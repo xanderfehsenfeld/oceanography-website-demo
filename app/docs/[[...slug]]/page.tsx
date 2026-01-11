@@ -72,16 +72,7 @@ export async function generateMetadata({ params }: PageProps) {
         url: `${Settings.metadataBase}${image.url}`,
       })),
     },
-    twitter: {
-      title: `${frontmatter.title} - ${Settings.twitter.title}`,
-      description: frontmatter.description || Settings.twitter.description,
-      card: Settings.twitter.card,
-      site: Settings.twitter.site,
-      images: Settings.twitter.images.map((image) => ({
-        ...image,
-        url: `${Settings.metadataBase}${image.url}`,
-      })),
-    },
+
     alternates: {
       canonical: `${Settings.metadataBase}/docs/${pathName}`,
     },

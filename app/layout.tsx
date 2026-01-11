@@ -32,16 +32,7 @@ export const metadata: Metadata = {
       url: `${baseUrl}${image.url}`,
     })),
   },
-  twitter: {
-    card: Settings.twitter.card,
-    title: Settings.twitter.title,
-    description: Settings.twitter.description,
-    site: Settings.twitter.site,
-    images: Settings.twitter.images.map((image) => ({
-      ...image,
-      url: `${baseUrl}${image.url}`,
-    })),
-  },
+
   publisher: Settings.name,
   alternates: {
     canonical: baseUrl,

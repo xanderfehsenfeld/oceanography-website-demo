@@ -1,6 +1,5 @@
 import {
   branding,
-  companylink,
   companyname,
   description,
   feedbackedit,
@@ -14,12 +13,11 @@ import {
   sitename,
   tableofcontent,
   totopscroll,
-  twitterhandle,
   url,
   urlimage,
 } from "@/settings/main"
 
-import { OpenGraph, TwitterCard } from "@/types/opengraph"
+import { OpenGraph } from "@/types/opengraph"
 
 interface AppSettings {
   name: string
@@ -38,13 +36,12 @@ interface AppSettings {
   siteicon: string
   keywords: string[]
   openGraph: OpenGraph
-  twitter: TwitterCard
   canonical: string
 }
 
 export const Settings: AppSettings = {
   name: companyname,
-  link: companylink,
+  link: "",
   branding,
   gtm,
   gtmconnected,
@@ -73,17 +70,6 @@ export const Settings: AppSettings = {
       },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: sitename,
-    description,
-    site: twitterhandle,
-    images: [
-      {
-        url: urlimage,
-        alt: imagealt,
-      },
-    ],
-  },
+
   canonical: url,
 }
