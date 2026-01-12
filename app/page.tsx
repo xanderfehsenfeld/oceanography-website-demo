@@ -17,7 +17,7 @@ export default function Home() {
     <section className="flex min-h-[86.5vh] flex-col items-center justify-center px-2 py-8 text-center">
       <h1 className="mb-4 text-4xl font-bold sm:text-7xl">LiveOcean</h1>
 
-      <div className="my-2 grid w-full gap-4 sm:grid-cols-2 md:grid-cols-4 max-w-6xl">
+      <div className="my-2 grid w-full max-w-6xl gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div className="flex flex-col gap-2">
           <h2 className="font-bold">See Today's Forecast at NANOOS</h2>
 
@@ -33,88 +33,72 @@ export default function Home() {
 
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_Phab_full_salt_top.html"
+            className="bg-teal-200"
+            href="/docs/forecastmovies/p5_Phab_full_salt_top"
             title="Full Region Surface Salinity and Drifters"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_full_oxygen_bot.html"
+            className="bg-teal-200"
+            href="/docs/forecastmovies/p5_full_oxygen_bot"
             title="Full Region Bottom Oxygen"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_nshelf_oxygen_bot.html"
+            className="bg-teal-200"
+            href="/docs/forecastmovies/p5_nshelf_oxygen_bot"
             title="Washington Shelf Bottom Oxygen (5 days)"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_PS_temp_top.html"
+            className="bg-teal-200"
+            href="/docs/forecastmovies/p5_PS_temp_top"
             title="Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_PS_speed_top.html"
+            className="bg-teal-200"
+            href="/docs/forecastmovies/p5_PS_speed_top"
             title="Puget Sound Surface Currents"
           />
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="font-bold">High-Resolution Submodels</h3>
-          <Card
-          className="bg-teal-200"
-            variant="small"
-            href="../LO/p5_willapa_ARAG_top.html"
-            title="Willapa &amp; Grays Surface Ocean Acidification"
-          />
-          <Card
-            variant="small"
-                      className="bg-teal-200"
 
-            href="../LO/p5_willapa_ARAG_bot.html"
+          <Card
+            variant="small"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_willapa_ARAG_bot"
             title="Willapa &amp; Grays Bottom Ocean Acidification"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_willapa_temp_top.html"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_willapa_temp_top"
             title="Willapa &amp; Grays Surface Temperature"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_willapa_salt_top.html"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_willapa_salt_top"
             title="Willapa &amp; Grays Surface Salinity"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_willapa_speed_top.html"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_willapa_speed_top"
             title="Willapa &amp; Grays Surface Currents"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_oly_temp_top.html"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_oly_temp_top"
             title="South Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
-                      className="bg-teal-200"
-
-            href="../LO/p5_oly_salt_top.html"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_oly_salt_top"
             title="South Puget Sound Surface Salinity"
           />
         </div>
@@ -124,35 +108,31 @@ export default function Home() {
           <Card
             variant="small"
             className="bg-sky-200"
-            href="../LO/tracks2_PS.html"
+            href="/docs/interactivetools/tracks2_PS"
             title="Drifters: Puget Sound"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/tracks2_wgh.html"
+            className="bg-sky-200"
+            href="/docs/interactivetools/tracks2_wgh"
             title="Drifters: Willapa &amp; Grays"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/tracks2_willapa25.html"
+            className="bg-sky-200"
+            href="/docs/interactivetools/tracks2_willapa25"
             title="Drifters: Willapa 2025 Custom"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/obs.html"
+            className="bg-sky-200"
+            href="/docs/interactivetools/obs"
             title="Observation Viewer"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/obsmod.html"
+            className="bg-sky-200"
+            href="/docs/interactivetools/obsmod"
             title="Model vs. Observations Viewer"
           />
         </div>
@@ -161,54 +141,77 @@ export default function Home() {
           <h2 className="font-bold">Background</h2>
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/tides_background.html"
+            className="bg-sky-200"
+            href="/docs/background/tides_background"
             title="How Tides Work in Puget Sound"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/long_term_trends.html"
+            className="bg-sky-200"
+            href="/docs/background/long_term_trends"
             title="Observed Long-term Trends in Puget Sound Water
             Properties"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/exchange_flow.html"
+            className="bg-sky-200"
+            href="/docs/background/exchange_flow"
             title="The Estuarine Exchange Flow"
           />
-
+        </div>
+        <div className="flex flex-col gap-2">
           <h2 className="font-bold">About the Model</h2>
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/data_access.html"
+            className="bg-sky-200"
+            href="/docs/about/data_access"
             title="Data Access"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/how_it_works.html"
+            className="bg-sky-200"
+            href="/docs/about/how_it_works"
             title="How the Model Works"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
-
-            href="../LO/how_we_test_it.html"
+            className="bg-sky-200"
+            href="/docs/about/how_we_test_it"
             title="How We Test the Model"
           />
           <Card
             variant="small"
-                        className="bg-sky-200"
+            className="bg-sky-200"
+            href="/docs/about/references"
+            title="References"
+          />
+        </div>
 
-            href="../LO/references.html"
+      
+        <div className="flex flex-col gap-2">
+          <h2 className="font-bold">Gallery</h2>
+          <Card
+            variant="small"
+            className="bg-sky-200"
+            href="/docs/salinity_year"
+            title="A Year of Modeled Salinity"
+          />
+          <Card
+            variant="small"
+            className="bg-sky-200"
+            href="/docs/gallery/oxygen_year.html"
+            title="A Year of Modeled Oxygen"
+          />
+          <Card
+            variant="small"
+            className="bg-sky-200"
+            href="/docs/gallery/phytoplankton_year.html"
+            title="A Year of Modeled Phytoplankton"
+          />
+          <Card
+            variant="small"
+            className="bg-sky-200"
+            href="/docs/gallery/references"
             title="References"
           />
         </div>
@@ -223,7 +226,7 @@ export default function Home() {
           </h3>
           <p className="my-2">
             LiveOcean is an ongoing project of the UW Coastal Modeling Group:{" "}
-            <BlueLink href="../index.html">Dr. Parker MacCready</BlueLink> (UW
+            <BlueLink href="../index">Dr. Parker MacCready</BlueLink> (UW
             Oceanography, lead),{" "}
             <BlueLink href="https://samanthasiedlecki.wixsite.com/coastalbiogeodynlab">
               Dr. Samantha Siedlecki
@@ -264,15 +267,15 @@ export default function Home() {
           />
         </div>
       </div>
-            <hr className="my-4 w-full border border-y" />
-<div>
-  <Image 
-  width={400}
-  height={120}
-  src={"/images/WOAC_logo.png"}
-  alt="Coastal Modeling Group Logo"
-  />
-</div>
+      <hr className="my-4 w-full border border-y" />
+      <div>
+        <Image
+          width={400}
+          height={120}
+          src={"/images/WOAC_logo.png"}
+          alt="Coastal Modeling Group Logo"
+        />
+      </div>
     </section>
   )
 }

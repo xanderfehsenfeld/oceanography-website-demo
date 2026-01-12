@@ -14,9 +14,46 @@ export const Documents: Paths[] = [
         title: "Setup",
         href: "/setup",
       },
+    ],
+  },
+  {
+    spacer: true,
+  },
+  {
+    heading: "See Today's Forecast at NANOOS",
+    title: "NANOOS NVS",
+    href: "http://nvs.nanoos.org/Explorer?action=overlay:liveocean_temp",
+  },
+  {
+    spacer: true,
+  },
+  {
+    title: "Forecast movies",
+    href: "/forecastmovies",
+    noLink: true,
+
+    items: [
       {
-        title: "Changelog",
-        href: "/changelog",
+        title: "Full Region Surface Salinity and Drifters",
+        href: "/p5_Phab_full_salt_top",
+      },
+
+      {
+        title: "Full Region Bottom Oxygen",
+        href: "/p5_full_oxygen_bot",
+      },
+
+      {
+        title: "Washington Shelf Bottom Oxygen (5 days)",
+        href: "/p5_nshelf_oxygen_bot",
+      },
+      {
+        title: "Puget Sound Surface Temperature",
+        href: "/p5_PS_temp_top",
+      },
+      {
+        title: "Puget Sound Surface Currents",
+        href: "/p5_PS_speed_top",
       },
     ],
   },
@@ -24,9 +61,122 @@ export const Documents: Paths[] = [
     spacer: true,
   },
   {
-    title: "Navigation",
-    href: "/navigation",
-    heading: "Documents",
+    title: "High-Resolution Submodels",
+    href: "/highresolutionsubmodels",
+    noLink: true,
+
+    items: [
+      {
+        title: "Willapa & Grays Surface Ocean Acidification",
+        href: "/p5_willapa_ARAG_top",
+      },
+      {
+        title: "Willapa & Grays Surface Temperature",
+        href: "/p5_willapa_temp_top",
+      },
+      {
+        title: "Willapa & Grays Surface Salinity",
+        href: "/p5_willapa_salt_top",
+      },
+      {
+        title: "Willapa & Grays Surface Currents",
+        href: "/p5_willapa_speed_top",
+      },
+      {
+        title: "South Puget Sound Surface Temperature",
+        href: "/p5_oly_temp_top",
+      },
+      {
+        title: "South Puget Sound Surface Salinity",
+        href: "/p5_oly_salt_top",
+      },
+    ],
+  },
+  {
+    spacer: true,
+  },
+
+  {
+    title: "Interactive Tools",
+    href: "/interactivetools",
+    noLink: true,
+
+    items: [
+      {
+        title: "Drifters: Puget Sound",
+        href: "/tracks2_PS",
+      },
+      {
+        title: "Drifters: Willapa & Grays",
+        href: "/tracks2_wgh",
+      },
+      {
+        title: "Drifters: Willapa 2025 Custom",
+        href: "/tracks2_willapa25",
+      },
+      {
+        title: "Observation Viewer",
+        href: "/obs",
+      },
+      {
+        title: "Model vs. Observations Viewer",
+        href: "/obsmod",
+      },
+    ],
+  },
+  {
+    spacer: true,
+  },
+
+  {
+    title: "Background",
+    href: "/background",
+    noLink: true,
+
+    items: [
+      {
+        title: "How Tides Work in Puget Sound",
+        href: "/tides_background",
+      },
+      {
+        title: "Observed Long-term Trends in Puget Sound Water Properties",
+        href: "/long_term_trends",
+      },
+      {
+        title: "The Estuarine Exchange Flow",
+        href: "/exchange_flow",
+      },
+    ],
+  },
+  {
+    spacer: true,
+  },
+    {
+    title: "About the Model",
+    href: "/about",
+    noLink: true,
+
+    items: [
+      {
+        title: "Data Access",
+        href: "/data_access",
+      },
+      {
+        title: "How the Model Works",
+        href: "/how_it_works",
+      },
+      {
+        title: "How We Test the Model",
+        href: "/how_we_test_it",
+      },
+        {
+        title: "References",
+        href: "/references",
+      },
+    ],
+  },
+  {
+    spacer: true,
   },
   {
     title: "Structure",
