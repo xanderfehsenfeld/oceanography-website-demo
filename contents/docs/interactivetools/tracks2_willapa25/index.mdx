@@ -1,0 +1,33 @@
+---
+title: Willapa Bay Customized Drifter Tracks
+
+description: The map plot shows tracks from simulated drifter tracks over three days from the most recent LiveOcean daily forecast.
+---
+
+
+<div className={'lg:flex gap-4 '}>
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <link  href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css"/>
+
+    <div className={'w-full'} id="map_container">
+
+        <Script src="/scripts/jspm/tracks2_willapa25/tracks2_willapa25_d3.js" />
+    </div>
+
+    <div className={'w-full'}>
+        <p>Time Slider: <span id="demo"></span></p>
+
+        <Slider defaultValue={0} min="0" max="100" className="slider" id="myRange"/>
+
+        ### Willapa Bay Customized Drifter Tracks
+
+        The map plot shows tracks from simulated drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as six clusters of blue dots at locations in and near Willapa Bay. The green lines show the tracks that the drifters take over the full three days, about six tidal cycles.
+
+        Using the "Time Slider" you can see where each particle goes in time. If you click and drag across a region of the map with some drifters in it they will turn red. They will stay red when you use the Time Slider. By selecting different groups of particles at different times you can explore questions such as: Where do all the particles from a given release site go? or Where did all the particles that ended up in some place come from?
+
+        The model used here is a high-resolution model of these two estuaries, nested inside the larger LiveOcean model. It has 200 m horizontal resolution, 30 vertical layers, and wetting-and-drying of the intertidal. The particles stay at the ocean surface, and so can accumulate along convergence fronts. The tides in this model tend to lag real tides by about an hour. This is something that will be improved in the next version of the model.
+
+    </div>
+</div>
+
+
