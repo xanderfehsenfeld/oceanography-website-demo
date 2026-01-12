@@ -17,13 +17,14 @@ export default function Home() {
     <section className="flex min-h-[86.5vh] flex-col items-center justify-center px-2 py-8 text-center">
       <h1 className="mb-4 text-4xl font-bold sm:text-7xl">LiveOcean</h1>
 
-      <div className="my-2 grid w-full gap-4 sm:grid-cols-2 md:grid-cols-4">
+      <div className="my-2 grid w-full gap-4 sm:grid-cols-2 md:grid-cols-4 max-w-6xl">
         <div className="flex flex-col gap-2">
           <h2 className="font-bold">See Today's Forecast at NANOOS</h2>
 
           <Card
             title="NANOOS NVS"
             variant="small"
+            className="bg-pink-300"
             external={true}
             href="http://nvs.nanoos.org/Explorer?action=overlay:liveocean_temp"
           />
@@ -32,26 +33,36 @@ export default function Home() {
 
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_Phab_full_salt_top.html"
             title="Full Region Surface Salinity and Drifters"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_full_oxygen_bot.html"
             title="Full Region Bottom Oxygen"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_nshelf_oxygen_bot.html"
             title="Washington Shelf Bottom Oxygen (5 days)"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_PS_temp_top.html"
             title="Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_PS_speed_top.html"
             title="Puget Sound Surface Currents"
           />
@@ -59,37 +70,50 @@ export default function Home() {
         <div className="flex flex-col gap-2">
           <h3 className="font-bold">High-Resolution Submodels</h3>
           <Card
+          className="bg-teal-200"
             variant="small"
             href="../LO/p5_willapa_ARAG_top.html"
             title="Willapa &amp; Grays Surface Ocean Acidification"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_willapa_ARAG_bot.html"
             title="Willapa &amp; Grays Bottom Ocean Acidification"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_willapa_temp_top.html"
             title="Willapa &amp; Grays Surface Temperature"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_willapa_salt_top.html"
             title="Willapa &amp; Grays Surface Salinity"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_willapa_speed_top.html"
             title="Willapa &amp; Grays Surface Currents"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_oly_temp_top.html"
             title="South Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
+                      className="bg-teal-200"
+
             href="../LO/p5_oly_salt_top.html"
             title="South Puget Sound Surface Salinity"
           />
@@ -99,26 +123,35 @@ export default function Home() {
           <h2 className="font-bold">Interactive Tools</h2>
           <Card
             variant="small"
+            className="bg-sky-200"
             href="../LO/tracks2_PS.html"
             title="Drifters: Puget Sound"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/tracks2_wgh.html"
             title="Drifters: Willapa &amp; Grays"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/tracks2_willapa25.html"
             title="Drifters: Willapa 2025 Custom"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/obs.html"
             title="Observation Viewer"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/obsmod.html"
             title="Model vs. Observations Viewer"
           />
@@ -128,17 +161,23 @@ export default function Home() {
           <h2 className="font-bold">Background</h2>
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/tides_background.html"
             title="How Tides Work in Puget Sound"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/long_term_trends.html"
             title="Observed Long-term Trends in Puget Sound Water
             Properties"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/exchange_flow.html"
             title="The Estuarine Exchange Flow"
           />
@@ -146,21 +185,29 @@ export default function Home() {
           <h2 className="font-bold">About the Model</h2>
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/data_access.html"
             title="Data Access"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/how_it_works.html"
             title="How the Model Works"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/how_we_test_it.html"
             title="How We Test the Model"
           />
           <Card
             variant="small"
+                        className="bg-sky-200"
+
             href="../LO/references.html"
             title="References"
           />
@@ -217,6 +264,15 @@ export default function Home() {
           />
         </div>
       </div>
+            <hr className="my-4 w-full border border-y" />
+<div>
+  <Image 
+  width={400}
+  height={120}
+  src={"/images/WOAC_logo.png"}
+  alt="Coastal Modeling Group Logo"
+  />
+</div>
     </section>
   )
 }

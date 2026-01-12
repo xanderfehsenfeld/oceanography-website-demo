@@ -19,24 +19,8 @@ export function Footer() {
         .
       </p>
       {Settings.branding !== false && (
-        <div className="hidden items-center md:block">
-          <Link
-            className="font-semibold"
-            href="https://rubixstudios.com.au"
-            title="LiveOcean"
-            aria-label="LiveOcean"
-            target="_blank"
-          >
-            <Image
-              src="/logo.svg"
-              alt="LiveOcean logo"
-              title="LiveOcean logo"
-              aria-label="LiveOcean logo"
-              priority={false}
-              width={30}
-              height={30}
-            />
-          </Link>
+        <div className="hidden items-center md:block italic">
+          Last edited 07/04/2025 14:13:04
         </div>
       )}
     </footer>

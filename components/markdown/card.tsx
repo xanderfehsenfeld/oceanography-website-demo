@@ -4,6 +4,7 @@ import { iconMap } from "@/settings/icons"
 import clsx from "clsx"
 import { Link } from "lib/transition"
 
+
 type CardProps = PropsWithChildren & {
   subtitle?: string
   title: string
@@ -22,7 +23,7 @@ export function Card({
   description,
   href,
   image,
-  className,
+  className = 'bg-white',
   external = false,
   icon,
   variant = "normal",
@@ -34,7 +35,7 @@ export function Card({
   const content = (
     <div
       className={clsx(
-        "group relative flex overflow-hidden rounded-lg border bg-white shadow-md transition-shadow duration-300 ease-in-out hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900 hover:dark:shadow-md",
+        "group relative flex overflow-hidden rounded-lg border shadow-md transition-shadow duration-300 ease-in-out hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900 hover:dark:shadow-md",
         variant === "small"
           ? "items-center space-x-2 p-3"
           : variant === "image"
