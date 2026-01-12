@@ -151,7 +151,7 @@ export const Documents: Paths[] = [
   {
     spacer: true,
   },
-    {
+  {
     title: "About the Model",
     href: "/about",
     noLink: true,
@@ -169,7 +169,7 @@ export const Documents: Paths[] = [
         title: "How We Test the Model",
         href: "/how_we_test_it",
       },
-        {
+      {
         title: "References",
         href: "/references",
       },

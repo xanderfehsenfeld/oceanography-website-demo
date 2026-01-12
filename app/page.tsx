@@ -2,7 +2,6 @@ import { ComponentProps } from "react"
 import Image from "next/image"
 import { Link } from "lib/transition"
 
-import { Button, buttonVariants } from "@/components/ui/button"
 import { Card } from "@/components/markdown/card"
 
 const BlueLink = (props: ComponentProps<typeof Link>) => (
@@ -19,7 +18,7 @@ export default function Home() {
 
       <div className="my-2 grid w-full max-w-6xl gap-4 sm:grid-cols-2 md:grid-cols-4">
         <div className="flex flex-col gap-2">
-          <h2 className="font-bold">See Today's Forecast at NANOOS</h2>
+          <h2 className="font-bold">See Today&apos;s Forecast at NANOOS</h2>
 
           <Card
             title="NANOOS NVS"
@@ -187,7 +186,6 @@ export default function Home() {
           />
         </div>
 
-      
         <div className="flex flex-col gap-2">
           <h2 className="font-bold">Gallery</h2>
           <Card

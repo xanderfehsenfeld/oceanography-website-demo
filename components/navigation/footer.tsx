@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 
 import { Settings } from "@/types/settings"
@@ -19,7 +18,7 @@ export function Footer() {
         .
       </p>
       {Settings.branding !== false && (
-        <div className="hidden items-center md:block italic">
+        <div className="hidden items-center italic md:block">
           Last edited 07/04/2025 14:13:04
         </div>
       )}

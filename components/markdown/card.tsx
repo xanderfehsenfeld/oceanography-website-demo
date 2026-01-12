@@ -4,7 +4,6 @@ import { iconMap } from "@/settings/icons"
 import clsx from "clsx"
 import { Link } from "lib/transition"
 
-
 type CardProps = PropsWithChildren & {
   subtitle?: string
   title: string
@@ -23,7 +22,7 @@ export function Card({
   description,
   href,
   image,
-  className = 'bg-white',
+  className = "bg-white",
   external = false,
   icon,
   variant = "normal",
