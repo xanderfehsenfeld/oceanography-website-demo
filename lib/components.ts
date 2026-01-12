@@ -9,6 +9,10 @@ import Note from "@/components/markdown/note"
 import { Step, StepItem } from "@/components/markdown/step"
 import { Video } from "@/components/video"
 
+import Script from 'next/script'
+import { Slider } from "@/components/slider"
+
+
 export const components = {
   a: RoutedLink,
   Card,
@@ -26,4 +30,6 @@ export const components = {
   TabsList,
   TabsTrigger,
   Video,
+  Script,
+  Slider
 }

@@ -205,6 +205,94 @@
     }
   },
   {
+    "slug": "/highresolutionsubmodels/p5_oly_salt_top",
+    "title": "South Puget Sound Surface Salinity",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_Psouth_salt_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    The color shows the salinity of surface waters in south Puget Sound. The model is a high-resolution (150 m grid) sub-model nested inside the larger LiveOcean domain.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1psouthsalt_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast the color shows the salinity of surface waters in south puget sound the model is a high-resolution 150 m grid sub-model nested inside the larger liveocean domain the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_oly_temp_top",
+    "title": "South Puget Sound Surface Temperature",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'lg:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_Psouth_temp_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    The color shows the temperature of surface waters in south Puget Sound. The model is a high-resolution (150 m grid) sub-model nested inside the larger LiveOcean domain.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname lg:flex gap-4 div classname w-full video src videos p1psouthtemp_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast the color shows the temperature of surface waters in south puget sound the model is a high-resolution 150 m grid sub-model nested inside the larger liveocean domain the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_willapa_ARAG_bot",
+    "title": "Willapa & Grays Bottom Ocean Acidification",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_wgh_ARAG_bot.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    This movie shows the predicted distribution of aragonite saturation state (Ωarag) for bottom waters in two of the three main estuaries on the Washington Coast, Willapa Bay to the south and Grays Harbor to the north. When the aragonite saturation state sis below about 1.5 it is likely that larval oysters will not survive because they will be unable to form shells. During upwelling conditions (winds from the north, typically in the summer) the deep waters entering the coastal estuaries from the shelf can be relatively \"corrosive\" (low aragonite saturation state) because of natural and anthropogenic processes.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1wgharag_bot mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast this movie shows the predicted distribution of aragonite saturation state arag for bottom waters in two of the three main estuaries on the washington coast willapa bay to the south and grays harbor to the north when the aragonite saturation state sis below about 1 5 it is likely that larval oysters will not survive because they will be unable to form shells during upwelling conditions winds from the north typically in the summer the deep waters entering the coastal estuaries from the shelf can be relatively corrosive low aragonite saturation state because of natural and anthropogenic processes the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_willapa_ARAG_top",
+    "title": "Willapa & Grays Surface Ocean Acidification",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_wgh_ARAG_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    This movie shows the predicted distribution of aragonite saturation state (Ωarag) for surface waters in two of the three main estuaries on the Washington Coast, Willapa Bay to the south and Grays Harbor to the north. When the aragonite saturation state is below about 1.5 it is likely that larval oysters will not survive because they will be unable to form shells. This movie highlights the river contribution to this problem. In particular, water from the Columbia River can also be corrosive, and this water often enters Willapa Bay and Grays Harbor during downwelling conditions (winds from the south, typical of storms any time of year).\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1wgharag_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast this movie shows the predicted distribution of aragonite saturation state arag for surface waters in two of the three main estuaries on the washington coast willapa bay to the south and grays harbor to the north when the aragonite saturation state is below about 1 5 it is likely that larval oysters will not survive because they will be unable to form shells this movie highlights the river contribution to this problem in particular water from the columbia river can also be corrosive and this water often enters willapa bay and grays harbor during downwelling conditions winds from the south typical of storms any time of year the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_willapa_salt_top",
+    "title": "Willapa & Grays Surface Salinity",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_wgh_salt_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    This movie shows the predicted distribution of salinity for surface waters in two of the main estuaries on the Washington Coast, Willapa Bay to the south and Grays Harbor to the north.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1wghsalt_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast this movie shows the predicted distribution of salinity for surface waters in two of the main estuaries on the washington coast willapa bay to the south and grays harbor to the north the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_willapa_speed_top",
+    "title": "Willapa & Grays Surface Currents",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_wgh_speed_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    This movie shows the predicted distribution of the speed of surface currents in two of the main estuaries on the Washington Coast, Willapa Bay to the south and Grays Harbor to the north.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1wghspeed_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast this movie shows the predicted distribution of the speed of surface currents in two of the main estuaries on the washington coast willapa bay to the south and grays harbor to the north the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/highresolutionsubmodels/p5_willapa_temp_top",
+    "title": "Willapa & Grays Surface Temperature",
+    "description": "This is a movie made from the most recent LiveOcean three-day forecast.",
+    "content": "<div className={'md:flex gap-4 '}>\n  <div className={'w-full'}>\n    <Video src={'/videos/P1_wgh_temp_top.mp4'} />\n  </div>\n\n  <div className={'w-full'}>\n    ### This is a movie made from the most recent LiveOcean three-day forecast.\n\n    This movie shows the predicted distribution of temperature for surface waters in two of the main estuaries on the Washington Coast, Willapa Bay to the south and Grays Harbor to the north.\n\n    The movie has a panel at the bottom that shows time. The tide is evident in the twice-a-day variation of the sea surface height. Daytimes are shown as the thick yellow lines on the horizontal axis. Winds are shown by an arrow in the middle of the map, with the scale given by the circle.\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname md:flex gap-4 div classname w-full video src videos p1wghtemp_top mp4 div div classname w-full this is a movie made from the most recent liveocean three-day forecast this movie shows the predicted distribution of temperature for surface waters in two of the main estuaries on the washington coast willapa bay to the south and grays harbor to the north the movie has a panel at the bottom that shows time the tide is evident in the twice-a-day variation of the sea surface height daytimes are shown as the thick yellow lines on the horizontal axis winds are shown by an arrow in the middle of the map with the scale given by the circle div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
+    "slug": "/interactivetools/tracks2_PS",
+    "title": "Puget Sound Drifter Tracks",
+    "description": "The map plot shows tracks from simulated surface drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as blue dots.",
+    "content": "<div className={'lg:flex gap-4 '}>\n  <script src=\"https://d3js.org/d3.v7.js\" />\n\n  <link href=\"/scripts/jspm/style1.css\" rel=\"stylesheet\" type=\"text/css\" />\n\n  <div className={'w-full'} id=\"map_container\">\n    <Script src=\"/scripts/jspm/tracks2_PS_d3.js\" />\n  </div>\n\n  <div className={'w-full'}>\n    <p>Time Slider: <span id=\"demo\" /></p>\n\n    <Slider min=\"0\" max=\"100\" className=\"slider\" id=\"myRange\" />\n\n    <h3>Puget Sound Drifter Tracks</h3>\n    <p>The map plot shows tracks from simulated surface drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as blue dots.</p>\n    <p>Using the \"Time Slider\" you can see where each particle goes in time. If you click and drag across a region of the map with some drifters in it they will turn red. They will stay red when you use the Time Slider. By selecting different groups of particles at different times you can explore questions such as: Where do all the particles from one place go? or Where did all the particles that ended up in some place come from?</p>\n  </div>\n</div>\n",
+    "_searchMeta": {
+      "cleanContent": "div classname lg:flex gap-4 script src https: d3js org d3 v7 js link href scripts jspm style1 css rel stylesheet type text css div classname w-full id map_container script src scripts jspm tracks2psd3 js div div classname w-full p time slider: span id demo p slider min 0 max 100 classname slider id myrange h3 puget sound drifter tracks h3 p the map plot shows tracks from simulated surface drifter tracks over three days from the most recent liveocean daily forecast at the start time you can see the initial drifter release locations as blue dots p p using the time slider you can see where each particle goes in time if you click and drag across a region of the map with some drifters in it they will turn red they will stay red when you use the time slider by selecting different groups of particles at different times you can explore questions such as: where do all the particles from one place go or where did all the particles that ended up in some place come from p div div",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
     "slug": "/markdown/cards",
     "title": "Cards",
     "description": "Explore and implement various card styles, including small, large and image cards.",

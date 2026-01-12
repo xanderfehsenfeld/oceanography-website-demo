@@ -65,6 +65,10 @@ export const Documents = [
                 href: "/p5_willapa_ARAG_top",
             },
             {
+                title: "Willapa & Grays Bottom Ocean Acidification",
+                href: "/p5_willapa_ARAG_bot",
+            },
+            {
                 title: "Willapa & Grays Surface Temperature",
                 href: "/p5_willapa_temp_top",
             },
