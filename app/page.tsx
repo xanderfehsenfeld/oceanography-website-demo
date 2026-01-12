@@ -63,7 +63,12 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="font-bold">High-Resolution Submodels</h3>
-
+          <Card
+            variant="small"
+            className="bg-teal-200"
+            href="/docs/highresolutionsubmodels/p5_willapa_ARAG_top"
+            title="Willapa &amp; Grays Surface Ocean Acidification"
+          />
           <Card
             variant="small"
             className="bg-teal-200"
