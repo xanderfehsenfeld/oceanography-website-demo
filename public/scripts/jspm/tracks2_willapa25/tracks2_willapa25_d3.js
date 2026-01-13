@@ -14,6 +14,8 @@ async function loadFiles() {
 // Code to make the plot and interact with it.
 function create_vis(data) {
 
+    console.log('create vis')
+
     // Define the geographical range of the svg and its aspect ratio.
     // NOTE: by using "let" these variables are available anywhere inside this
     // code block (embraced by {}). They cannot be redeclared.
