@@ -156,6 +156,7 @@
   padding: 0.75px 12.5px;
 }
 
+
 pre {
   padding: 0 !important;
   width: inherit !important;
@@ -311,4 +312,8 @@ span.katex-html {
   to {
     height: 0;
   }
+}
+
+article a {
+   @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
 }

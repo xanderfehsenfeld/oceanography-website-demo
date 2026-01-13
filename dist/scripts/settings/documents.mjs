@@ -1,31 +1,5 @@
 export const Documents = [
     {
-        heading: "Introduction",
-        title: "Basic Setup",
-        href: "/basic-setup",
-        items: [
-            {
-                title: "Installation",
-                href: "/installation",
-            },
-            {
-                title: "Setup",
-                href: "/setup",
-            },
-        ],
-    },
-    {
-        spacer: true,
-    },
-    {
-        heading: "See Today's Forecast at NANOOS",
-        title: "NANOOS NVS",
-        href: "http://nvs.nanoos.org/Explorer?action=overlay:liveocean_temp",
-    },
-    {
-        spacer: true,
-    },
-    {
         title: "Forecast movies",
         href: "/forecastmovies",
         noLink: true,
@@ -165,77 +139,6 @@ export const Documents = [
             {
                 title: "References",
                 href: "/references",
-            },
-        ],
-    },
-    {
-        spacer: true,
-    },
-    {
-        title: "Structure",
-        href: "/structure",
-        items: [
-            {
-                title: "Deep",
-                href: "/deep",
-                items: [
-                    {
-                        title: "Deeper",
-                        href: "/deeper",
-                        items: [
-                            {
-                                title: "Even deeper",
-                                href: "/even-deeper",
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        spacer: true,
-    },
-    {
-        title: "Markdown",
-        href: "/markdown",
-        heading: "Components",
-        items: [
-            {
-                title: "Cards",
-                href: "/cards",
-            },
-            {
-                title: "Diagrams",
-                href: "/diagrams",
-            },
-            {
-                title: "Filetree",
-                href: "/filetree",
-            },
-            {
-                title: "Lists",
-                href: "/lists",
-            },
-            {
-                title: "Maths",
-                href: "/maths",
-            },
-            {
-                title: "Notes",
-                href: "/notes",
-            },
-            {
-                title: "Steps",
-                href: "/steps",
-            },
-            {
-                title: "Table",
-                href: "/table",
-            },
-            {
-                title: "Tabs",
-                href: "/tabs",
             },
         ],
     },

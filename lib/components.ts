@@ -11,6 +11,9 @@ import { Video } from "@/components/video"
 
 import Script from 'next/script'
 import { Slider } from "@/components/slider"
+import Image from "next/image"
+
+
 
 
 export const components = {
@@ -31,5 +34,6 @@ export const components = {
   TabsTrigger,
   Video,
   Script,
-  Slider
+  Slider,
+  Image
 }
