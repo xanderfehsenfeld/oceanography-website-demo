@@ -23,12 +23,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "20" # Updated to Node.js 20 as per the GitHub Actions change
-
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          cache: true
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Compile TypeScript
-        run: npx tsc --project tsconfig.scripts.json
+        run: pnpm tsc --project tsconfig.scripts.json
 
       - name: Rename .js files to .mjs
         run: |
