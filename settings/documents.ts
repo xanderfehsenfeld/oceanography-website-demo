@@ -90,13 +90,13 @@ export const Documents: Paths[] = [
 
   {
     title: "Interactive Tools",
-    href: "/interactivetools",
+    href: "/../interactive",
     noLink: true,
 
     items: [
       {
         title: "Drifters: Puget Sound",
-        href: "/tracks2_PS",
+        href: "/drifters/pugetsound",
       },
       {
         title: "Drifters: Willapa & Grays",

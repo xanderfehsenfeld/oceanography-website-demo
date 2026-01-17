@@ -3,10 +3,16 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react"
 import * as d3 from "d3"
 
-import { Slider } from "../slider"
 import coast from "./coast_xy.json"
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
+import { Slider } from "@/components/slider"
+
+
+// ---
+// title: Puget Sound Drifter Tracks
+// description: The map plot shows tracks from simulated surface drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as blue dots.
+// ---
 
 //Load the data
 
@@ -184,7 +190,7 @@ function update_isin() {
   }
 }
 
-const Chart = () => {
+const DriftersPugetSound = () => {
   const ref = useRef<SVGElement>(null)
 
   const [sliderMaxValue, setSliderMaxValue] = useState(10)
@@ -284,8 +290,6 @@ const Chart = () => {
     }
   }, [ref])
 
-  console.log('using Chart component')
-
   return (
     <div className={"gap-4 lg:flex"}>
       <script src="https://d3js.org/d3.v7.js"></script>
@@ -327,4 +331,6 @@ const Chart = () => {
   )
 }
 
-export default Chart
+
+
+export default DriftersPugetSound

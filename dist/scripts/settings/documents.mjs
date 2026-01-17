@@ -1,5 +1,16 @@
 export const Documents = [
     {
+        title: "Interactive Tools",
+        href: "/../interactive",
+        noLink: true,
+        items: [
+            {
+                title: "Salt",
+                href: "/salt",
+            },
+        ]
+    },
+    {
         title: "Forecast movies",
         href: "/forecastmovies",
         noLink: true,
