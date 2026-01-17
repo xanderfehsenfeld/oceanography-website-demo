@@ -8,7 +8,7 @@ import SubLink from "@/components/sidebar/sublink"
 
 export function PageMenu({ isSheet = false }) {
   const pathname = usePathname()
-  if (!pathname.startsWith("/docs")) return null
+  if (!pathname.startsWith("/docs") && !pathname.startsWith("/interactive")) return null
 
   return (
     <div className="flex flex-col gap-3.5 pb-6">
