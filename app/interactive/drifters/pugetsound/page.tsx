@@ -135,7 +135,7 @@ for (let j = 0; j < nTracks; j++) {
 // sxyT is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one time, packed as a list of [x,y] points.
-let sxyT:number[][][] = []
+let sxyT: number[][][] = []
 for (let i = 0; i < nTimes; i++) {
   var xy = []
   for (let j = 0; j < nTracks; j++) {
@@ -146,13 +146,13 @@ for (let i = 0; i < nTimes; i++) {
 
 // function that fills out an array with the position of points at
 // a specific timestep
-let sxyNow:number[][] = []
+let sxyNow: number[][] = []
 function update_sxyNow(tt: number) {
   sxyNow = sxyT[tt]
 }
 
 // Initialize a list to indicate if a particle is within the brushExtent
-let isin:number[] = []
+let isin: number[] = []
 for (let j = 0; j < nTracks; j++) {
   isin.push(0)
 }
@@ -198,7 +198,19 @@ function update_isin() {
   }
 }
 
+interface IProps {
 
+  sxyNow: number[][],
+nTracks: number,
+isin: number[],
+width: number,
+height: number,
+cxy: number[][][],
+
+nCoast: number,
+nTimes: number,
+
+}
 
 const DriftersPugetSound = () => {
 
@@ -210,7 +222,10 @@ const DriftersPugetSound = () => {
 
   const [sliderValue, setSliderValue] = useState(0)
 
-  const [displayValue, setDisplayValue] = useState("")
+
+
+
+  const displayValue = tlist[sliderValue]
 
   const update_points = useEffectEvent(() => {
     const svg = d3.select(ref.current)
@@ -272,7 +287,6 @@ const DriftersPugetSound = () => {
 
       setSliderMaxValue(nTimes - 1)
 
-      setDisplayValue(tlist[sliderValue])
 
       update_sxyNow(0)
 
@@ -319,7 +333,6 @@ const DriftersPugetSound = () => {
           defaultValue={sliderValue}
           onChange={(input) => {
             setSliderValue(input.target.valueAsNumber)
-            setDisplayValue(tlist[input.target.valueAsNumber])
             update_sxyNow(input.target.valueAsNumber)
             update_points()
           }}

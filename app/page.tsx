@@ -112,31 +112,31 @@ export default function Home() {
           <Card
             variant="small"
             className="bg-sky-200"
-            href="/docs/interactivetools/tracks2_PS"
+            href="/interactive/drifters/pugetsound"
             title="Drifters: Puget Sound"
           />
           <Card
             variant="small"
             className="bg-sky-200"
-            href="/docs/interactivetools/tracks2_wgh"
+            href="/interactive/drifters/willapaandgrays"
             title="Drifters: Willapa &amp; Grays"
           />
           <Card
             variant="small"
             className="bg-sky-200"
-            href="/docs/interactivetools/tracks2_willapa25"
+            href="/interactive/drifters/willapa2025Custom"
             title="Drifters: Willapa 2025 Custom"
           />
           <Card
             variant="small"
             className="bg-sky-200"
-            href="/docs/interactivetools/obs"
+            href="/interactive/observationviewer"
             title="Observation Viewer"
           />
           <Card
             variant="small"
             className="bg-sky-200"
-            href="/docs/interactivetools/obsmod"
+            href="/interactive/modelvsobservation"
             title="Model vs. Observations Viewer"
           />
         </div>
