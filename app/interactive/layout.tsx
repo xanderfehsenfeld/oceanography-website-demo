@@ -5,13 +5,12 @@ import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 import { Sidebar } from "@/components/sidebar"
 
-interface PageProps {
-  params: Promise<{ slug: string[] }>
-  children: React.ReactNode
-}
 
-export default async function Pages({ params, children }: PageProps) {
-  const { slug = [] } = await params
+
+export default function Pages({ children }: Readonly<{
+  children: React.ReactNode
+}>) {
+  const slug:string[] = [] 
   const pathName = slug.join("/")
 
   return (
@@ -37,7 +36,7 @@ export default async function Pages({ params, children }: PageProps) {
   )
 }
 
-export async function generateMetadata(props: PageProps) {
+export async function generateMetadata() {
   return {}
 }
 

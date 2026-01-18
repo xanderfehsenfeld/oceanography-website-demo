@@ -99,7 +99,7 @@ function xyScale(x: number, y: number) {
 // Save the coastline as a list of lists in the format
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one segment, packed as a list of [x,y] points.
-const cxy = []
+const cxy:number[][][] = []
 for (let s = 0; s < nCoast; s++) {
   // pull out a single segment and scale
   const cx = coastVal[s].x
@@ -289,9 +289,10 @@ const initializePoints = useEffectEvent(() => {
 
       // Loop over all the coast segments and plot them, one line per segment.
       for (let j = 0; j < nCoast; j++) {
+
         svg
           .append("path")
-          .attr("d", d3.line()(cxy[j]))
+          .attr("d", d3.line()(cxy[j] as any))
           .attr("stroke", "black")
           .attr("fill", "none")
           .attr("opacity", 1.0)
@@ -315,17 +316,13 @@ const initializePoints = useEffectEvent(() => {
       update_sxyNow(0)
 
 
-      // brush code
-
-      function initBrush() {
-        svg.call(brush)
-      }
+  
       // Create a brush "behaviour".
       // A brush behaviour is a function that has methods such as .on defined on it.
       // The function itself adds event listeners to an element as well as
       // additional elements (mainly rect elements) for rendering the brush extent.
 
-      function handleBrush(e) {
+      function handleBrush(e: any) {
         brushExtent = e.selection
 
         if (brushExtent != null) {
@@ -333,8 +330,13 @@ const initializePoints = useEffectEvent(() => {
           updatePoints()
         }
       }
-
+          // brush code
       let brush = d3.brush().on("end", handleBrush)
+
+      function initBrush() {
+        svg.call(brush as any)
+      }
+
 
       initBrush()
       

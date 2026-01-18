@@ -2,19 +2,6 @@ import { Paths } from "@/lib/pageroutes"
 
 export const Documents: Paths[] = [
   {
-    title: "Interactive Tools",
-    href: "/../interactive",
-    noLink: true,
-    items: [
-        {
-        title: "Salt",
-        href: "/salt",
-      },
-    ]
-
-  },
-
-  {
     title: "Forecast movies",
     href: "/forecastmovies",
     noLink: true,
@@ -90,7 +77,7 @@ export const Documents: Paths[] = [
 
   {
     title: "Interactive Tools",
-    href: "/../interactive",
+    href: "/interactive",
     noLink: true,
 
     items: [
