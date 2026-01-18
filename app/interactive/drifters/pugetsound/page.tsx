@@ -198,7 +198,12 @@ function update_isin() {
   }
 }
 
+
+
 const DriftersPugetSound = () => {
+
+
+
   const ref = useRef<SVGElement>(null)
 
   const [sliderMaxValue, setSliderMaxValue] = useState(10)
