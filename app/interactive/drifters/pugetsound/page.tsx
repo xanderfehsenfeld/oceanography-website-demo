@@ -198,14 +198,19 @@ function update_isin() {
   }
 }
 
-interface IProps {
-  sxyNow: number[][]
+interface IStaticProps {
+  timeVal: {
+    t: string[]
+  }[]
+  coastVal: {
+    x: number[]
+    y: number[]
+  }
+  trackVal: {
+    x: number[]
+    y: number[]
+  }[]
   nTracks: number
-  isin: number[]
-  width: number
-  height: number
-  cxy: number[][][]
-
   nCoast: number
   nTimes: number
 }
