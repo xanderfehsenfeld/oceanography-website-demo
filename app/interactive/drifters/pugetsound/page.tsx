@@ -3,11 +3,11 @@
 import { useEffect, useEffectEvent, useRef, useState } from "react"
 import * as d3 from "d3"
 
+import { Slider } from "@/components/slider"
+
 import coast from "./coast_xy.json"
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
-import { Slider } from "@/components/slider"
-
 
 // ---
 // title: Puget Sound Drifter Tracks
@@ -62,8 +62,13 @@ const y = d3
   .domain([lat0, lat1])
   .range([height - margin.bottom, margin.top])
 
+interface ICoast {
+  x: number[]
+  y: number[]
+}
+
 // Get the coast line segments
-const coastVal = Object.values(coast)
+const coastVal: ICoast[] = Object.values(coast)
 let nCoast = coastVal.length
 
 // Get the list of timestamps
@@ -81,12 +86,14 @@ const trackVal = Object.values(tracks)
 let nTracks = trackVal.length
 
 // Function to convert from lon and lat to svg coordinates.
-let sx, sy
-function xyScale(x, y) {
+function xyScale(x: number, y: number) {
   var xscl = w0 / dlon
   var yscl = h0 / dlat
-  sx = margin.left + xscl * (x - lon0)
-  sy = height - margin.top - yscl * (y - lat0)
+
+  return {
+    sx: margin.left + xscl * (x - lon0),
+    sy: height - margin.top - yscl * (y - lat0),
+  }
 }
 
 // Save the coastline as a list of lists in the format
@@ -99,7 +106,7 @@ for (let s = 0; s < nCoast; s++) {
   var cy = coastVal[s].y
   var csxy = []
   for (let i = 0; i < cx.length; i++) {
-    xyScale(cx[i], cy[i])
+    const { sx, sy } = xyScale(cx[i], cy[i])
     csxy.push([sx, sy])
   }
   cxy.push(csxy)
@@ -114,9 +121,10 @@ for (let j = 0; j < nTracks; j++) {
   // pull out a single track
   var xdata = trackVal[j].x
   var ydata = trackVal[j].y
+
   var sxy = []
   for (let i = 0; i < nTimes; i++) {
-    xyScale(xdata[i], ydata[i])
+    const { sx, sy } = xyScale(xdata[i], ydata[i])
     sxy.push([sx, sy])
   }
   sxyAll.push(sxy)
@@ -127,7 +135,7 @@ for (let j = 0; j < nTracks; j++) {
 // sxyT is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one time, packed as a list of [x,y] points.
-let sxyT = []
+let sxyT:number[][][] = []
 for (let i = 0; i < nTimes; i++) {
   var xy = []
   for (let j = 0; j < nTracks; j++) {
@@ -138,13 +146,13 @@ for (let i = 0; i < nTimes; i++) {
 
 // function that fills out an array with the position of points at
 // a specific timestep
-let sxyNow = []
+let sxyNow:number[][] = []
 function update_sxyNow(tt: number) {
   sxyNow = sxyT[tt]
 }
 
 // Initialize a list to indicate if a particle is within the brushExtent
-let isin = []
+let isin:number[] = []
 for (let j = 0; j < nTracks; j++) {
   isin.push(0)
 }
@@ -329,7 +337,5 @@ const DriftersPugetSound = () => {
     </div>
   )
 }
-
-
 
 export default DriftersPugetSound
