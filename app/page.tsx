@@ -50,7 +50,7 @@ export default function Home() {
           />
           <Card
             variant="small"
-            className="dark:bg-inherit bg-teal-200"
+            className="dark:bg-teal-800 bg-teal-200"
             href="/docs/forecastmovies/p5_PS_temp_top"
             title="Puget Sound Surface Temperature"
           />

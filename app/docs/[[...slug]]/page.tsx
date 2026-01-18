@@ -22,6 +22,7 @@ export default async function Pages({ params }: PageProps) {
 
   const { frontmatter, content, tocs } = res
 
+
   return (
     <div className="flex items-start gap-10">
       <section className="flex-3">
