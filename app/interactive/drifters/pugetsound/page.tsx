@@ -32,21 +32,21 @@ import tracks from "./PS_tracks.json"
 // Define the geographical range of the svg and its aspect ratio.
 // NOTE: by using "let" these variables are available anywhere inside this
 // code block (embraced by {}). They cannot be redeclared.
-let lon0 = -124,
+const lon0 = -124,
   lon1 = -122,
   lat0 = 47,
   lat1 = 49.2
-let dlon = lon1 - lon0
-let dlat = lat1 - lat0
-let clat = Math.cos((Math.PI * (lat0 + lat1)) / (2 * 180))
-let hfac = dlat / (dlon * clat)
+const dlon = lon1 - lon0
+const dlat = lat1 - lat0
+const clat = Math.cos((Math.PI * (lat0 + lat1)) / (2 * 180))
+const hfac = dlat / (dlon * clat)
 
 // Define the size of the svg.
-let m = 0.5,
+const m = 0.5,
   w0 = 350,
   h0 = w0 * hfac
 
-let margin = { top: m, right: m, bottom: m, left: m },
+const margin = { top: m, right: m, bottom: m, left: m },
   width = w0 + margin.left + margin.right,
   height = h0 + margin.top + margin.bottom
 
@@ -69,12 +69,12 @@ interface ICoast {
 
 // Get the coast line segments
 const coastVal: ICoast[] = Object.values(coast)
-let nCoast = coastVal.length
+const nCoast = coastVal.length
 
 // Get the list of timestamps
 const timeVal = Object.values(times)
-let tlist = timeVal[0].t
-let nTimes = tlist.length
+const tlist = timeVal[0].t
+const nTimes = tlist.length
 
 // Get the track data values.
 const trackVal = Object.values(tracks)
@@ -83,12 +83,12 @@ const trackVal = Object.values(tracks)
 // [{"x:[lon values for one track]", "y":[lat values for one track]},{},...]
 // Like a list of dict objects, and each dict has keys x and y with values that
 // are lists of lon or lat for one track.
-let nTracks = trackVal.length
+const nTracks = trackVal.length
 
 // Function to convert from lon and lat to svg coordinates.
 function xyScale(x: number, y: number) {
-  var xscl = w0 / dlon
-  var yscl = h0 / dlat
+  const xscl = w0 / dlon
+  const yscl = h0 / dlat
 
   return {
     sx: margin.left + xscl * (x - lon0),
@@ -99,12 +99,12 @@ function xyScale(x: number, y: number) {
 // Save the coastline as a list of lists in the format
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one segment, packed as a list of [x,y] points.
-let cxy = []
+const cxy = []
 for (let s = 0; s < nCoast; s++) {
   // pull out a single segment and scale
-  var cx = coastVal[s].x
-  var cy = coastVal[s].y
-  var csxy = []
+  const cx = coastVal[s].x
+  const cy = coastVal[s].y
+  const csxy = []
   for (let i = 0; i < cx.length; i++) {
     const { sx, sy } = xyScale(cx[i], cy[i])
     csxy.push([sx, sy])
@@ -116,13 +116,13 @@ for (let s = 0; s < nCoast; s++) {
 // sxyAll is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one track, packed as a list of [x,y] points.
-let sxyAll = []
+const sxyAll = []
 for (let j = 0; j < nTracks; j++) {
   // pull out a single track
-  var xdata = trackVal[j].x
-  var ydata = trackVal[j].y
+  const xdata = trackVal[j].x
+  const ydata = trackVal[j].y
 
-  var sxy = []
+  const sxy = []
   for (let i = 0; i < nTimes; i++) {
     const { sx, sy } = xyScale(xdata[i], ydata[i])
     sxy.push([sx, sy])
@@ -135,9 +135,9 @@ for (let j = 0; j < nTracks; j++) {
 // sxyT is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one time, packed as a list of [x,y] points.
-let sxyT: number[][][] = []
+const sxyT: number[][][] = []
 for (let i = 0; i < nTimes; i++) {
-  var xy = []
+  const xy = []
   for (let j = 0; j < nTracks; j++) {
     xy.push(sxyAll[j][i])
   }
@@ -196,39 +196,33 @@ function update_isin() {
       // perhaps interpreting 0 as "null".
     }
   }
+
 }
 
 interface IProps {
+  sxyNow: number[][]
+  nTracks: number
+  isin: number[]
+  width: number
+  height: number
+  cxy: number[][][]
 
-  sxyNow: number[][],
-nTracks: number,
-isin: number[],
-width: number,
-height: number,
-cxy: number[][][],
-
-nCoast: number,
-nTimes: number,
-
+  nCoast: number
+  nTimes: number
 }
 
 const DriftersPugetSound = () => {
-
-
-
   const ref = useRef<SVGElement>(null)
 
   const [sliderMaxValue, setSliderMaxValue] = useState(10)
 
   const [sliderValue, setSliderValue] = useState(0)
 
-
-
-
   const displayValue = tlist[sliderValue]
 
-  const update_points = useEffectEvent(() => {
+const initializePoints = useEffectEvent(() => {
     const svg = d3.select(ref.current)
+
     // get rid of any circles
     svg.selectAll("circle").remove()
 
@@ -236,13 +230,12 @@ const DriftersPugetSound = () => {
       // plot the point
       if (isin[j] == 2.0) {
         svg
-          .append("circle")
-          .attr("cx", sxyNow[j][0])
+          .append("circle") .attr("cx", sxyNow[j][0])
           .attr("cy", sxyNow[j][1])
           .attr("r", 3)
           .attr("opacity", 0.2)
           .style("fill", "blue")
-      } else if (isin[j] == 1.0) {
+         } else if (isin[j] == 1.0) {
         svg
           .append("circle")
           .attr("cx", sxyNow[j][0])
@@ -251,6 +244,39 @@ const DriftersPugetSound = () => {
           .style("fill", "red")
       }
     }
+})
+
+  const updatePoints = useEffectEvent(() => {
+    const svg = d3.select(ref.current)
+
+    const circle = svg.selectAll("circle").data(sxyNow)
+    circle
+    .attr("r", 3)
+    .attr("opacity", 0.2)
+    .style("fill", "blue")
+    circle.enter().append("svg:circle")
+
+    circle.attr("cx", (data: number[], index: number) => {
+      return data[0]
+    })
+
+    circle.attr("cy", (data: number[], index: number) => {
+      return data[1]
+    })
+
+    
+
+    circle.style("fill", (data: number[], index: number) => {
+      return isin[index] === 1 ? 'red' : "blue"
+    })
+
+       circle.attr("opacity", (data: number[], index: number) => {
+      return isin[index] === 1 ? 1 : 0.2
+    })
+
+
+
+
   })
 
   useEffect(() => {
@@ -286,9 +312,8 @@ const DriftersPugetSound = () => {
       //Slider actions
 
       setSliderMaxValue(nTimes - 1)
-
-
       update_sxyNow(0)
+
 
       // brush code
 
@@ -305,15 +330,21 @@ const DriftersPugetSound = () => {
 
         if (brushExtent != null) {
           update_isin()
-          update_points()
+          updatePoints()
         }
       }
 
       let brush = d3.brush().on("end", handleBrush)
 
       initBrush()
+      
+
       update_isin()
-      update_points()
+      // updatePoints()
+      initializePoints()
+
+
+
     }
   }, [ref])
 
@@ -334,8 +365,8 @@ const DriftersPugetSound = () => {
           onChange={(input) => {
             setSliderValue(input.target.valueAsNumber)
             update_sxyNow(input.target.valueAsNumber)
-            update_points()
-          }}
+updatePoints() 
+         }}
           min={0}
           max={sliderMaxValue}
           className="slider"
