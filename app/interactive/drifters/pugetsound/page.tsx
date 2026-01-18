@@ -292,7 +292,6 @@ const DriftersPugetSound = () => {
 
   return (
     <div className={"gap-4 lg:flex"}>
-      <script src="https://d3js.org/d3.v7.js"></script>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
 
       <div className={"w-full"} id="map_container">
