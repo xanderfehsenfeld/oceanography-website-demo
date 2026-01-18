@@ -3,7 +3,7 @@ import { Paths } from "@/lib/pageroutes"
 export const Documents: Paths[] = [
   {
     title: "Forecast movies",
-    href: "/forecastmovies",
+    href: "/docs/forecastmovies",
     noLink: true,
 
     items: [
@@ -36,7 +36,7 @@ export const Documents: Paths[] = [
   },
   {
     title: "High-Resolution Submodels",
-    href: "/highresolutionsubmodels",
+    href: "/docs/highresolutionsubmodels",
     noLink: true,
 
     items: [
@@ -109,7 +109,7 @@ export const Documents: Paths[] = [
 
   {
     title: "Background",
-    href: "/background",
+    href: "/docs/background",
     noLink: true,
 
     items: [
@@ -132,7 +132,7 @@ export const Documents: Paths[] = [
   },
   {
     title: "About the Model",
-    href: "/about",
+    href: "/docs/about",
     noLink: true,
 
     items: [

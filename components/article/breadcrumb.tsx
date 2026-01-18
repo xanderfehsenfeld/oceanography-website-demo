@@ -24,7 +24,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
               <Link
                 title="Documentation Home"
                 aria-label="Documentation Home"
-                href={`/docs${PageRoutes[0].href}`}
+                href={`${PageRoutes[0].href}`}
               >
                 <LuHouse className="h-4" />
               </Link>
@@ -39,7 +39,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
                   <Link
                     title={toTitleCase(paths[0])}
                     aria-label={toTitleCase(paths[0])}
-                    href={`/docs/${paths[0]}`}
+                    href={`/${paths[0]}`}
                   >
                     {toTitleCase(paths[0])}
                   </Link>
@@ -53,7 +53,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
 
               {paths.slice(-1).map((path, i) => {
                 const index = paths.length - 1 + i
-                const href = `/docs/${paths.slice(0, index + 1).join("/")}`
+                const href = `/${paths.slice(0, index + 1).join("/")}`
 
                 return (
                   <Fragment key={path}>
@@ -81,7 +81,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
             </>
           ) : (
             paths.map((path, index) => {
-              const href = `/docs/${paths.slice(0, index + 1).join("/")}`
+              const href = `/${paths.slice(0, index + 1).join("/")}`
 
               return (
                 <Fragment key={path}>

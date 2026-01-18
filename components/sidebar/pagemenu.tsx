@@ -24,7 +24,7 @@ export function PageMenu({ isSheet = false }) {
             <SubLink
               {...{
                 ...item,
-                href: `/docs${item.href}`,
+                href: `${item.href}`,
                 level: 0,
                 isSheet,
               }}
