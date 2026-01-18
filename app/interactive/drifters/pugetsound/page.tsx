@@ -99,7 +99,7 @@ function xyScale(x: number, y: number) {
 // Save the coastline as a list of lists in the format
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one segment, packed as a list of [x,y] points.
-const cxy:number[][][] = []
+const cxy: number[][][] = []
 for (let s = 0; s < nCoast; s++) {
   // pull out a single segment and scale
   const cx = coastVal[s].x
@@ -196,7 +196,6 @@ function update_isin() {
       // perhaps interpreting 0 as "null".
     }
   }
-
 }
 
 interface IProps {
@@ -220,7 +219,7 @@ const DriftersPugetSound = () => {
 
   const displayValue = tlist[sliderValue]
 
-const initializePoints = useEffectEvent(() => {
+  const initializePoints = useEffectEvent(() => {
     const svg = d3.select(ref.current)
 
     // get rid of any circles
@@ -230,12 +229,13 @@ const initializePoints = useEffectEvent(() => {
       // plot the point
       if (isin[j] == 2.0) {
         svg
-          .append("circle") .attr("cx", sxyNow[j][0])
+          .append("circle")
+          .attr("cx", sxyNow[j][0])
           .attr("cy", sxyNow[j][1])
           .attr("r", 3)
           .attr("opacity", 0.2)
           .style("fill", "blue")
-         } else if (isin[j] == 1.0) {
+      } else if (isin[j] == 1.0) {
         svg
           .append("circle")
           .attr("cx", sxyNow[j][0])
@@ -244,16 +244,13 @@ const initializePoints = useEffectEvent(() => {
           .style("fill", "red")
       }
     }
-})
+  })
 
   const updatePoints = useEffectEvent(() => {
     const svg = d3.select(ref.current)
 
     const circle = svg.selectAll("circle").data(sxyNow)
-    circle
-    .attr("r", 3)
-    .attr("opacity", 0.2)
-    .style("fill", "blue")
+    circle.attr("r", 3).attr("opacity", 0.2).style("fill", "blue")
     circle.enter().append("svg:circle")
 
     circle.attr("cx", (data: number[], index: number) => {
@@ -264,19 +261,13 @@ const initializePoints = useEffectEvent(() => {
       return data[1]
     })
 
-    
-
     circle.style("fill", (data: number[], index: number) => {
-      return isin[index] === 1 ? 'red' : "blue"
+      return isin[index] === 1 ? "red" : "blue"
     })
 
-       circle.attr("opacity", (data: number[], index: number) => {
+    circle.attr("opacity", (data: number[], index: number) => {
       return isin[index] === 1 ? 1 : 0.2
     })
-
-
-
-
   })
 
   useEffect(() => {
@@ -289,7 +280,6 @@ const initializePoints = useEffectEvent(() => {
 
       // Loop over all the coast segments and plot them, one line per segment.
       for (let j = 0; j < nCoast; j++) {
-
         svg
           .append("path")
           .attr("d", d3.line()(cxy[j] as any))
@@ -315,8 +305,6 @@ const initializePoints = useEffectEvent(() => {
       setSliderMaxValue(nTimes - 1)
       update_sxyNow(0)
 
-
-  
       // Create a brush "behaviour".
       // A brush behaviour is a function that has methods such as .on defined on it.
       // The function itself adds event listeners to an element as well as
@@ -330,23 +318,18 @@ const initializePoints = useEffectEvent(() => {
           updatePoints()
         }
       }
-          // brush code
+      // brush code
       let brush = d3.brush().on("end", handleBrush)
 
       function initBrush() {
         svg.call(brush as any)
       }
 
-
       initBrush()
-      
 
       update_isin()
       // updatePoints()
       initializePoints()
-
-
-
     }
   }, [ref])
 
@@ -367,8 +350,8 @@ const initializePoints = useEffectEvent(() => {
           onChange={(input) => {
             setSliderValue(input.target.valueAsNumber)
             update_sxyNow(input.target.valueAsNumber)
-updatePoints() 
-         }}
+            updatePoints()
+          }}
           min={0}
           max={sliderMaxValue}
           className="slider"
