@@ -87,7 +87,7 @@ export const Documents: Paths[] = [
       },
       {
         title: "Drifters: Willapa & Grays",
-        href: "/tracks2_wgh",
+        href: "/drifters/willapaandgrays",
       },
       {
         title: "Drifters: Willapa 2025 Custom",
