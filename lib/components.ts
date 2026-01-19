@@ -12,6 +12,8 @@ import { Video } from "@/components/video"
 import Script from 'next/script'
 import { Slider } from "@/components/slider"
 import Image from "next/image"
+import { HorizontalLayout } from "@/components/ui/horizontal-layout"
+
 
 
 
@@ -35,5 +37,6 @@ export const components = {
   Video,
   Script,
   Slider,
-  Image
+  Image,
+  HorizontalLayout
 }

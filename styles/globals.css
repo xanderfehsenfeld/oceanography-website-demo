@@ -130,8 +130,15 @@
   @apply dark:prose-invert prose-code:text-neutral-800 dark:prose-code:bg-neutral-900 dark:prose-code:text-white dark:prose-pre:bg-neutral-900;
 }
 
+
+
 .prose {
   margin: 0 !important;
+
+}
+
+.prose .flex > img {
+  @apply prose-img:my-0;
 }
 
 .prose ul > li::marker {
@@ -318,6 +325,8 @@ span.katex-html {
   }
 }
 
-article a {
-   @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
+
+
+article.typography a {
+  @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
 }
