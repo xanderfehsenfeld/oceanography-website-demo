@@ -6,7 +6,7 @@ export default function Documents({
   children: React.ReactNode
 }>) {
   return (
-    <div className="flex items-start gap-10 pt-10">
+    <div className="flex items-start gap-10 pt-5">
       <Sidebar />
       <div className="flex-1 md:flex-6">{children}</div>
     </div>
