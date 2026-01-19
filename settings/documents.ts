@@ -155,6 +155,30 @@ export const Documents: Paths[] = [
     ],
   },
 
+ {
+    spacer: true,
+  },
+  {
+    title: "Gallery",
+    href: "/docs/gallery",
+    noLink: true,
+
+    items: [
+      {
+        title: "A Year of Modeled Salinity",
+        href: "/salinity_year",
+      },
+      {
+        title: "A Year of Modeled Oxygen",
+        href: "/oxygen_year",
+      },
+          {
+        title: "A Year of Modeled Phytoplankton",
+        href: "/phytoplankton_year",
+      },
+    
+    ],
+  },
 
   
  

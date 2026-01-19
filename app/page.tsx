@@ -196,27 +196,22 @@ export default function Home() {
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/salinity_year"
+            href="/docs/gallery/salinity_year"
             title="A Year of Modeled Salinity"
           />
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/gallery/oxygen_year.html"
+            href="/docs/gallery/oxygen_year"
             title="A Year of Modeled Oxygen"
           />
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/gallery/phytoplankton_year.html"
+            href="/docs/gallery/phytoplankton_year"
             title="A Year of Modeled Phytoplankton"
           />
-          <Card
-            variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/gallery/references"
-            title="References"
-          />
+
         </div>
       </div>
       <hr className="my-4 w-full border border-y" />
