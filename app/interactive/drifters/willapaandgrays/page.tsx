@@ -309,7 +309,7 @@ const DriftersWillapaAndGrays = () => {
     <div className={"gap-4 lg:flex"}>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
 
-      <div className={"w-full dark:bg-gray-200"} id="map_container">
+      <div className={"w-full dark:bg-gray-400"} id="map_container">
         <svg width={width} height={height} id="barchart" ref={ref as any} />
       </div>
 
