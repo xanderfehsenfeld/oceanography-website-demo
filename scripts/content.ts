@@ -39,10 +39,10 @@ function createSlug(filePath: string): string {
 
   if (parsed.name === "index") {
     const dir = parsed.dir.replace(/\\/g, "/")
-    return dir ? `/${dir}` : "/"
+    return dir ? `/docs/${dir}` : "/"
   }
 
-  return `/${normalizedSlug}`
+  return `/docs/${normalizedSlug}`
 }
 
 function findDocumentBySlug(slug: string): Paths | null {
@@ -173,6 +173,7 @@ async function processMdxFile(filePath: string) {
     ),
   ])
 
+  
   const slug = createSlug(filePath)
   const matchedDoc = findDocumentBySlug(slug)
 
@@ -214,6 +215,7 @@ async function convertMdxToJson() {
 
     const mdxFiles = await getMdxFiles(docsDir)
     const combinedData = []
+
 
     for (const file of mdxFiles) {
       const jsonData = await processMdxFile(file)

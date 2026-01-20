@@ -36,6 +36,7 @@ export default function Search() {
       debounce((input) => {
         setIsLoading(true)
         const results = advanceSearch(input.trim())
+        console.log('results')
         setFilteredResults(results)
         setIsLoading(false)
       }, 300),
@@ -47,7 +48,7 @@ export default function Search() {
       if (isOpen && event.key === "Enter" && filteredResults.length > 2) {
         const selected = filteredResults[0]
         if ("href" in selected) {
-          window.location.href = `/docs${selected.href}`
+          window.location.href = `${selected.href}`
           setIsOpen(false)
         }
       }
@@ -76,6 +77,8 @@ export default function Search() {
     if (!Array.isArray(documents) || documents.length === 0) {
       return []
     }
+
+    
 
     return documents.flatMap((doc) => {
       if ("spacer" in doc && doc.spacer) {
