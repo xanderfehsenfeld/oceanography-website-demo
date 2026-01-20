@@ -327,6 +327,6 @@ span.katex-html {
 
 
 
-article.typography a {
+article.typography section a {
   @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
 }
