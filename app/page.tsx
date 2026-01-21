@@ -168,25 +168,25 @@ export default function Home() {
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/about/data_access"
+            href="/docs/aboutthemodel/data_access"
             title="Data Access"
           />
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/about/how_it_works"
+            href="/docs/aboutthemodel/how_it_works"
             title="How the Model Works"
           />
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/about/how_we_test_it"
+            href="/docs/aboutthemodel/how_we_test_it"
             title="How We Test the Model"
           />
           <Card
             variant="small"
             className="dark:bg-sky-900 bg-sky-200"
-            href="/docs/about/references"
+            href="/docs/aboutthemodel/references"
             title="References"
           />
         </div>

@@ -132,7 +132,7 @@ export const Documents: Paths[] = [
   },
   {
     title: "About the Model",
-    href: "/docs/about",
+    href: "/docs/aboutthemodel",
     noLink: true,
 
     items: [
