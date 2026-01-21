@@ -6,7 +6,7 @@ export type Paths =
       href: string
       noLink?: true
       heading?: string
-      items?: Paths[]
+      items?: Paths[],
     }
   | {
       spacer: true
@@ -16,7 +16,8 @@ export const Routes: Paths[] = [...Documents]
 
 interface Page {
   title: string
-  href: string
+  href: string,
+  breadCrumb: string[]
 }
 
 function isRoute(
@@ -25,17 +26,26 @@ function isRoute(
   return "title" in node && "href" in node
 }
 
-function getAllLinks(node: Paths): Page[] {
+function getAllLinks(node: Paths & {breadCrumb?: string[]}): Page[] {
   const pages: Page[] = []
 
+  const { breadCrumb = []} = node
+
   if (isRoute(node) && !node.noLink) {
-    pages.push({ title: node.title, href: node.href })
+    pages.push({ title: node.title, href: node.href, breadCrumb: [...breadCrumb , node.title] })
   }
 
   if (isRoute(node) && node.items) {
+    
     node.items.forEach((subNode) => {
       if (isRoute(subNode)) {
-        const temp = { ...subNode, href: `${node.href}${subNode.href}` }
+        const temp = { 
+          ...subNode, href: `${node.href}${subNode.href}` ,
+
+          breadCrumb: [...breadCrumb , node.title]
+        
+        
+        }
         pages.push(...getAllLinks(temp))
       }
     })

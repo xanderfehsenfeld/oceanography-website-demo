@@ -15,6 +15,21 @@ import {
 } from "@/components/ui/breadcrumb"
 
 export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
+
+  
+  const currentPath = `/${paths.join("/").toLowerCase()}`
+  console.log("currentPath", currentPath)
+  const breadCrumb = PageRoutes.find(({ href }) => {
+    return href.toLowerCase().includes(currentPath)
+  })?.breadCrumb || []
+
+
+
+
+  console.log("breadcrumb text", breadCrumb)
+
+
+
   return (
     <div className="pb-5">
       <Breadcrumb>
@@ -24,7 +39,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
               <Link
                 title="Documentation Home"
                 aria-label="Documentation Home"
-                href={`${PageRoutes[0].href}`}
+                href={`/`}
               >
                 <LuHouse className="h-4" />
               </Link>
@@ -37,11 +52,11 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
                   <Link
-                    title={toTitleCase(paths[0])}
+                    title={breadCrumb[0] || toTitleCase(paths[0])}
                     aria-label={toTitleCase(paths[0])}
                     href={`/${paths[0]}`}
                   >
-                    {toTitleCase(paths[0])}
+                    {breadCrumb[0] || toTitleCase(paths[0])}
                   </Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -62,7 +77,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
                       {index < paths.length - 1 ? (
                         <BreadcrumbLink asChild>
                           <Link
-                            title={toTitleCase(path)}
+                            title={ toTitleCase(path)}
                             aria-label={toTitleCase(path)}
                             href={href}
                           >
@@ -82,7 +97,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
           ) : (
             paths.map((path, index) => {
               const href = `/${paths.slice(0, index + 1).join("/")}`
-
+const breadCrumbTitle = breadCrumb[index] || toTitleCase(path)
               return (
                 <Fragment key={path}>
                   <BreadcrumbSeparator />
@@ -90,16 +105,16 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
                     {index < paths.length - 1 ? (
                       <BreadcrumbLink asChild>
                         <Link
-                          title={toTitleCase(path)}
-                          aria-label={toTitleCase(path)}
+                          title={breadCrumbTitle}
+                          aria-label={breadCrumbTitle}
                           href={href}
                         >
-                          {toTitleCase(path)}
+                          {breadCrumbTitle}
                         </Link>
                       </BreadcrumbLink>
                     ) : (
                       <BreadcrumbPage className="b">
-                        {toTitleCase(path)}
+                        {breadCrumbTitle}
                       </BreadcrumbPage>
                     )}
                   </BreadcrumbItem>
