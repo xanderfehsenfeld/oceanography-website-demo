@@ -36,7 +36,6 @@ export default function Search() {
       debounce((input) => {
         setIsLoading(true)
         const results = advanceSearch(input.trim())
-        console.log('results')
         setFilteredResults(results)
         setIsLoading(false)
       }, 300),

@@ -93,6 +93,17 @@
     }
   },
   {
+    "slug": "/docs/background",
+    "title": "Background",
+    "description": "",
+    "content": "",
+    "_searchMeta": {
+      "cleanContent": "",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
     "slug": "/docs/background/long_term_trends",
     "title": "Changes in Puget Sound Waters Over the Last Century",
     "description": "Here we explore how Puget Sound water properties, river flow, and weather have changed over the past century.",

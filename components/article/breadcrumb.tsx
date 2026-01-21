@@ -14,20 +14,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
-
-  
+export function ArticleBreadcrumb({ paths, prefix }: { paths: string[], prefix: string }) {
   const currentPath = `/${paths.join("/").toLowerCase()}`
-  console.log("currentPath", currentPath)
-  const breadCrumb = PageRoutes.find(({ href }) => {
-    return href.toLowerCase().includes(currentPath)
-  })?.breadCrumb || []
-
-
-
-
-  console.log("breadcrumb text", breadCrumb)
-
+  const breadCrumb =
+    PageRoutes.find(({ href }) => {
+      return href.toLowerCase().includes(currentPath)
+    })?.breadCrumb || []
 
 
   return (
@@ -68,7 +60,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
 
               {paths.slice(-1).map((path, i) => {
                 const index = paths.length - 1 + i
-                const href = `/${paths.slice(0, index + 1).join("/")}`
+                const href = `${prefix}/${paths.slice(0, index + 1).join("/")}`
 
                 return (
                   <Fragment key={path}>
@@ -77,7 +69,7 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
                       {index < paths.length - 1 ? (
                         <BreadcrumbLink asChild>
                           <Link
-                            title={ toTitleCase(path)}
+                            title={toTitleCase(path)}
                             aria-label={toTitleCase(path)}
                             href={href}
                           >
@@ -96,8 +88,8 @@ export function ArticleBreadcrumb({ paths }: { paths: string[] }) {
             </>
           ) : (
             paths.map((path, index) => {
-              const href = `/${paths.slice(0, index + 1).join("/")}`
-const breadCrumbTitle = breadCrumb[index] || toTitleCase(path)
+              const href = `${prefix}/${paths.slice(0, index + 1).join("/")}`
+              const breadCrumbTitle = breadCrumb[index] || toTitleCase(path)
               return (
                 <Fragment key={path}>
                   <BreadcrumbSeparator />
