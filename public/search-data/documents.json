@@ -248,6 +248,17 @@
     }
   },
   {
+    "slug": "/docs/gallery/phytoplankton_year",
+    "title": "A year of Phytoplankton in the Salish Sea and Pacific Northwest Coast",
+    "description": "",
+    "content": "<Video src={'/videos/superplot_chl.mp4'} />\n\nThe movie above shows a full year of phytoplankton concentration simulated by the LiveOcean model. The colorscale - blue to red - goes from zero to 25 mg of Chlorophyll per cubic meter. Phytoplankton, the base of the marine food chain, are tiny photosynthetic organisms that drift with the currents. They need two things to grow: nutrients and light. Along the US West Coast nutrients are brought to the surface (where light can penetrate the water) mostly by winds. Winds from the north, which happen primarily in the summer in the Pacific Northwest, push the surface water to the south. The Coriolis force, caused by the Earth's rotation, deflects that water to the right, and hence offshore. In its place water is pulled up from deeper (\"upwelling\") and brings nutrients with it. In the Pacific Northwest nutrients also are pulled up in canyons and cycled through the [estuarine circulation](/docs/background/exchange_flow) of the Salish Sea, significantly boosting phytoplankton growth above what the winds alone would do. Within Puget Sound you can see that some bays are highly productive, in common with estuaries around the world.\n",
+    "_searchMeta": {
+      "cleanContent": "video src videos superplot_chl mp4 the movie above shows a full year of phytoplankton concentration simulated by the liveocean model the colorscale - blue to red - goes from zero to 25 mg of chlorophyll per cubic meter phytoplankton the base of the marine food chain are tiny photosynthetic organisms that drift with the currents they need two things to grow: nutrients and light along the us west coast nutrients are brought to the surface where light can penetrate the water mostly by winds winds from the north which happen primarily in the summer in the pacific northwest push the surface water to the south the coriolis force caused by the earth s rotation deflects that water to the right and hence offshore in its place water is pulled up from deeper upwelling and brings nutrients with it in the pacific northwest nutrients also are pulled up in canyons and cycled through the estuarine circulation of the salish sea significantly boosting phytoplankton growth above what the winds alone would do within puget sound you can see that some bays are highly productive in common with estuaries around the world",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
     "slug": "/docs/gallery/salinity_year",
     "title": "A year of salinity in the Pacific Northwest and Salish Sea",
     "description": "",
