@@ -237,6 +237,17 @@
     }
   },
   {
+    "slug": "/docs/gallery/oxygen_year",
+    "title": "A year of Dissolved Oxygen in the Pacific Northwest and Salish Sea",
+    "description": "",
+    "content": "<Video src={'/videos/superplot_oxygen.mp4'} />\n\nThe color shows the amount of dissolved oxygen predicted by the model to be in the water. We model the oxygen at all depths, but the movie is focused on the bottom water, which is where oxygen is often the lowest. When oxygen drops below 2 mg/L (the red part of the colors) that is called \"hypoxia\" and organisms like crabs begin to be negatively affected. In our region hypoxia typically develops every summer on the continental shelf. In part this is because the water upwelled onto the shelf is already low in oxygen, and in part it is because of phytoplankton blooms near the surface. When these blooms die the organic particles sink to the bottom and when these degrade they use up oxygen.\n\nWithin the Salish Sea and Puget Sound there are a few places that develop hypoxic bottom waters in most years. One of these is Hood Canal, which is shown as a vertical/along-channel section at the upper right. Hypoxia in Hood Canal results from the high growth rate of phytoplankton in the upper waters during spring and summer combined with relatively long residence times of the deep water. The inward flowing branch of the estuarine [exchange flow](/docs/background/exchange_flow) tends to confine the effects of sinking particles to the landward end of Hood Canal. Interestingly, you can also see that the inflowing deep exchange flow can replenish the oxygen in the deep water in the fall and winter, pushing the lowest-oxygen water up to become a layer at mid-depth.\n",
+    "_searchMeta": {
+      "cleanContent": "video src videos superplot_oxygen mp4 the color shows the amount of dissolved oxygen predicted by the model to be in the water we model the oxygen at all depths but the movie is focused on the bottom water which is where oxygen is often the lowest when oxygen drops below 2 mg l the red part of the colors that is called hypoxia and organisms like crabs begin to be negatively affected in our region hypoxia typically develops every summer on the continental shelf in part this is because the water upwelled onto the shelf is already low in oxygen and in part it is because of phytoplankton blooms near the surface when these blooms die the organic particles sink to the bottom and when these degrade they use up oxygen within the salish sea and puget sound there are a few places that develop hypoxic bottom waters in most years one of these is hood canal which is shown as a vertical along-channel section at the upper right hypoxia in hood canal results from the high growth rate of phytoplankton in the upper waters during spring and summer combined with relatively long residence times of the deep water the inward flowing branch of the estuarine exchange flow tends to confine the effects of sinking particles to the landward end of hood canal interestingly you can also see that the inflowing deep exchange flow can replenish the oxygen in the deep water in the fall and winter pushing the lowest-oxygen water up to become a layer at mid-depth",
+      "headings": [],
+      "keywords": []
+    }
+  },
+  {
     "slug": "/docs/gallery/salinity_year",
     "title": "A year of salinity in the Pacific Northwest and Salish Sea",
     "description": "",
