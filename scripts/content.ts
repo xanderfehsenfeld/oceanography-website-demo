@@ -72,19 +72,25 @@ async function ensureDirectoryExists(dir: string) {
 
 function removeCustomComponents() {
   const customComponentNames = [
-    "Tabs",
-    "TabsList",
-    "TabsTrigger",
-    "pre",
-    "Mermaid",
     "Card",
     "CardGrid",
-    "Step",
-    "StepItem",
-    "Note",
+    "File",
     "FileTree",
     "Folder",
-    "File",
+    "Image",
+    "Mermaid",
+    "Note",
+    "Script",
+    "Slider",
+    "Step",
+    "StepItem",
+    "Tabs",
+    "TabsContent",
+    "TabsList",
+    "TabsTrigger",
+    "Video",
+    "a",
+    "pre",
   ]
 
   return (tree: Node) => {
@@ -125,9 +131,12 @@ function cleanContentForSearch(content: string): string {
   })
 
   cleanedContent = cleanedContent.replace(
-    /<(?:Note|Card|Step|FileTree|Folder|File|Mermaid)[^>]*>([\s\S]*?)<\/(?:Note|Card|Step|FileTree|Folder|File|Mermaid)>/g,
+    /<(?:Card|CardGrid|File|FileTree|Folder|HorizontalLayout|Image|Mermaid|Note|Script|Slider|Step|StepItem|Tabs|TabsContent|TabsList|TabsTrigger|Video|pre|a|div)[^>]*>([\s\S]*?)<\/(?:Card|CardGrid|File|FileTree|Folder|HorizontalLayout|Image|Mermaid|Note|Script|Slider|Step|StepItem|Tabs|TabsContent|TabsList|TabsTrigger|Video|pre|a|div)>/g,
     "$1"
   )
+
+     cleanedContent = cleanedContent.replace(/<[^>]+>/g, '')
+
 
   cleanedContent = cleanedContent
     .replace(/^\s*[-*+]\s+/gm, "")
@@ -140,6 +149,7 @@ function cleanContentForSearch(content: string): string {
     .replace(/\s+/g, " ")
     .toLowerCase()
     .trim()
+
 
   return cleanedContent
 }
@@ -173,7 +183,6 @@ async function processMdxFile(filePath: string) {
     ),
   ])
 
-  
   const slug = createSlug(filePath)
   const matchedDoc = findDocumentBySlug(slug)
 
@@ -215,7 +224,6 @@ async function convertMdxToJson() {
 
     const mdxFiles = await getMdxFiles(docsDir)
     const combinedData = []
-
 
     for (const file of mdxFiles) {
       const jsonData = await processMdxFile(file)
