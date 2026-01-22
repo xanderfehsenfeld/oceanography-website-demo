@@ -5,19 +5,24 @@ description: An estuary is a long bay that opens onto the ocean. It also has a s
 
 This energy usually comes from tidal currents. With these three ingredients: ocean water, river water, and tidal mixing, estuaries around the world perform a rather amazing trick - developing an "estuarine exchange flow" that persistently pulls ocean water in through the deeper part of the channel, and sends a mixture of ocean and river water back to the ocean in a surface flow. This exchange flow can often be surprisingly big - for example in Puget Sound it is 20 times bigger than the sum of all the rivers! This means that the exchange flow has a dominant influence over residence time and water quality in an estuary. Here we give an introduction to the physics behind the estuarine exchange flow.
 
-* * *
-
+---
 
 <HorizontalLayout>
-These plots show observed sections of salinity versus depth and along-channel distance for five different estuaries. The ocean is always on the right, and the river generally enters on the left. The numbers on the contours are salinity in "parts per thousand," so 30 means there are 30 kg of salt in 1000 kg of salty water. Salty water is denser than fresh water, and the force of gravity makes the salinity layers want to flatten out, just like the layers of oil and vinegar in salad dressing. If you look at the vertical and horizontal scales for each section you can see that they are very different, yet all of these systems share some similarities: they gradually get saltier from the river to the ocean end, and they have some vertical stratification (a lot for the Chesapeake, and only a little for its neighbor Delaware Bay). The stratification is important because it separates the surface water from the deep water. This allows for example for bottom water to become hypoxic (low in oxygen) even though surface waters might have a lot of oxygen.
+    These plots show observed sections of salinity versus depth and along-channel distance for five different estuaries. The ocean is always on the right, and the river generally enters on the left. The numbers on the contours are salinity in "parts per thousand," so 30 means there are 30 kg of salt in 1000 kg of salty water. Salty water is denser than fresh water, and the force of gravity makes the salinity layers want to flatten out, just like the layers of oil and vinegar in salad dressing. If you look at the vertical and horizontal scales for each section you can see that they are very different, yet all of these systems share some similarities: they gradually get saltier from the river to the ocean end, and they have some vertical stratification (a lot for the Chesapeake, and only a little for its neighbor Delaware Bay). The stratification is important because it separates the surface water from the deep water. This allows for example for bottom water to become hypoxic (low in oxygen) even though surface waters might have a lot of oxygen.
 
-<Image width={916} height={937}  src="/images/Figs_exchange_flow/five_sections.png" alt="Estuary Sections" />
+    <Image width={916} height={937}  src="/images/Figs_exchange_flow/five_sections.png" alt="Estuary Sections" />
+
 </HorizontalLayout>
 
-* * *
+---
 
-<Image width={1359} height={743}  src="/images/Figs_exchange_flow/exchange_sketch.png" alt="Exchange Flow Sketch" className={'lg:float-right not-prose ml-2 mb-2 max-w-lg'}/>
-
+<Image
+  width={1359}
+  height={743}
+  src="/images/Figs_exchange_flow/exchange_sketch.png"
+  alt="Exchange Flow Sketch"
+  className={"not-prose mb-2 ml-2 max-w-lg lg:float-right"}
+/>
 
 These plots show a conceptual sketch of estuarine salinity structure (top) and tidally averaged circulation (bottom). The salinity structure is just an idealized version of the observations from many estuaries, like the five we plotted above. The "circulation" shows that deep water is being pulled in from the ocean, and gradually rises up to join river water and flow back out to sea near the surface. The transports of these three flows are given by Qin, QR and Qout which are volume transports (cubic meters per second).
 
@@ -25,31 +30,33 @@ The circulation shown above is "tidally averaged" meaning that it is what we fin
 
 <Note title="Note on naming" type="success">
 
-We call the tidally averaged circulation the "Estuarine Exchange Flow" because it efficiently exchanges water with the ocean. Typically Qin and Qout are several time larger than QR. In Puget Sound the annual average river flow QR is about 1000 m3/s, but Qin = 20,000 m3/s and Qout = 21,000 m3/s (note that the outflow is the sum of the two inflows).
+    We call the tidally averaged circulation the "Estuarine Exchange Flow" because it efficiently exchanges water with the ocean. Typically Qin and Qout are several time larger than QR. In Puget Sound the annual average river flow QR is about 1000 m3/s, but Qin = 20,000 m3/s and Qout = 21,000 m3/s (note that the outflow is the sum of the two inflows).
 
 </Note>
 
-* * *
+---
 
 <HorizontalLayout>
 
-So, why is there an estuarine exchange flow? Why would deep water flow in persistently when the main forcing from the river is always pushing water out? The physical process is shown separated into three steps in the panels above. The river is an essential ingredient because it introduces stratification to the system. The tides are another essential ingredient because they mix the buoyant water downward, giving it more potential energy that can be turned into the kinetic energy of the exchange flow. The final step is the tendency of the stratified water to want to flatten out its density (salinity) layers. In flattening it has to drag more ocean water in to replace the mixed water going out. The reason the exchange flow can be so much larger than the river flow is that the mixing means that much of the water going out is ocean water, which then must be replaced.
+    So, why is there an estuarine exchange flow? Why would deep water flow in persistently when the main forcing from the river is always pushing water out? The physical process is shown separated into three steps in the panels above. The river is an essential ingredient because it introduces stratification to the system. The tides are another essential ingredient because they mix the buoyant water downward, giving it more potential energy that can be turned into the kinetic energy of the exchange flow. The final step is the tendency of the stratified water to want to flatten out its density (salinity) layers. In flattening it has to drag more ocean water in to replace the mixed water going out. The reason the exchange flow can be so much larger than the river flow is that the mixing means that much of the water going out is ocean water, which then must be replaced.
 
-<Image width={827} height={1002}  src="/images/Figs_exchange_flow/exchange_thought_problem.png" alt="Thought Problem" />
+    <Image width={827} height={1002}  src="/images/Figs_exchange_flow/exchange_thought_problem.png" alt="Thought Problem" />
 
 </HorizontalLayout>
 
-* * *
+---
+
 <HorizontalLayout>
 
-<Image  width={1233} height={650}  src="/images/Figs_exchange_flow/ai_velocity.png" alt="Admiralty Inlet Exchange Flow" />
+    <Image  width={1233} height={650}  src="/images/Figs_exchange_flow/ai_velocity.png" alt="Admiralty Inlet Exchange Flow" />
 
-An example observation of the estuarine exchange flow is shown here. This shows tidally averaged currents versus depth at Admiralty Inlet, at the seaward end of Puget Sound. The negative currents in deeper water are the inflow, and the positive currents near the surface are the outflow. The profiles show greater exchange flow during neap tides when there are weaker tidal current. This is because the water is less turbulent then, and so there is less effective friction acting on the currents. These observations are from: Geyer, W. R., and G. A. Cannon, 1982: Sill processes related to deep water renewal in a fjord. J. Geophys. Res., 87, 7985-7996, a classic paper.
+    An example observation of the estuarine exchange flow is shown here. This shows tidally averaged currents versus depth at Admiralty Inlet, at the seaward end of Puget Sound. The negative currents in deeper water are the inflow, and the positive currents near the surface are the outflow. The profiles show greater exchange flow during neap tides when there are weaker tidal current. This is because the water is less turbulent then, and so there is less effective friction acting on the currents. These observations are from: Geyer, W. R., and G. A. Cannon, 1982: Sill processes related to deep water renewal in a fjord. J. Geophys. Res., 87, 7985-7996, a classic paper.
+
 </HorizontalLayout>
 
-* * *
+---
 
 To learn more about the physics of the exchange flow here are couple of places to start:
 
--   MacCready, P., and N. S. Banas, 2011: Residual Circulation, Mixing, and Dispersion. _Treatise on Estuarine and Coastal Science_, Vol. 2 of, Elsevier, 75-89.
--   MacCready, P., and W. R. Geyer, 2010: Advances in Estuarine Physics. _Ann. Rev. Mar. Sci._, **2**, 35-58.
+- MacCready, P., and N. S. Banas, 2011: Residual Circulation, Mixing, and Dispersion. _Treatise on Estuarine and Coastal Science_, Vol. 2 of, Elsevier, 75-89.
+- MacCready, P., and W. R. Geyer, 2010: Advances in Estuarine Physics. _Ann. Rev. Mar. Sci._, **2**, 35-58.

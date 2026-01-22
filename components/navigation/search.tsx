@@ -179,7 +179,7 @@ export default function Search() {
                             </div>
                             {"snippet" in item && item.snippet && (
                               <p
-                                className="truncate text-xs text-neutral-500 dark:text-neutral-400"
+                                className="text-xs text-neutral-500 dark:text-neutral-400"
                                 dangerouslySetInnerHTML={{
                                   __html: highlight(
                                     item.snippet,
