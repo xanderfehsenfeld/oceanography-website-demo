@@ -4,9 +4,6 @@ import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
 import DriftersPugetSound from "./DriftersPugetSound"
-import { getStaticPropsForChart } from "./getStaticPropsForChart"
-
-const driftersProps = getStaticPropsForChart()
 
 export default function Pages() {
   return (
@@ -29,7 +26,7 @@ export default function Pages() {
 
         <Typography>
           <section>
-            <DriftersPugetSound {...driftersProps} />
+            <DriftersPugetSound />
           </section>
           <Pagination pathname={"drifters/pugetsound"} prefix="interactive" />
         </Typography>

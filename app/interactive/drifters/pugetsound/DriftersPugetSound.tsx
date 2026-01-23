@@ -5,6 +5,8 @@ import * as d3 from "d3"
 
 import { Slider } from "@/components/slider"
 
+import { getStaticPropsForChart } from "./getStaticPropsForChart"
+
 const lon0 = -124,
   lon1 = -122,
   lat0 = 47,
@@ -59,14 +61,9 @@ export interface IDriftersPugetSoundProps {
   cxy: number[][][]
 }
 
-const DriftersPugetSound = ({
-  tlist,
-  nTimes,
-  nTracks,
-  sxyT,
-  nCoast,
-  cxy,
-}: IDriftersPugetSoundProps) => {
+const { tlist, nTimes, nTracks, sxyT, nCoast, cxy } = getStaticPropsForChart()
+
+const DriftersPugetSound = () => {
   const ref = useRef<SVGElement>(null)
 
   const [sliderMaxValue, setSliderMaxValue] = useState(10)
