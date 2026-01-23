@@ -96,13 +96,11 @@ export function ArticleBreadcrumb({ paths, prefix }: { paths: string[], prefix: 
                   <BreadcrumbItem>
                     {index < paths.length - 1 ? (
                       <BreadcrumbLink asChild>
-                        <Link
-                          title={breadCrumbTitle}
-                          aria-label={breadCrumbTitle}
-                          href={href}
-                        >
+              
+                          <span>
                           {breadCrumbTitle}
-                        </Link>
+
+                          </span>
                       </BreadcrumbLink>
                     ) : (
                       <BreadcrumbPage className="b">
