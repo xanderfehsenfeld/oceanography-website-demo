@@ -152,6 +152,10 @@ export const Documents: Paths[] = [
         title: "References",
         href: "/references",
       },
+            {
+        title: "New page",
+        href: "/newpage",
+      },
     ],
   },
 

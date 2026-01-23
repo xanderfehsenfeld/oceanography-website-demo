@@ -189,6 +189,12 @@ export default function Home() {
             href="/docs/aboutthemodel/references"
             title="References"
           />
+          <Card
+            variant="small"
+            className="dark:bg-sky-900 bg-sky-200"
+            href="/docs/aboutthemodel/newpage"
+            title="New page"
+          />
         </div>
 
         <div className="flex flex-col gap-2">
