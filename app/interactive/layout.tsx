@@ -19,7 +19,7 @@ export default function Pages({ children }: Readonly<{
       <div className="flex-1 md:flex-6">
         <div className="flex items-start gap-10">
           <section className="flex-3">
-            <ArticleBreadcrumb paths={slug} />
+            <ArticleBreadcrumb paths={slug} prefix={'/interactive'}/>
             {/* <div className="space-y-4">
           <h1 className="text-3xl font-semibold">{frontmatter.title}</h1>
           <p className="text-sm">{frontmatter.description}</p>
