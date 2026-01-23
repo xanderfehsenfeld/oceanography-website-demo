@@ -116,7 +116,7 @@ for (let s = 0; s < nCoast; s++) {
 // sxyAll is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one track, packed as a list of [x,y] points.
-const sxyAll = []
+const sxyAll: number[][][] = []
 for (let j = 0; j < nTracks; j++) {
   // pull out a single track
   const xdata = trackVal[j].x
@@ -147,9 +147,6 @@ for (let i = 0; i < nTimes; i++) {
 // function that fills out an array with the position of points at
 // a specific timestep
 let sxyNow: number[][] = []
-function update_sxyNow(tt: number) {
-  sxyNow = sxyT[tt]
-}
 
 // Initialize a list to indicate if a particle is within the brushExtent
 let isin: number[] = []
@@ -162,43 +159,7 @@ let brushExtent = [
   [0, 0],
 ]
 
-function update_isin() {
-  isin = []
-  for (let j = 0; j < nTracks; j++) {
-    // plot the point
-    // treating the brush rectangle as a circle
-    // var xp = sxyNow[j][0];
-    // var yp = sxyNow[j][1];
-    // var bx0 = brushExtent[0][0];
-    // var bx1 = brushExtent[1][0];
-    // var by0 = brushExtent[0][1];
-    // var by1 = brushExtent[1][1];
-    // var bxc = (bx1 + bx0) / 2;
-    // var byc = (by0 + by1) / 2;
-    // var br = (bx1 - bx0 + by1 - by0) / 4;
-    // var pr = Math.sqrt((xp - bxc) ** 2 + (yp - byc) ** 2)
-    // if (pr < br) {
-    //     isin.push(1.0);
-    // } else {
-    //     isin.push(2.0);
-    // }
-    // Using the brush rectangle
-    if (
-      sxyNow[j][0] >= brushExtent[0][0] &&
-      sxyNow[j][0] <= brushExtent[1][0] &&
-      sxyNow[j][1] >= brushExtent[0][1] &&
-      sxyNow[j][1] <= brushExtent[1][1]
-    ) {
-      isin.push(1.0)
-    } else {
-      isin.push(2.0)
-      // I tried to push 0 for this but it threw a TypeError
-      // perhaps interpreting 0 as "null".
-    }
-  }
-}
-
-interface IStaticProps {
+export interface IDriftersPugetSoundProps {
   timeVal: {
     t: string[]
   }[]
@@ -213,6 +174,10 @@ interface IStaticProps {
   nTracks: number
   nCoast: number
   nTimes: number
+
+  sxyT: number[][][]
+
+  sxyAll: number[][][]
 }
 
 const DriftersPugetSound = () => {
@@ -223,6 +188,48 @@ const DriftersPugetSound = () => {
   const [sliderValue, setSliderValue] = useState(0)
 
   const displayValue = tlist[sliderValue]
+
+  useEffect(() => {})
+
+  const update_sxyNow = useEffectEvent((tt: number) => {
+    sxyNow = sxyT[tt]
+  })
+
+  const update_isin = useEffectEvent(() => {
+    isin = []
+    for (let j = 0; j < nTracks; j++) {
+      // plot the point
+      // treating the brush rectangle as a circle
+      // var xp = sxyNow[j][0];
+      // var yp = sxyNow[j][1];
+      // var bx0 = brushExtent[0][0];
+      // var bx1 = brushExtent[1][0];
+      // var by0 = brushExtent[0][1];
+      // var by1 = brushExtent[1][1];
+      // var bxc = (bx1 + bx0) / 2;
+      // var byc = (by0 + by1) / 2;
+      // var br = (bx1 - bx0 + by1 - by0) / 4;
+      // var pr = Math.sqrt((xp - bxc) ** 2 + (yp - byc) ** 2)
+      // if (pr < br) {
+      //     isin.push(1.0);
+      // } else {
+      //     isin.push(2.0);
+      // }
+      // Using the brush rectangle
+      if (
+        sxyNow[j][0] >= brushExtent[0][0] &&
+        sxyNow[j][0] <= brushExtent[1][0] &&
+        sxyNow[j][1] >= brushExtent[0][1] &&
+        sxyNow[j][1] <= brushExtent[1][1]
+      ) {
+        isin.push(1.0)
+      } else {
+        isin.push(2.0)
+        // I tried to push 0 for this but it threw a TypeError
+        // perhaps interpreting 0 as "null".
+      }
+    }
+  })
 
   const initializePoints = useEffectEvent(() => {
     const svg = d3.select(ref.current)
@@ -363,17 +370,15 @@ const DriftersPugetSound = () => {
           id="myRange"
         />
         <h3>Puget Sound Drifter Tracks</h3>
-        
-        The map plot shows tracks from simulated
-        surface drifter tracks over three days from the most recent LiveOcean
-        daily forecast. At the start time you can see the initial drifter
-        release locations as blue dots. Using the "Time Slider" you can see
-        where each particle goes in time. If you click and drag across a region
-        of the map with some drifters in it they will turn red. They will stay
-        red when you use the Time Slider. By selecting different groups of
-        particles at different times you can explore questions such as: Where do
-        all the particles from one place go? or Where did all the particles that
-        ended up in some place come from?
+        The map plot shows tracks from simulated surface drifter tracks over
+        three days from the most recent LiveOcean daily forecast. At the start
+        time you can see the initial drifter release locations as blue dots.
+        Using the "Time Slider" you can see where each particle goes in time. If
+        you click and drag across a region of the map with some drifters in it
+        they will turn red. They will stay red when you use the Time Slider. By
+        selecting different groups of particles at different times you can
+        explore questions such as: Where do all the particles from one place go?
+        or Where did all the particles that ended up in some place come from?
       </div>
     </div>
   )
