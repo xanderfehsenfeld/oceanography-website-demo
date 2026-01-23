@@ -16,17 +16,19 @@ interface PageProps {
 export default async function Pages({ params }: PageProps) {
   const { slug = [] } = await params
   const pathName = slug.join("/")
-  const res = await getDocument(pathName)
+
+  const res = await getDocument(
+    `/docs/${pathName}`.replace("/docs/docs", "/docs")
+  )
 
   if (!res) notFound()
 
   const { frontmatter, content, tocs } = res
 
-
   return (
     <div className="flex items-start gap-10">
       <section className="flex-3">
-        <ArticleBreadcrumb paths={slug} prefix={'/docs'} />
+        <ArticleBreadcrumb paths={slug} prefix={"/docs"} />
         <div className="space-y-4">
           <h1 className="text-3xl font-semibold">{frontmatter.title}</h1>
           <p className="text-sm">{frontmatter.description}</p>
@@ -49,7 +51,10 @@ export default async function Pages({ params }: PageProps) {
 export async function generateMetadata({ params }: PageProps) {
   const { slug = [] } = await params
   const pathName = slug.join("/")
-  const res = await getDocument(pathName)
+
+  const res = await getDocument(
+    `/docs/${pathName}`.replace("/docs/docs", "/docs")
+  )
 
   if (!res) return null
 
@@ -81,7 +86,11 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export function generateStaticParams() {
-  return PageRoutes.filter((item) => item.href).map((item) => ({
-    slug: item.href.split("/").slice(1),
-  }))
+  return PageRoutes.filter(
+    (item) => item.href && item.href.includes("/docs")
+  ).map((item) => {
+    return {
+      slug: item.href.split("/").slice(1),
+    }
+  })
 }

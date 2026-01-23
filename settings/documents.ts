@@ -89,18 +89,18 @@ export const Documents: Paths[] = [
         title: "Drifters: Willapa & Grays",
         href: "/drifters/willapaandgrays",
       },
-      {
-        title: "Drifters: Willapa 2025 Custom",
-        href: "/tracks2_willapa25",
-      },
-      {
-        title: "Observation Viewer",
-        href: "/obs",
-      },
-      {
-        title: "Model vs. Observations Viewer",
-        href: "/obsmod",
-      },
+      // {
+      //   title: "Drifters: Willapa 2025 Custom",
+      //   href: "/tracks2_willapa25",
+      // },
+      // {
+      //   title: "Observation Viewer",
+      //   href: "/obs",
+      // },
+      // {
+      //   title: "Model vs. Observations Viewer",
+      //   href: "/obsmod",
+      // },
     ],
   },
   {
@@ -155,7 +155,7 @@ export const Documents: Paths[] = [
     ],
   },
 
- {
+  {
     spacer: true,
   },
   {
@@ -172,14 +172,10 @@ export const Documents: Paths[] = [
         title: "A Year of Modeled Oxygen",
         href: "/oxygen_year",
       },
-          {
+      {
         title: "A Year of Modeled Phytoplankton",
         href: "/phytoplankton_year",
       },
-    
     ],
   },
-
-  
- 
 ]

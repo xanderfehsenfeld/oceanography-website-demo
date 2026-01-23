@@ -345,34 +345,5 @@
       "headings": [],
       "keywords": []
     }
-  },
-  {
-    "slug": "/docs/interactivetools/tracks2_willapa25",
-    "title": "Willapa Bay Customized Drifter Tracks",
-    "description": "The map plot shows tracks from simulated drifter tracks over three days from the most recent LiveOcean daily forecast.",
-    "content": "<div className={'lg:flex gap-4 '}>\n  <script src=\"https://d3js.org/d3.v7.js\" />\n\n  <link href=\"/scripts/jspm/style1.css\" rel=\"stylesheet\" type=\"text/css\" />\n\n  <div className={'w-full'} id=\"map_container\" />\n\n  <div className={'w-full'}>\n    <p>Time Slider: <span id=\"demo\" /></p>\n\n    ### Willapa Bay Customized Drifter Tracks\n\n    The map plot shows tracks from simulated drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as six clusters of blue dots at locations in and near Willapa Bay. The green lines show the tracks that the drifters take over the full three days, about six tidal cycles.\n\n    Using the \"Time Slider\" you can see where each particle goes in time. If you click and drag across a region of the map with some drifters in it they will turn red. They will stay red when you use the Time Slider. By selecting different groups of particles at different times you can explore questions such as: Where do all the particles from a given release site go? or Where did all the particles that ended up in some place come from?\n\n    The model used here is a high-resolution model of these two estuaries, nested inside the larger LiveOcean model. It has 200 m horizontal resolution, 30 vertical layers, and wetting-and-drying of the intertidal. The particles stay at the ocean surface, and so can accumulate along convergence fronts. The tides in this model tend to lag real tides by about an hour. This is something that will be improved in the next version of the model.\n  </div>\n</div>\n",
-    "_searchMeta": {
-      "cleanContent": "time slider: willapa bay customized drifter tracks the map plot shows tracks from simulated drifter tracks over three days from the most recent liveocean daily forecast at the start time you can see the initial drifter release locations as six clusters of blue dots at locations in and near willapa bay the green lines show the tracks that the drifters take over the full three days about six tidal cycles using the time slider you can see where each particle goes in time if you click and drag across a region of the map with some drifters in it they will turn red they will stay red when you use the time slider by selecting different groups of particles at different times you can explore questions such as: where do all the particles from a given release site go or where did all the particles that ended up in some place come from the model used here is a high-resolution model of these two estuaries nested inside the larger liveocean model it has 200 m horizontal resolution 30 vertical layers and wetting-and-drying of the intertidal the particles stay at the ocean surface and so can accumulate along convergence fronts the tides in this model tend to lag real tides by about an hour this is something that will be improved in the next version of the model",
-      "headings": [],
-      "keywords": []
-    }
-  },
-  {
-    "slug": "/docs/navigation",
-    "title": "Navigation",
-    "description": "How to build our your documents menu and navigations.",
-    "content": "",
-    "_searchMeta": {
-      "cleanContent": "",
-      "headings": [],
-      "keywords": [
-        "navigation",
-        "sidebar",
-        "menus",
-        "mdx",
-        "nextjs",
-        "documents"
-      ]
-    }
   }
 ]

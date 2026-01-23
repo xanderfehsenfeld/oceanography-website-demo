@@ -53,8 +53,8 @@ async function parseMdx<Frontmatter>(rawMdx: string) {
 
 const documentPath = (slug: string) => {
   return Settings.gitload
-    ? `${GitHubLink.href}/raw/main/contents/docs/${slug}/index.mdx`
-    : path.join(process.cwd(), "/contents/docs/", `${slug}/index.mdx`)
+    ? `${GitHubLink.href}/raw/main/contents/${slug}/index.mdx`
+    : path.join(process.cwd(), "/contents/", `${slug}/index.mdx`)
 }
 
 const getDocumentPath = (() => {
@@ -98,6 +98,7 @@ export async function getDocument(slug: string) {
       lastUpdated,
     }
   } catch (err) {
+    console.error("error while looking in path", slug)
     console.error(err)
     return null
   }
@@ -132,7 +133,7 @@ export async function getTable(
   } else {
     const contentPath = path.join(
       process.cwd(),
-      "/contents/docs/",
+      "/contents/",
       `${slug}/index.mdx`
     )
     try {
