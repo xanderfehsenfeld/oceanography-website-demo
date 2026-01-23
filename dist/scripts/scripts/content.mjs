@@ -22,9 +22,9 @@ function createSlug(filePath) {
     const normalizedSlug = slugPath.replace(/\\/g, "/");
     if (parsed.name === "index") {
         const dir = parsed.dir.replace(/\\/g, "/");
-        return dir ? `/${dir}` : "/";
+        return dir ? `/docs/${dir}` : "/";
     }
-    return `/${normalizedSlug}`;
+    return `/docs/${normalizedSlug}`;
 }
 function findDocumentBySlug(slug) {
     function searchDocs(docs, currentPath = "") {
@@ -54,19 +54,25 @@ async function ensureDirectoryExists(dir) {
 }
 function removeCustomComponents() {
     const customComponentNames = [
-        "Tabs",
-        "TabsList",
-        "TabsTrigger",
-        "pre",
-        "Mermaid",
         "Card",
         "CardGrid",
-        "Step",
-        "StepItem",
-        "Note",
+        "File",
         "FileTree",
         "Folder",
-        "File",
+        "Image",
+        "Mermaid",
+        "Note",
+        "Script",
+        "Slider",
+        "Step",
+        "StepItem",
+        "Tabs",
+        "TabsContent",
+        "TabsList",
+        "TabsTrigger",
+        "Video",
+        "a",
+        "pre",
     ];
     return (tree) => {
         visit(tree, "mdxJsxFlowElement", (node, index, parent) => {
@@ -95,7 +101,8 @@ function cleanContentForSearch(content) {
             .map((cell) => cell.trim())
             .join(" ");
     });
-    cleanedContent = cleanedContent.replace(/<(?:Note|Card|Step|FileTree|Folder|File|Mermaid)[^>]*>([\s\S]*?)<\/(?:Note|Card|Step|FileTree|Folder|File|Mermaid)>/g, "$1");
+    cleanedContent = cleanedContent.replace(/<(?:Card|CardGrid|File|FileTree|Folder|HorizontalLayout|Image|Mermaid|Note|Script|Slider|Step|StepItem|Tabs|TabsContent|TabsList|TabsTrigger|Video|pre|a|div)[^>]*>([\s\S]*?)<\/(?:Card|CardGrid|File|FileTree|Folder|HorizontalLayout|Image|Mermaid|Note|Script|Slider|Step|StepItem|Tabs|TabsContent|TabsList|TabsTrigger|Video|pre|a|div)>/g, "$1");
+    cleanedContent = cleanedContent.replace(/<[^>]+>/g, '');
     cleanedContent = cleanedContent
         .replace(/^\s*[-*+]\s+/gm, "")
         .replace(/^\s*\d+\.\s+/gm, "")

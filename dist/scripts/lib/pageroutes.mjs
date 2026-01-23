@@ -5,13 +5,17 @@ function isRoute(node) {
 }
 function getAllLinks(node) {
     const pages = [];
+    const { breadCrumb = [] } = node;
     if (isRoute(node) && !node.noLink) {
-        pages.push({ title: node.title, href: node.href });
+        pages.push({ title: node.title, href: node.href, breadCrumb: [...breadCrumb, node.title] });
     }
     if (isRoute(node) && node.items) {
         node.items.forEach((subNode) => {
             if (isRoute(subNode)) {
-                const temp = { ...subNode, href: `${node.href}${subNode.href}` };
+                const temp = {
+                    ...subNode, href: `${node.href}${subNode.href}`,
+                    breadCrumb: [...breadCrumb, node.title]
+                };
                 pages.push(...getAllLinks(temp));
             }
         });

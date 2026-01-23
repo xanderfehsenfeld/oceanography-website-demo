@@ -1,18 +1,7 @@
 export const Documents = [
     {
-        title: "Interactive Tools",
-        href: "/../interactive",
-        noLink: true,
-        items: [
-            {
-                title: "Salt",
-                href: "/salt",
-            },
-        ]
-    },
-    {
         title: "Forecast movies",
-        href: "/forecastmovies",
+        href: "/docs/forecastmovies",
         noLink: true,
         items: [
             {
@@ -42,7 +31,7 @@ export const Documents = [
     },
     {
         title: "High-Resolution Submodels",
-        href: "/highresolutionsubmodels",
+        href: "/docs/highresolutionsubmodels",
         noLink: true,
         items: [
             {
@@ -80,16 +69,16 @@ export const Documents = [
     },
     {
         title: "Interactive Tools",
-        href: "/interactivetools",
+        href: "/interactive",
         noLink: true,
         items: [
             {
                 title: "Drifters: Puget Sound",
-                href: "/tracks2_PS",
+                href: "/drifters/pugetsound",
             },
             {
                 title: "Drifters: Willapa & Grays",
-                href: "/tracks2_wgh",
+                href: "/drifters/willapaandgrays",
             },
             {
                 title: "Drifters: Willapa 2025 Custom",
@@ -110,7 +99,7 @@ export const Documents = [
     },
     {
         title: "Background",
-        href: "/background",
+        href: "/docs/background",
         noLink: true,
         items: [
             {
@@ -132,7 +121,7 @@ export const Documents = [
     },
     {
         title: "About the Model",
-        href: "/about",
+        href: "/docs/aboutthemodel",
         noLink: true,
         items: [
             {
@@ -150,6 +139,28 @@ export const Documents = [
             {
                 title: "References",
                 href: "/references",
+            },
+        ],
+    },
+    {
+        spacer: true,
+    },
+    {
+        title: "Gallery",
+        href: "/docs/gallery",
+        noLink: true,
+        items: [
+            {
+                title: "A Year of Modeled Salinity",
+                href: "/salinity_year",
+            },
+            {
+                title: "A Year of Modeled Oxygen",
+                href: "/oxygen_year",
+            },
+            {
+                title: "A Year of Modeled Phytoplankton",
+                href: "/phytoplankton_year",
             },
         ],
     },

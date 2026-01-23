@@ -1,4 +1,3 @@
-import { PageRoutes } from "@/lib/pageroutes"
 import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
@@ -6,17 +5,7 @@ import { Pagination } from "@/components/article/pagination"
 
 import DriftersPugetSound from "./DriftersPugetSound"
 
-interface PageProps {
-  params: Promise<{ slug: string[] }>
-}
-
-export default async function Pages({ params }: PageProps) {
-  const { slug = [] } = await params
-  const result = await params
-  const pathName = slug.join("/")
-
-  console.log("pathname", result)
-
+export default function Pages() {
   return (
     <div className="flex items-start gap-10">
       <section className="flex-3">
@@ -39,15 +28,9 @@ export default async function Pages({ params }: PageProps) {
           <section>
             <DriftersPugetSound />
           </section>
-          <Pagination pathname={pathName} />
+          <Pagination pathname={"drifters/pugetsound"} prefix="interactive" />
         </Typography>
       </section>
     </div>
   )
-}
-
-export function generateStaticParams() {
-  return PageRoutes.filter((item) => item.href).map((item) => ({
-    slug: item.href.split("/").slice(1),
-  }))
 }
