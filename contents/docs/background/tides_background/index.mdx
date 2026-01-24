@@ -113,7 +113,11 @@ These small imbalances to the gravitational tug of the moon are only able to pul
 ---
 
 <HorizontalLayout>
-    <Video src={'/videos/tractive_0.mp4'} id={'dec0'} className={' max-w-sm w-full'}/>
+    <Video src={'/videos/tractive_0.mp4'} id={'dec0'} 
+    
+    width={900}
+    height={900}
+    className={' max-w-sm w-full'}/>
 
         The Earth is rotating under this pattern of tractive force about once a day. In the movie we plot the size and direction of the tractive force (the red arrows) at three places on the Earth, as the moon (the smaller green sphere) circles around over the course of a day (really the Earth is rotating under the moon, but the movie is made to show things from an Earth-centered point of view). At any place water is getting tugged back and forth in a pattern that repeats twice a day, and this is the fundamental reason why there are two tides a day.
 
@@ -144,7 +148,7 @@ You may have noticed that in the [movie in the section above](#dec0) it says "Lu
 
 <HorizontalLayout>
 
-        <Video src={'/videos/tractive_23.5.mp4'}/>
+<Video src={"/videos/tractive_23.5.mp4"} width={900} height={900} />
 
 In this second movie we show the pattern of tractive force when the moon is at its maximum declination. The patterns are much more complicated, like pretzels, but you can think of them as being a combination of twice-a-day forcing and once-a-day forcing, and this is the fundamental reason for the two low waters in a day being so different.
 
@@ -207,7 +211,7 @@ As we explained [above](#why-are-the-two-tides-in-a-day-different-in-size), the 
 
 <HorizontalLayout>
 
-        <Video src={'/videos/day_movie_Seattle_Summer.mp4'}/>
+        <Video width={1000} height={800 } src={'/videos/day_movie_Seattle_Summer.mp4'}/>
 
 The movie shows tide height at Seattle over a month. It is easier to understand if you pause it: then the plot is tide height vs. time for a single day (date shown at upper left). If you go to the next frame it is the tide height for the following day.
 
@@ -276,13 +280,13 @@ Finally, there is long-term variation of sea level, due to melting ice caps, war
 
 Because ocean basins have irregular shapes, the response of the tide over the globe, and inside basins like the Salish Sea, forms complex patterns.
 
-<Video src={"/videos/global_M2_movie.mp4"} />
+<Video src={"/videos/global_M2_movie.mp4"} width={2084} height={1250} />
 
 This movie shows the global pattern of tide height. This is not the full tide, just the twice-a-day part due to the moon's forcing. It repeats every 12.42 hours. You can see that one tidal "slosh" can fill a whole ocean basin, and that some bays at the edges of the ocean have really large tidal amplitude. This is because their natural resonant period is close to 12.42 hours.
 
 ---
 
-<Video src={"/videos/LO_SSH_movie.mp4"} />
+<Video src={"/videos/LO_SSH_movie.mp4"} width={2084} height={1250} />
 
 This movie shows sea surface height in the Salish Sea and the coastal waters of Oregon, Washington, and British Columbia. You can see that there is a big phase difference between the coast and Puget Sound: when it is high tide in Seattle is it low tide at the coast. These are like the two ends of a bathtub with the water sloshing. The was made from a realistic numerical model of the region called [LiveOcean](/).
 
