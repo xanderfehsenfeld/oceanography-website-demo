@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "@radix-ui/themes/styles.css";
+
 @plugin "@tailwindcss/typography";
+
 
 @custom-variant dark (&:is(.dark *));
 
