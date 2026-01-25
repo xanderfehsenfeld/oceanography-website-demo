@@ -48,12 +48,6 @@ export default async function Pages({ params }: PageProps) {
   )
 }
 
-async function promise2(timeout = 5000) {
-  await new Promise((resolve) => setTimeout(resolve, timeout))
-
-  return new Promise(() => {})
-}
-
 export async function generateMetadata({ params }: PageProps) {
   const { slug = [] } = await params
   const pathName = slug.join("/")
@@ -61,8 +55,6 @@ export async function generateMetadata({ params }: PageProps) {
   const res = await getDocument(
     `/docs/${pathName}`.replace("/docs/docs", "/docs")
   )
-
-  const x = await promise2
 
   if (!res) return null
 
