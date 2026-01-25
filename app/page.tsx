@@ -23,7 +23,7 @@ export default function Home() {
           <Card
             title="NANOOS NVS"
             variant="small"
-            className="dark:bg-pink-900 bg-pink-300"
+            className="bg-pink-300 dark:bg-pink-900"
             external={true}
             href="http://nvs.nanoos.org/Explorer?action=overlay:liveocean_temp"
           />
@@ -32,31 +32,31 @@ export default function Home() {
 
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/forecastmovies/p5_Phab_full_salt_top"
             title="Full Region Surface Salinity and Drifters"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/forecastmovies/p5_full_oxygen_bot"
             title="Full Region Bottom Oxygen"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/forecastmovies/p5_nshelf_oxygen_bot"
             title="Washington Shelf Bottom Oxygen (5 days)"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/forecastmovies/p5_PS_temp_top"
             title="Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/forecastmovies/p5_PS_speed_top"
             title="Puget Sound Surface Currents"
           />
@@ -65,43 +65,43 @@ export default function Home() {
           <h3 className="font-bold">High-Resolution Submodels</h3>
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_willapa_ARAG_top"
             title="Willapa &amp; Grays Surface Ocean Acidification"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_willapa_ARAG_bot"
             title="Willapa &amp; Grays Bottom Ocean Acidification"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_willapa_temp_top"
             title="Willapa &amp; Grays Surface Temperature"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_willapa_salt_top"
             title="Willapa &amp; Grays Surface Salinity"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_willapa_speed_top"
             title="Willapa &amp; Grays Surface Currents"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_oly_temp_top"
             title="South Puget Sound Surface Temperature"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-teal-200"
+            className="bg-teal-200 dark:bg-teal-800"
             href="/docs/highresolutionsubmodels/p5_oly_salt_top"
             title="South Puget Sound Surface Salinity"
           />
@@ -111,31 +111,31 @@ export default function Home() {
           <h2 className="font-bold">Interactive Tools</h2>
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-sky-200"
+            className="bg-sky-200 dark:bg-teal-800"
             href="/interactive/drifters/pugetsound"
             title="Drifters: Puget Sound"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-sky-200"
+            className="bg-sky-200 dark:bg-teal-800"
             href="/interactive/drifters/willapaandgrays"
             title="Drifters: Willapa &amp; Grays"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-sky-200"
-            href="/interactive/drifters/willapa2025Custom"
+            className="bg-sky-200 dark:bg-teal-800"
+            href="/interactive/drifters/custom"
             title="Drifters: Willapa 2025 Custom"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-sky-200"
+            className="bg-sky-200 dark:bg-teal-800"
             href="/interactive/observationviewer"
             title="Observation Viewer"
           />
           <Card
             variant="small"
-            className="dark:bg-teal-800 bg-sky-200"
+            className="bg-sky-200 dark:bg-teal-800"
             href="/interactive/modelvsobservation"
             title="Model vs. Observations Viewer"
           />
@@ -145,20 +145,20 @@ export default function Home() {
           <h2 className="font-bold">Background</h2>
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/background/tides_background"
             title="How Tides Work in Puget Sound"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/background/long_term_trends"
             title="Observed Long-term Trends in Puget Sound Water
             Properties"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/background/exchange_flow"
             title="The Estuarine Exchange Flow"
           />
@@ -167,25 +167,25 @@ export default function Home() {
           <h2 className="font-bold">About the Model</h2>
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/aboutthemodel/data_access"
             title="Data Access"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/aboutthemodel/how_it_works"
             title="How the Model Works"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/aboutthemodel/how_we_test_it"
             title="How We Test the Model"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/aboutthemodel/references"
             title="References"
           />
@@ -195,23 +195,22 @@ export default function Home() {
           <h2 className="font-bold">Gallery</h2>
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/gallery/salinity_year"
             title="A Year of Modeled Salinity"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/gallery/oxygen_year"
             title="A Year of Modeled Oxygen"
           />
           <Card
             variant="small"
-            className="dark:bg-sky-900 bg-sky-200"
+            className="bg-sky-200 dark:bg-sky-900"
             href="/docs/gallery/phytoplankton_year"
             title="A Year of Modeled Phytoplankton"
           />
-
         </div>
       </div>
       <hr className="my-4 w-full border border-y" />

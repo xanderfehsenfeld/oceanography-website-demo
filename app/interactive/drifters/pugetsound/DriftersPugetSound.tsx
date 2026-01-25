@@ -52,12 +52,9 @@ export interface IDriftersPugetSoundProps {
   nTracks: number
   nCoast: number
   nTimes: number
-
   sxyT: number[][][]
-
   sxyAll: number[][][]
   tlist: string[]
-
   cxy: number[][][]
 }
 

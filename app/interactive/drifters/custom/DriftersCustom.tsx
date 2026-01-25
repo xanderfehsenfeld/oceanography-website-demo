@@ -6,20 +6,8 @@ import * as d3 from "d3"
 import { Slider } from "@/components/slider"
 
 import coast from "./coast_xy.json"
-import times from "./wgh0_times.json"
-import tracks from "./wgh0_tracks.json"
-
-// Get the coast line segments
-const coastVal = Object.values(coast)
-const nCoast = coastVal.length
-
-// Get the list of timestamps
-const timeVal = Object.values(times)
-const tlist = timeVal[0].t
-const nTimes = tlist.length
-
-// Get the track data values.
-const trackVal = Object.values(tracks)
+import times from "./willapa25_times.json"
+import tracks from "./willapa25_tracks.json"
 
 // Define the geographical range of the svg and its aspect ratio.
 // NOTE: by using "let" these variables are available anywhere inside this
@@ -54,16 +42,57 @@ const y = d3
   .domain([lat0, lat1])
   .range([height - margin.bottom, margin.top])
 
+// Create the SVG container.
+const svg = d3.create("svg").attr("width", width).attr("height", height)
+
+// make the container visible
+svg
+  .append("g")
+  .append("rect")
+  .attr("width", width)
+  .attr("height", height)
+  .attr("fill", "none")
+  .attr("stroke", "red")
+  .attr("stroke-width", 10)
+  .attr("opacity", 0.3)
+  .attr("id", "my_thing")
+
+// Add the x-axis.
+svg
+  .append("g") // NOTE: the svg "g" element groups things together.
+  .attr("transform", `translate(0,${height - margin.bottom})`)
+  .call(d3.axisTop(x).ticks(3))
+
+// Add the y-axis.
+svg
+  .append("g")
+  .attr("transform", `translate(${margin.left},0)`)
+  .call(d3.axisRight(y).ticks(5))
+
+// Get the coast line segments
+const coastVal = Object.values(coast)
+const nCoast = coastVal.length
+
+// Get the list of timestamps
+const timeVal = Object.values(times)
+const tlist = timeVal[0].t
+const nTimes = tlist.length
+
+// Get the track data values.
+const trackVal = Object.values(tracks).map(({ x, y }) => ({
+  x: x.map(parseFloat),
+  y: y.map(parseFloat),
+}))
+
 // This is packed as:
 // [{"x:[lon values for one track]", "y":[lat values for one track]},{},...]
 // Like a list of dict objects, and each dict has keys x and y with values that
 // are lists of lon or lat for one track.
-const nTracks = trackVal.length
+let nTracks = trackVal.length
 console.log("Number of tracks = " + nTracks)
 console.log("Times per track = " + nTimes)
 console.log("Coast line segments = " + nCoast)
 
-// Function to convert from lon and lat to svg coordinates.
 // Function to convert from lon and lat to svg coordinates.
 function xyScale(x: number, y: number) {
   const xscl = w0 / dlon
@@ -78,7 +107,7 @@ function xyScale(x: number, y: number) {
 // Save the coastline as a list of lists in the format
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one segment, packed as a list of [x,y] points.
-const cxy: number[][][] = []
+let cxy = []
 for (let s = 0; s < nCoast; s++) {
   // pull out a single segment and scale
   var cx = coastVal[s].x
@@ -96,6 +125,7 @@ for (let s = 0; s < nCoast; s++) {
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one track, packed as a list of [x,y] points.
 let sxyAll: number[][][] = []
+
 for (let j = 0; j < nTracks; j++) {
   // pull out a single track
   var xdata = trackVal[j].x
@@ -103,6 +133,7 @@ for (let j = 0; j < nTracks; j++) {
   var sxy = []
   for (let i = 0; i < nTimes; i++) {
     const { sx, sy } = xyScale(xdata[i], ydata[i])
+
     sxy.push([sx, sy])
   }
   sxyAll.push(sxy)
@@ -121,7 +152,6 @@ for (let i = 0; i < nTimes; i++) {
   }
   sxyT.push(xy)
 }
-
 // function that fills out an array with the position of points at
 // a specific timestep
 let sxyNow: number[][] = []
@@ -136,7 +166,7 @@ for (let j = 0; j < nTracks; j++) {
   isin.push(0)
 }
 
-const DriftersWillapaAndGrays = () => {
+const DriftersCustom = () => {
   const ref = useRef<SVGElement>(null)
 
   const [sliderMaxValue, setSliderMaxValue] = useState(nTimes - 1)
@@ -324,35 +354,37 @@ const DriftersWillapaAndGrays = () => {
           id="myRange"
         />
 
-        <h3> Willapa Bay & Grays Harbor Drifter Tracks</h3>
+        <h3> Willapa Bay Customized Drifter Tracks</h3>
 
         <p>
           The map plot shows tracks from simulated drifter tracks over three
           days from the most recent LiveOcean daily forecast. At the start time
-          you can see the initial drifter release locations as two clusters of
-          blue dots near the beaches north and south of Willapa Bay. The green
-          lines show the tracks that the drifters take over the full three days,
-          about six tidal cycles.
+          you can see the initial drifter release locations as six clusters of
+          blue dots at locations in and near Willapa Bay. The green lines show
+          the tracks that the drifters take over the full three days, about six
+          tidal cycles.
         </p>
         <p>
           Using the "Time Slider" you can see where each particle goes in time.
           If you click and drag across a region of the map with some drifters in
           it they will turn red. They will stay red when you use the Time
           Slider. By selecting different groups of particles at different times
-          you can explore questions such as: Where do all the particles from the
-          North release site go? or Where did all the particles that ended up in
+          you can explore questions such as: Where do all the particles from a
+          given release site go? or Where did all the particles that ended up in
           some place come from?
         </p>
         <p>
           The model used here is a high-resolution model of these two estuaries,
           nested inside the larger LiveOcean model. It has 200 m horizontal
           resolution, 30 vertical layers, and wetting-and-drying of the
-          intertidal. The particles are tracked in 3-D, including dispersion due
-          to turbulence.
+          intertidal. The particles stay at the ocean surface, and so can
+          accumulate along convergence fronts. The tides in this model tend to
+          lag real tides by about an hour. This is something that will be
+          improved in the next version of the model.
         </p>
       </div>
     </div>
   )
 }
 
-export default DriftersWillapaAndGrays
+export default DriftersCustom
