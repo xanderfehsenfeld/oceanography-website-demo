@@ -3,20 +3,11 @@ import { Sidebar } from "@/components/sidebar"
 import { BackToTop } from "@/components/toc/backtotop"
 import ClientSideFeedback from "@/components/toc/client-side-feedback"
 
-interface ILayoutProps {
-  params: Promise<{ slug: string[] }>
-}
-
 export default async function InteractiveLayout({
   children,
-  params,
-}: Readonly<
-  ILayoutProps & {
-    children: React.ReactNode
-  }
->) {
-  const p = await params
-
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
     <div className="flex items-start gap-10 pt-5">
       <Sidebar />
