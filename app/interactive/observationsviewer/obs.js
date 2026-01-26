@@ -284,6 +284,6 @@ function update_vis(data) {
 }
 
 // Line that executes the visualization code once the data have loaded.
-export const initializeVisualization = () => {
-  loadFiles(year).then(create_vis)
+export const initializeVisualization = async () => {
+  await loadFiles(year).then(create_vis)
 }

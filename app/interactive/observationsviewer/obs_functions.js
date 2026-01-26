@@ -3,7 +3,7 @@ import * as d3 from "d3"
 // Functions for obs.js and obsmod.js.
 
 let margin = 18
-let mapSize = 465 // pixels for map width
+let mapSize = 372 // pixels for map width
 let dataSize = 235 // pixels for data plot width and height
 
 let plotType = "obsz"
@@ -50,7 +50,11 @@ export function make_svg(this_info) {
     .domain([this_info.y0, this_info.y1])
     .range([height - margin, margin])
   // Create the SVG container.
-  const svg = d3.create("svg").attr("width", width).attr("height", height)
+  const svg = d3
+    .create("svg")
+
+    .attr("width", width)
+    .attr("height", height)
   // Fix for displaying negative ticklabels
   const formatLocale = d3.formatDefaultLocale({
     minus: "-", // Use the regular hyphen-minus

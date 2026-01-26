@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { Separator } from "@radix-ui/react-dropdown-menu"
 
 import { Typography } from "@/components/ui/typography"
@@ -50,9 +51,9 @@ export default function Pages() {
             Ecology, UW Washington Ocean Acidification Center cruises, NOAA West
             Coast Ocean Acidification cruise, Fisheries and Oceans Canada, etc.
             The complete reference for data sources is{" "}
-            <a href="https://github.com/parkermac/LO/blob/main/obs/README.md">
-              here{" "}
-            </a>
+            <Link href="https://github.com/parkermac/LO/blob/main/obs/README.md">
+              here
+            </Link>
             .
           </p>
           <p>
