@@ -3,6 +3,30 @@
 Documents is a modern documentation starter kit built with **Next.js**, **React**, **Tailwind CSS**, and **TypeScript**. Designed for businesses, product teams, and technical writers, it provides a scalable and efficient foundation for building documentation websites, product manuals, and knowledge bases.
 
 
+---
+
+## Quick Start
+
+### Installation
+
+```bash
+git clone https://github.com/xanderfehsenfeld/oceanography-website-demo
+cd oceanography-website-demo
+pnpm install
+pnpm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000) to view your project locally.
+
+**For production:**
+
+```bash
+pnpm run build
+pnpm run start
+```
+
+
+
 ## Overview
 
 Documents enables businesses to deliver clear, structured, and accessible product documentation — with a focus on performance, usability, and maintainability.
@@ -39,29 +63,7 @@ Built for technical and content-driven projects, this starter kit supports Markd
 - Fuzzy search with term highlighting
 - Planned: AI-powered knowledgebase tools
 
----
 
-## Quick Start
-
-### Installation
-
-```bash
-git clone https://github.com/rubixvi/rubix-documents.git
-cd rubix-documents
-pnpm install
-pnpm run dev
-```
-
-Visit [http://localhost:3000](http://localhost:3000) to view your project locally.
-
-**For production:**
-
-```bash
-pnpm run build
-pnpm run start
-```
-
-Deploy to Vercel for automated builds and hosting.
 
 ---
 
