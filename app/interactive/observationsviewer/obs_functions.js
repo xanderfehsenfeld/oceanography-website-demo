@@ -165,6 +165,13 @@ export function make_info(obs_info, map_info) {
 // where the associated data field is not null.
 export let data_info_all = {}
 
+export function deleteAllChildNodes(id) {
+  const myNode = document.getElementById(id)
+  while (myNode.firstChild) {
+    myNode.removeChild(myNode.lastChild)
+  }
+}
+
 const fld_ranges = {
   CT: [4, 20],
   SA: [0, 34],

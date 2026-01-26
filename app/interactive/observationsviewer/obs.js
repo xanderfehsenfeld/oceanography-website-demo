@@ -4,6 +4,7 @@ import {
   add_coastline,
   add_unity_line,
   data_info_all,
+  deleteAllChildNodes,
   fld_long_names,
   make_data_info_all,
   make_info,
@@ -96,6 +97,8 @@ function create_vis(data) {
 
   var div1 = document.getElementById("div1")
 
+  deleteAllChildNodes("div1")
+
   div1.append(svgMap.node())
 
   add_coastline(coast, svgMap, map_info)
@@ -111,6 +114,7 @@ function create_vis(data) {
 
   // Append the SVG element to an element in the html.
   var div2 = document.getElementById("div2")
+  deleteAllChildNodes("div2")
 
   plot_fld_list.forEach(function (fld) {
     div2.append(fld_svg[fld].node())
