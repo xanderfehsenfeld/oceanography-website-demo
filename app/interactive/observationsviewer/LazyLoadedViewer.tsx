@@ -6,6 +6,6 @@ const ObservationsViewer = dynamic(() => import("./ObservationsViewer"), {
   ssr: false,
 })
 
-const LazyLoadedViewer = () => <ObservationsViewer />
+const LazyLoadedViewer = () => <ObservationsViewer key={Date.now()} />
 
 export default LazyLoadedViewer

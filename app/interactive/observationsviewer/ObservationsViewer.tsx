@@ -7,8 +7,11 @@ import L from "leaflet"
 
 import { Slider } from "@/components/slider"
 
-import collection from "./points.json"
+import { getPoints } from "./getPoints"
 
+import "./ObservationsViewer.css"
+
+const collection = getPoints()
 var map: L.Map
 
 interface ISource {
@@ -28,12 +31,15 @@ const mapSources: { [name: string]: ISource } = {
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   },
 }
+
 const initializeMap = () => {
   map?.remove()
 
-  map = L.map("map")
-
-    .setView([40.72332345541449, -73.99], 14)
+  map = L.map("map", {
+    zoomControl: false,
+    maxZoom: 15,
+    minZoom: 8,
+  }).setView([48, -124], 8)
 
   L.tileLayer(mapSources.voyagerNoLabels.url, {
     attribution: mapSources.voyagerNoLabels.attribution,
@@ -53,7 +59,7 @@ const initializeMap = () => {
   // featuresdata is an array of point objects
 
   var featuresdata = collection.features.filter(function (d) {
-    return d.properties.id == "route1"
+    return d
   })
 
   //stream transform. transforms geometry before passing it to
@@ -97,7 +103,7 @@ const initializeMap = () => {
     .data(featuresdata)
     .enter()
     .append("circle")
-    .attr("r", 3)
+    .attr("r", 5)
     .attr("class", "waypoints")
 
   // Here we will make the points into a single
@@ -113,35 +119,26 @@ const initializeMap = () => {
     .append("path")
     .attr("class", "lineConnect")
 
-  // This will be our traveling circle it will
-  // travel along our path
-  var marker = g
-    .append("circle")
-    .attr("r", 10)
-    .attr("id", "marker")
-    .attr("class", "travelMarker")
-
   // For simplicity I hard-coded this! I'm taking
   // the first and the last object (the origin)
   // and destination and adding them separately to
   // better style them. There is probably a better
   // way to do this!
-  var originANDdestination = [featuresdata[0], featuresdata[17]]
+  // var originANDdestination = [featuresdata[0], featuresdata[17]]
 
-  var begend = g
-    .selectAll(".drinks")
-    .data(originANDdestination)
-    .enter()
-    .append("circle", ".drinks")
-    .attr("r", 5)
-    .style("fill", "red")
-    .style("opacity", "1")
+  var begend = g.selectAll(".drinks")
+  // .data(originANDdestination)
+  // .enter()
+  // .append("circle", ".drinks")
+  // .attr("r", 5)
+  // .style("fill", "red")
+  // .style("opacity", "1")
 
   // I want names for my coffee and beer
   var text = g
     .selectAll("text")
-    .data(originANDdestination)
-    .enter()
+    // .data(originANDdestination)
+    // .enter()
     .append("text")
     .text(function (d) {
       return d.properties.name
@@ -207,17 +204,17 @@ const initializeMap = () => {
     // again, not best practice, but I'm harding coding
     // the starting point
 
-    marker.attr("transform", function () {
-      var y = featuresdata[0].geometry.coordinates[1]
-      var x = featuresdata[0].geometry.coordinates[0]
-      return (
-        "translate(" +
-        map.latLngToLayerPoint(new L.LatLng(y, x)).x +
-        "," +
-        map.latLngToLayerPoint(new L.LatLng(y, x)).y +
-        ")"
-      )
-    })
+    // marker.attr("transform", function () {
+    //   var y = featuresdata[0].geometry.coordinates[1]
+    //   var x = featuresdata[0].geometry.coordinates[0]
+    //   return (
+    //     "translate(" +
+    //     map.latLngToLayerPoint(new L.LatLng(y, x)).x +
+    //     "," +
+    //     map.latLngToLayerPoint(new L.LatLng(y, x)).y +
+    //     ")"
+    //   )
+    // })
 
     // Setting the size and location of the overall SVG container
     svg
@@ -227,7 +224,7 @@ const initializeMap = () => {
       .style("top", topLeft[1] - 50 + "px")
 
     // linePath.attr("d", d3path);
-    linePath.attr("d", toLine)
+    // linePath.attr("d", toLine)
     // ptPath.attr("d", d3path);
     g.attr(
       "transform",
