@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import * as d3 from "d3"
 import { ExtendedGeometryCollection } from "d3"
-import L from "leaflet"
+import L, { LayerEvent } from "leaflet"
 
 import { Slider } from "@/components/slider"
 
@@ -157,10 +157,15 @@ const initializeMap = () => {
   // transition()
 
   // Reposition the SVG to cover the features.
-  function reset() {
+  function reset(event?: LayerEvent) {
     var bounds = d3path.bounds(collection),
       topLeft = bounds[0],
       bottomRight = bounds[1]
+
+    const scale = map.getZoom()
+
+    map.getZoomScale(9, 10)
+    console.log("scale", map.getZoomScale(9, 10))
 
     // here you're setting some styles, width, heigh etc
     // to the SVG. Note that we're adding a little height and
