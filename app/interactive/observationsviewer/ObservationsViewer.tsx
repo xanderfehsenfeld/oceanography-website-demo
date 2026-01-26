@@ -9,7 +9,8 @@ import {
   ZoomableGroup,
 } from "react-simple-maps"
 
-import geography from "./featureCollection.json"
+import geography from "./ne_10m_coastline.json"
+import marinePolys from "./ne_10m_geography_marine_polys.json"
 
 const geoUrl =
   "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json"
@@ -30,12 +31,12 @@ function MapChart() {
       projectionConfig={{
         rotate: [124, -47, 0],
         // center: [-126, 47],
-        scale: 20000,
+        scale: 15000,
       }}
     >
       <Graticule stroke="#F53" />
 
-      <Geographies geography={geography}>
+      <Geographies geography={marinePolys}>
         {({ geographies }) =>
           geographies.map((geo) => (
             <Geography key={geo.rsmKey} geography={geo} />
