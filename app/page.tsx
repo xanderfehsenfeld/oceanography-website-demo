@@ -130,7 +130,7 @@ export default function Home() {
           <Card
             variant="small"
             className="bg-sky-200 dark:bg-teal-800"
-            href="/interactive/observationviewer"
+            href="/interactive/observationsviewer"
             title="Observation Viewer"
           />
           <Card
