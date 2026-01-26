@@ -5,7 +5,7 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import OberservationsViewer from "./ObservationsViewer"
+import LazyLoadedViewer from "./LazyLoadedViewer"
 
 export default function Pages() {
   return (
@@ -24,7 +24,8 @@ export default function Pages() {
       </div>
       <Typography>
         <section>
-          <OberservationsViewer />
+          {/* <OberservationsViewer /> */}
+          <LazyLoadedViewer />
 
           <h3>
             This interactive tool plots observational bottle data throughout the
