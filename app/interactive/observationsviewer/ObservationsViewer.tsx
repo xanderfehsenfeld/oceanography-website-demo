@@ -1,39 +1,49 @@
 "use client"
 
-import { useEffect } from "react"
-import { ScrollArea } from "@radix-ui/react-scroll-area"
+import React from "react"
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Graticule,
+  ZoomableGroup,
+} from "react-simple-maps"
 
-import { initializeVisualization } from "./obs"
+import geography from "./featureCollection.json"
 
-const OberservationsViewer = () => {
-  useEffect(() => {
-    initializeVisualization()
-  })
+const geoUrl =
+  "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json"
 
+let lon0 = -130,
+  lon1 = -122,
+  lat0 = 42,
+  lat1 = 52
+
+// -126, 47
+
+function MapChart() {
   return (
-    <div>
-      <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
-      <div className="flex flex-row dark:bg-gray-600">
-        <div className="flex-2" id="div1"></div>
+    <ComposableMap
+      width={800}
+      height={800}
+      projection="geoAzimuthalEqualArea"
+      projectionConfig={{
+        rotate: [124, -47, 0],
+        // center: [-126, 47],
+        scale: 20000,
+      }}
+    >
+      <Graticule stroke="#F53" />
 
-        <div className="flex-3">
-          <div className="container">
-            <input type="range" className="slider" id="myRange" />
-            <h3 style={{ textAlign: "center", color: "red" }}>
-              <span id="demo"></span>
-            </h3>
-          </div>
-          <div className="container">
-            <select id="myDropdown"></select>
-          </div>
-          <ScrollArea
-            className="flex max-h-[500px] w-full flex-wrap overflow-y-auto"
-            id="div2"
-          ></ScrollArea>{" "}
-        </div>
-      </div>
-    </div>
+      <Geographies geography={geography}>
+        {({ geographies }) =>
+          geographies.map((geo) => (
+            <Geography key={geo.rsmKey} geography={geo} />
+          ))
+        }
+      </Geographies>
+    </ComposableMap>
   )
 }
 
-export default OberservationsViewer
+export default MapChart
