@@ -1,13 +1,7 @@
 "use client"
 
-import React from "react"
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-  Graticule,
-  ZoomableGroup,
-} from "react-simple-maps"
+import React, { useEffect } from "react"
+import L from "leaflet"
 
 import geography from "./ne_10m_coastline.json"
 import marinePolys from "./ne_10m_geography_marine_polys.json"
@@ -22,28 +16,67 @@ let lon0 = -130,
 
 // -126, 47
 
-function MapChart() {
-  return (
-    <ComposableMap
-      width={800}
-      height={800}
-      projection="geoAzimuthalEqualArea"
-      projectionConfig={{
-        rotate: [124, -47, 0],
-        // center: [-126, 47],
-        scale: 15000,
-      }}
-    >
-      <Graticule stroke="#F53" />
+function deleteAllChildNodes(id: string) {
+  const myNode = document.getElementById(id)
+  while (myNode?.firstChild && myNode.lastChild) {
+    myNode.removeChild(myNode.lastChild)
+  }
+}
 
-      <Geographies geography={marinePolys}>
-        {({ geographies }) =>
-          geographies.map((geo) => (
-            <Geography key={geo.rsmKey} geography={geo} />
-          ))
-        }
-      </Geographies>
-    </ComposableMap>
+var map: L.Map
+
+//light mode
+// L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png', {
+// 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+
+interface ISource {
+  attribution: string
+  url: string
+}
+
+const mapSources: { [name: string]: ISource } = {
+  voyagerNoLabels: {
+    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+  darkMatterNoLabels: {
+    url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+}
+const initializeMap = () => {
+  map?.remove()
+  deleteAllChildNodes("map")
+
+  map = L.map("map").setView([48, -124], 7)
+
+  L.tileLayer(mapSources.darkMatterNoLabels.url, {
+    attribution: mapSources.darkMatterNoLabels.attribution,
+    maxZoom: 10,
+    minZoom: 7,
+  }).addTo(map)
+
+  const geoJSONLayer = L.geoJSON().addTo(map)
+
+  map.setMaxBounds(map.getBounds())
+
+  // geoJSONLayer.addData(marinePolys)
+}
+
+function MapChart() {
+  useEffect(initializeMap)
+  return (
+    <div className="not-prose">
+      <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossOrigin=""
+      />{" "}
+      <div id="map" className="h-[360px]"></div>
+    </div>
   )
 }
 
