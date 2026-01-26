@@ -42,33 +42,6 @@ const y = d3
   .domain([lat0, lat1])
   .range([height - margin.bottom, margin.top])
 
-// Create the SVG container.
-const svg = d3.create("svg").attr("width", width).attr("height", height)
-
-// make the container visible
-svg
-  .append("g")
-  .append("rect")
-  .attr("width", width)
-  .attr("height", height)
-  .attr("fill", "none")
-  .attr("stroke", "red")
-  .attr("stroke-width", 10)
-  .attr("opacity", 0.3)
-  .attr("id", "my_thing")
-
-// Add the x-axis.
-svg
-  .append("g") // NOTE: the svg "g" element groups things together.
-  .attr("transform", `translate(0,${height - margin.bottom})`)
-  .call(d3.axisTop(x).ticks(3))
-
-// Add the y-axis.
-svg
-  .append("g")
-  .attr("transform", `translate(${margin.left},0)`)
-  .call(d3.axisRight(y).ticks(5))
-
 // Get the coast line segments
 const coastVal = Object.values(coast)
 const nCoast = coastVal.length
