@@ -7,16 +7,16 @@ interface Track {
 
 const tracksTyped = tracks as Track[]
 
-interface IPoints {
+export interface IPoints {
   type: "FeatureCollection"
-  features: Feature[]
+  features: IFeature[]
 }
 
 interface Properties {
   name: string
 }
 
-export interface Feature {
+export interface IFeature {
   type: "Feature"
   properties: Properties2
   geometry: Geometry
@@ -36,26 +36,28 @@ interface Geometry {
   coordinates: [number, number]
 }
 
-export const getPoints = (): IPoints => {
+export const getPoints = (): IPoints[] => {
   const points = tracksTyped
 
-  return {
-    type: "FeatureCollection",
-    features: points.map(({ x, y }) => {
-      const latitude = y[0]
-      const longitude = x[0]
+  return points[0].x.map((_, timeIndex) => {
+    return {
+      type: "FeatureCollection",
+      features: points.map(({ x, y }) => {
+        const latitude = y[timeIndex]
+        const longitude = x[timeIndex]
 
-      return {
-        type: "Feature",
-        properties: {
-          latitude,
-          longitude,
-        },
-        geometry: {
-          type: "Point",
-          coordinates: [longitude, latitude],
-        },
-      }
-    }),
-  }
+        return {
+          type: "Feature",
+          properties: {
+            latitude,
+            longitude,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [longitude, latitude],
+          },
+        }
+      }),
+    }
+  })
 }
