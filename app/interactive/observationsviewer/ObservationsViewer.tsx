@@ -1,23 +1,47 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
+import { useEffect } from "react"
 import * as d3 from "d3"
 import L from "leaflet"
 
 import { Slider } from "@/components/slider"
 
-import geography from "./ne_10m_coastline.json"
 import marinePolys from "./ne_10m_geography_marine_polys.json"
+import times from "./PS_times.json"
+import tracks from "./PS_tracks.json"
 
-const geoUrl =
-  "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json"
+const tracksArray = tracks as {
+  x: number[]
+  y: number[]
+}[]
 
-let lon0 = -130,
-  lon1 = -122,
-  lat0 = 42,
-  lat1 = 52
+const timeValues = times[0].t
 
-// -126, 47
+console.log(timeValues)
+
+const featuresAtTime = timeValues.map((time, index) => {
+  return {
+    type: "FeatureCollection",
+    properties: { time },
+    features: tracksArray.map(({ x, y }) => {
+      return {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          coordinates: [x[index], y[index]],
+          type: "Point",
+        },
+      }
+    }),
+  }
+})
+const allCoordinates = featuresAtTime.reduce((previous, next) => {
+  const coordinates = next.features.map(({ geometry }) => {
+    return geometry.coordinates
+  })
+
+  return [...previous, ...coordinates]
+}, [] as number[][])
 
 function deleteAllChildNodes(id: string) {
   const myNode = document.getElementById(id)
@@ -77,16 +101,37 @@ const initializeMap = () => {
   const transform = d3.geoTransform({ point: projectPoint })
   const path = d3.geoPath().projection(transform)
 
+  //   circle.attr("cx", (data, index: number) => {
+  //   return data[0]
+  // })
+
+  // circle.attr("cy", (data: number[], index: number) => {
+  //   return data[1]
+  // })
+
+  console.log(featuresAtTime[0].features)
+
   var feature = g
-    .selectAll("path")
-    .data(marinePolys.features)
+    .selectAll("circle")
+    .data(featuresAtTime[0].features)
+    .attr("cy", (data, index: number) => {
+      return data.geometry.coordinates[1]
+    })
+
+    .attr("cx", (data, index: number) => {
+      return data.geometry.coordinates[0]
+    })
+
+    .attr("r", 50)
+    .attr("opacity", 1)
+    .style("fill", "blue")
     .enter()
-    .append("path")
+    .append("svg:circle")
 
   feature.attr("d", path)
 
   function reset() {
-    var bounds = path.bounds(marinePolys),
+    var bounds = path.bounds(allCoordinates),
       topLeft = bounds[0],
       bottomRight = bounds[1]
 
@@ -107,7 +152,7 @@ const initializeMap = () => {
     g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")")
   }
 
-  reset()
+  // reset()
 
   // geoJSONLayer.addData(marinePolys)
 }
