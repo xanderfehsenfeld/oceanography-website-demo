@@ -32,6 +32,10 @@ const mapSources: { [name: string]: ISource } = {
   },
 }
 
+const initialZoomLevel = 8
+
+const initialCircleRadius = 2
+
 const initializeMap = () => {
   map?.remove()
 
@@ -39,7 +43,7 @@ const initializeMap = () => {
     zoomControl: false,
     maxZoom: 15,
     minZoom: 8,
-  }).setView([48, -124], 8)
+  }).setView([48, -124], initialZoomLevel)
 
   L.tileLayer(mapSources.voyagerNoLabels.url, {
     attribution: mapSources.voyagerNoLabels.attribution,
@@ -103,7 +107,7 @@ const initializeMap = () => {
     .data(featuresdata)
     .enter()
     .append("circle")
-    .attr("r", 5)
+    .attr("r", initialCircleRadius)
     .attr("class", "waypoints")
 
   // Here we will make the points into a single
@@ -162,10 +166,27 @@ const initializeMap = () => {
       topLeft = bounds[0],
       bottomRight = bounds[1]
 
-    const scale = map.getZoom()
+    const currentZoomLevel = map.getZoom()
 
-    map.getZoomScale(9, 10)
-    console.log("scale", map.getZoomScale(9, 10))
+    console.log("current zoom", currentZoomLevel)
+    console.log(
+      "zoom scale",
+      map.getZoomScale(initialZoomLevel, currentZoomLevel)
+    )
+
+    const zoomScale = map.getZoomScale(currentZoomLevel, initialZoomLevel)
+
+    // for the points we need to convert from latlong
+    // to map units
+    begend.attr("transform", function (d) {
+      return (
+        "translate(" +
+        applyLatLngToLayer(d).x +
+        "," +
+        applyLatLngToLayer(d).y +
+        ")"
+      )
+    })
 
     // here you're setting some styles, width, heigh etc
     // to the SVG. Note that we're adding a little height and
@@ -184,27 +205,18 @@ const initializeMap = () => {
       )
     })
 
-    // for the points we need to convert from latlong
-    // to map units
-    begend.attr("transform", function (d) {
-      return (
-        "translate(" +
-        applyLatLngToLayer(d).x +
-        "," +
-        applyLatLngToLayer(d).y +
-        ")"
-      )
-    })
+    ptFeatures
+      .attr("transform", function (d) {
+        return (
+          "translate(" +
+          applyLatLngToLayer(d).x +
+          "," +
+          applyLatLngToLayer(d).y +
+          ")"
+        )
+      })
 
-    ptFeatures.attr("transform", function (d) {
-      return (
-        "translate(" +
-        applyLatLngToLayer(d).x +
-        "," +
-        applyLatLngToLayer(d).y +
-        ")"
-      )
-    })
+      .attr("r", initialCircleRadius * zoomScale)
 
     // again, not best practice, but I'm harding coding
     // the starting point
