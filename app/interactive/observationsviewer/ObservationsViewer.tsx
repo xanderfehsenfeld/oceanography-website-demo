@@ -1,15 +1,12 @@
 "use client"
 
-import { memo, useEffect, useEffectEvent } from "react"
+import { useEffect, useEffectEvent } from "react"
 import * as d3 from "d3"
-import { ExtendedGeometryCollection } from "d3"
-import L, { LatLngBounds, LayerEvent } from "leaflet"
+import L from "leaflet"
 
 import { Slider } from "@/components/slider"
 
 import { getPoints, IFeature } from "./getPoints"
-
-import "./ObservationsViewer.css"
 
 const points = getPoints()
 
@@ -97,6 +94,8 @@ const getScaleMultiplier = (): number => {
 // svg coordinates except that it accepts a point from our
 // GeoJSON
 
+const isIn: { [key: string]: boolean } = {}
+
 function applyLatLngToLayer(d) {
   var y = d.geometry.coordinates[1]
   var x = d.geometry.coordinates[0]
@@ -172,40 +171,27 @@ function MapChart() {
   })
 
   const renderData = useEffectEvent((data: IFeature[]) => {
-    // ptFeatures
-    //   .attr("transform", function (d) {
-    //     return (
-    //       "translate(" +
-    //       applyLatLngToLayer(d).x +
-    //       "," +
-    //       applyLatLngToLayer(d).y +
-    //       ")"
-    //     )
-    //   })
-
-    //   .attr("r", initialCircleRadius * zoomScale)
-
     const existingCircles = g.selectAll("circle").data(data)
 
-    // console.log(existingCircles)
+    existingCircles
+      .attr("fill", function (_, i) {
+        const isSelected = isIn[i.toString()]
 
-    existingCircles.attr("transform", function (d) {
-      return (
-        "translate(" +
-        applyLatLngToLayer(d).x +
-        "," +
-        applyLatLngToLayer(d).y +
-        ")"
-      )
-    })
+        return isSelected ? "red" : "teal"
+      })
 
-    // existingCircles
+      .transition()
+      .duration(200)
 
-    //       .data(data)
-    //       .attr("r", initialCircleRadius * getScaleMultiplier())
-    //       .attr("class", "waypoints")
-
-    // reset()
+      .attr("transform", function (d) {
+        return (
+          "translate(" +
+          applyLatLngToLayer(d).x +
+          "," +
+          applyLatLngToLayer(d).y +
+          ")"
+        )
+      })
   })
 
   const initialLat = 48
@@ -217,9 +203,12 @@ function MapChart() {
     map = L.map("map", {
       zoomControl: false,
       maxZoom: 15,
-      minZoom: 8,
+      minZoom: 7,
     }).setView([initialLat, initialLong], initialZoomLevel)
-    map.setMaxBounds(map.getBounds())
+
+    const bounds = map.getBounds()
+
+    map.setMaxBounds(bounds.pad(2))
 
     L.tileLayer(mapSources.darkMatterNoLabels.url, {
       attribution: mapSources.darkMatterNoLabels.attribution,
@@ -262,7 +251,29 @@ function MapChart() {
       .append("circle")
       .attr("r", initialCircleRadius)
       .attr("opacity", 0.3)
-      .style("fill", "teal")
+      .attr("fill", "teal")
+      .attr("id", function (e, i) {
+        return i
+      })
+
+      .style("pointer-events", "all")
+
+      .on("click", function (e) {
+        console.log(this.getAttribute("id"))
+        const id = this.getAttribute("id")
+
+        if (id) {
+          isIn[id] = !isIn[id]
+
+          console.log(isIn[id])
+
+          this.setAttribute("fill", isIn[id] ? "red" : "teal")
+
+          this.setAttribute("opacity", isIn[id] ? "1" : "0.3")
+        }
+
+        // this.setAttribute()
+      })
 
     // Here we will make the points into a single
     // line/path. Note that we surround the featuresdata
@@ -349,7 +360,7 @@ function MapChart() {
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />{" "}
-      <div className="h-[50vh]">
+      <div className="z-10 h-[500px] md:h-[70vh]">
         <div className="h-full" key={"key"} id="map"></div>
       </div>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
@@ -360,7 +371,7 @@ function MapChart() {
           }}
           defaultValue={0}
           min={0}
-          max={points.length}
+          max={points.length - 1}
           className="slider"
           id="myRange"
         />
