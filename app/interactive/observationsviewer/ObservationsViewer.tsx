@@ -11,6 +11,11 @@ import { getPoints, IFeature } from "./getPoints"
 
 import "./ObservationsViewer.css"
 
+let brushExtent = [
+  [0, 0],
+  [0, 0],
+]
+
 const points = getPoints()
 
 const positionsAtTimeZero = points[0]
@@ -221,6 +226,24 @@ function MapChart() {
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
 
+    function handleBrush(e: any) {
+      console.log("handle brush")
+      brushExtent = e.selection
+
+      if (brushExtent != null) {
+        // update_isin()
+        // updatePoints()
+      }
+    }
+    // brush code
+    let brush = d3.brush().on("end", handleBrush)
+
+    function initBrush() {
+      svg.call(brush as any)
+    }
+
+    initBrush()
+
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
     // Lat/Long they need to be converted to map units
@@ -335,17 +358,21 @@ function MapChart() {
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />{" "}
-      <div key={"key"} id="map" className="h-[360px]"></div>
+      <div className="h-[360px]">
+        <div className="h-full" key={"key"} id="map"></div>
+      </div>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
-      <Slider
-        onChange={(input) => {
-          renderData(points[input.target.valueAsNumber].features)
-        }}
-        min={0}
-        max={points.length}
-        className="slider"
-        id="myRange"
-      />
+      <div>
+        <Slider
+          onChange={(input) => {
+            renderData(points[input.target.valueAsNumber].features)
+          }}
+          min={0}
+          max={points.length}
+          className="slider"
+          id="myRange"
+        />
+      </div>
     </div>
   )
 }
