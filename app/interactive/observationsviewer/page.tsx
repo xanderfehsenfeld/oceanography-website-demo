@@ -5,8 +5,6 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import LazyLoadedViewer from "./LazyLoadedViewer"
-
 export default function Pages() {
   return (
     <section className="flex-3">
