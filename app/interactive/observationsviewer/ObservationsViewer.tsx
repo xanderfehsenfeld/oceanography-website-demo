@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useEffectEvent } from "react"
+import { memo, useEffect, useEffectEvent } from "react"
 import * as d3 from "d3"
 import { ExtendedGeometryCollection } from "d3"
 import L, { LayerEvent } from "leaflet"
@@ -95,9 +95,74 @@ function applyLatLngToLayer(d) {
 }
 
 function MapChart() {
-  const renderData = useEffectEvent((data: IFeature[]) => {
-    console.log("render data", data.length)
+  const reset = useEffectEvent(() => {
+    // For simplicity I hard-coded this! I'm taking
+    // the first and the last object (the origin)
+    // and destination and adding them separately to
+    // better style them. There is probably a better
+    // way to do this!
+    // var originANDdestination = [featuresdata[0], featuresdata[17]]
 
+    var renderedPoints = g.selectAll("circle")
+
+    // .data(originANDdestination)
+    // .enter()
+    // .append("circle", ".drinks")
+    // .attr("r", 5)
+    // .style("fill", "red")
+    // .style("opacity", "1")
+
+    const zoomScale = getScaleMultiplier()
+
+    renderedPoints
+      .attr("transform", function (d) {
+        return (
+          "translate(" +
+          applyLatLngToLayer(d).x +
+          "," +
+          applyLatLngToLayer(d).y +
+          ")"
+        )
+      })
+
+      .attr("r", initialCircleRadius * zoomScale)
+
+    // again, not best practice, but I'm harding coding
+    // the starting point
+
+    // marker.attr("transform", function () {
+    //   var y = featuresdata[0].geometry.coordinates[1]
+    //   var x = featuresdata[0].geometry.coordinates[0]
+    //   return (
+    //     "translate(" +
+    //     map.latLngToLayerPoint(new L.LatLng(y, x)).x +
+    //     "," +
+    //     map.latLngToLayerPoint(new L.LatLng(y, x)).y +
+    //     ")"
+    //   )
+    // })
+
+    var bounds = d3path.bounds(positionsAtTimeZero),
+      topLeft = bounds[0],
+      bottomRight = bounds[1]
+
+    // Setting the size and location of the overall SVG container
+    svg
+      .attr("width", bottomRight[0] - topLeft[0] + 120)
+      .attr("height", bottomRight[1] - topLeft[1] + 120)
+      .style("left", topLeft[0] - 50 + "px")
+      .style("top", topLeft[1] - 50 + "px")
+
+    // linePath.attr("d", d3path);
+    // linePath.attr("d", toLine)
+    // ptPath.attr("d", d3path);
+    g.attr(
+      "transform",
+      "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
+    )
+  })
+
+  const renderData = useEffectEvent((data: IFeature[]) => {
     // ptFeatures
     //   .attr("transform", function (d) {
     //     return (
@@ -111,14 +176,27 @@ function MapChart() {
 
     //   .attr("r", initialCircleRadius * zoomScale)
 
-    var ptFeatures = g
-      .selectAll("circle")
+    const existingCircles = g.selectAll("circle").data(data)
 
-      .data(data)
-      .append("circle")
-      .attr("r", initialCircleRadius * getScaleMultiplier())
-      .attr("class", "waypoints")
-      .enter()
+    // console.log(existingCircles)
+
+    existingCircles.attr("transform", function (d) {
+      return (
+        "translate(" +
+        applyLatLngToLayer(d).x +
+        "," +
+        applyLatLngToLayer(d).y +
+        ")"
+      )
+    })
+
+    // existingCircles
+
+    //       .data(data)
+    //       .attr("r", initialCircleRadius * getScaleMultiplier())
+    //       .attr("class", "waypoints")
+
+    // reset()
   })
 
   useEffect(() => {
@@ -184,119 +262,6 @@ function MapChart() {
       .enter()
       .append("path")
       .attr("class", "lineConnect")
-
-    // Reposition the SVG to cover the features.
-    function reset(event?: LayerEvent) {
-      // For simplicity I hard-coded this! I'm taking
-      // the first and the last object (the origin)
-      // and destination and adding them separately to
-      // better style them. There is probably a better
-      // way to do this!
-      // var originANDdestination = [featuresdata[0], featuresdata[17]]
-
-      var begend = g.selectAll(".drinks")
-
-      var renderedPoints = g.selectAll("circle")
-
-      // .data(originANDdestination)
-      // .enter()
-      // .append("circle", ".drinks")
-      // .attr("r", 5)
-      // .style("fill", "red")
-      // .style("opacity", "1")
-
-      // I want names for my coffee and beer
-      var text = g
-        .selectAll("text")
-        // .data(originANDdestination)
-        // .enter()
-        .append("text")
-        .text(function (d) {
-          return d.properties.name
-        })
-        .attr("class", "locnames")
-        .attr("y", function (d) {
-          return -10
-        })
-
-      var bounds = d3path.bounds(positionsAtTimeZero),
-        topLeft = bounds[0],
-        bottomRight = bounds[1]
-
-      // for the points we need to convert from latlong
-      // to map units
-      begend.attr("transform", function (d) {
-        return (
-          "translate(" +
-          applyLatLngToLayer(d).x +
-          "," +
-          applyLatLngToLayer(d).y +
-          ")"
-        )
-      })
-
-      // here you're setting some styles, width, heigh etc
-      // to the SVG. Note that we're adding a little height and
-      // width because otherwise the bounding box would perfectly
-      // cover our features BUT... since you might be using a big
-      // circle to represent a 1 dimensional point, the circle
-      // might get cut off.
-
-      text.attr("transform", function (d) {
-        return (
-          "translate(" +
-          applyLatLngToLayer(d).x +
-          "," +
-          applyLatLngToLayer(d).y +
-          ")"
-        )
-      })
-
-      const zoomScale = getScaleMultiplier()
-
-      renderedPoints
-        .attr("transform", function (d) {
-          return (
-            "translate(" +
-            applyLatLngToLayer(d).x +
-            "," +
-            applyLatLngToLayer(d).y +
-            ")"
-          )
-        })
-
-        .attr("r", initialCircleRadius * zoomScale)
-
-      // again, not best practice, but I'm harding coding
-      // the starting point
-
-      // marker.attr("transform", function () {
-      //   var y = featuresdata[0].geometry.coordinates[1]
-      //   var x = featuresdata[0].geometry.coordinates[0]
-      //   return (
-      //     "translate(" +
-      //     map.latLngToLayerPoint(new L.LatLng(y, x)).x +
-      //     "," +
-      //     map.latLngToLayerPoint(new L.LatLng(y, x)).y +
-      //     ")"
-      //   )
-      // })
-
-      // Setting the size and location of the overall SVG container
-      svg
-        .attr("width", bottomRight[0] - topLeft[0] + 120)
-        .attr("height", bottomRight[1] - topLeft[1] + 120)
-        .style("left", topLeft[0] - 50 + "px")
-        .style("top", topLeft[1] - 50 + "px")
-
-      // linePath.attr("d", d3path);
-      // linePath.attr("d", toLine)
-      // ptPath.attr("d", d3path);
-      g.attr(
-        "transform",
-        "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
-      )
-    }
 
     // when the user zooms in or out you need to reset
     // the view
@@ -370,13 +335,11 @@ function MapChart() {
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />{" "}
-      <div key={"key"} id="map" className="h-[540px]"></div>
+      <div key={"key"} id="map" className="h-[360px]"></div>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
       <Slider
         onChange={(input) => {
-          console.log(input.target.valueAsNumber)
           renderData(points[input.target.valueAsNumber].features)
-          // setSliderValue(input.target.valueAsNumber)//
         }}
         min={0}
         max={points.length}
