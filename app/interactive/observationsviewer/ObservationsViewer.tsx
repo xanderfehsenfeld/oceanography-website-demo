@@ -3,7 +3,7 @@
 import { memo, useEffect, useEffectEvent } from "react"
 import * as d3 from "d3"
 import { ExtendedGeometryCollection } from "d3"
-import L, { LayerEvent } from "leaflet"
+import L, { LatLngBounds, LayerEvent } from "leaflet"
 
 import { Slider } from "@/components/slider"
 
@@ -44,9 +44,9 @@ const mapSources: { [name: string]: ISource } = {
   },
 }
 
-const initialZoomLevel = 8
+const initialZoomLevel = 9
 
-const initialCircleRadius = 2
+const initialCircleRadius = 3
 
 // Use Leaflet to implement a D3 geometric transformation.
 // the latLngToLayerPoint is a Leaflet conversion method:
@@ -208,6 +208,9 @@ function MapChart() {
     // reset()
   })
 
+  const initialLat = 48
+  const initialLong = -122.5
+
   useEffect(() => {
     map?.remove()
 
@@ -215,10 +218,11 @@ function MapChart() {
       zoomControl: false,
       maxZoom: 15,
       minZoom: 8,
-    }).setView([48, -124], initialZoomLevel)
+    }).setView([initialLat, initialLong], initialZoomLevel)
+    map.setMaxBounds(map.getBounds())
 
-    L.tileLayer(mapSources.voyagerNoLabels.url, {
-      attribution: mapSources.voyagerNoLabels.attribution,
+    L.tileLayer(mapSources.darkMatterNoLabels.url, {
+      attribution: mapSources.darkMatterNoLabels.attribution,
     }).addTo(map)
 
     // we will be appending the SVG to the Leaflet map pane
@@ -257,7 +261,8 @@ function MapChart() {
       .enter()
       .append("circle")
       .attr("r", initialCircleRadius)
-      .attr("class", "waypoints")
+      .attr("opacity", 0.3)
+      .style("fill", "teal")
 
     // Here we will make the points into a single
     // line/path. Note that we surround the featuresdata
@@ -344,7 +349,7 @@ function MapChart() {
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />{" "}
-      <div className="h-[360px]">
+      <div className="h-[50vh]">
         <div className="h-full" key={"key"} id="map"></div>
       </div>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
@@ -353,6 +358,7 @@ function MapChart() {
           onChange={(input) => {
             renderData(points[input.target.valueAsNumber].features)
           }}
+          defaultValue={0}
           min={0}
           max={points.length}
           className="slider"
