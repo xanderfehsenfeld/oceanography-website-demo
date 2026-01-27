@@ -1,6 +1,6 @@
 # oceanography-website-demo
 
-oceanography-website-demo is a [nextjs](https://nextjs.org/) app with some server-side-rendering. The content of the app is re-implementation of the static html website [LiveOcean](https://faculty.washington.edu/pmacc/LO/LiveOcean.html). the codebase began with the next.js template ["Documents"](https://github.com/rubixvi/rubix-documents) (deployed at [rubix-documents.vercel.app](rubix-documents.vercel.app) by rubixvi. 
+oceanography-website-demo is a [nextjs](https://nextjs.org/) app with some server-side-rendering. The content of the app is re-implementation of the static html website [LiveOcean](https://faculty.washington.edu/pmacc/LO/LiveOcean.html). the codebase began with the next.js template ["Documents"](https://github.com/rubixvi/rubix-documents).
 
 
 ---
