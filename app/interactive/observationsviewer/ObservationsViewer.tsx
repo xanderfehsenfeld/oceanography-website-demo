@@ -11,14 +11,18 @@ import { getPoints, IFeature } from "./getPoints"
 
 import "./ObservationsViewer.css"
 
-let brushExtent = [
-  [0, 0],
-  [0, 0],
-]
-
 const points = getPoints()
 
 const positionsAtTimeZero = points[0]
+
+const allPointsInOneCollection = points.reduce((previous, current) => {
+  previous.features.concat(current.features)
+
+  return {
+    ...positionsAtTimeZero,
+    features: [...previous.features, ...current.features],
+  }
+}, positionsAtTimeZero)
 
 var map: L.Map
 
@@ -147,7 +151,7 @@ function MapChart() {
     //   )
     // })
 
-    var bounds = d3path.bounds(positionsAtTimeZero),
+    var bounds = d3path.bounds(allPointsInOneCollection),
       topLeft = bounds[0],
       bottomRight = bounds[1]
 
@@ -225,24 +229,6 @@ function MapChart() {
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
-
-    function handleBrush(e: any) {
-      console.log("handle brush")
-      brushExtent = e.selection
-
-      if (brushExtent != null) {
-        // update_isin()
-        // updatePoints()
-      }
-    }
-    // brush code
-    let brush = d3.brush().on("end", handleBrush)
-
-    function initBrush() {
-      svg.call(brush as any)
-    }
-
-    initBrush()
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
