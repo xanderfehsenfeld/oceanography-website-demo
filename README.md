@@ -1,6 +1,6 @@
-# Documents
+# oceanography-website-demo
 
-Documents is a modern documentation starter kit built with **Next.js**, **React**, **Tailwind CSS**, and **TypeScript**. Designed for businesses, product teams, and technical writers, it provides a scalable and efficient foundation for building documentation websites, product manuals, and knowledge bases.
+oceanography-website-demo is a modern re-implementation of the static html website [LiveOcean](https://faculty.washington.edu/pmacc/LO/LiveOcean.html) using next.js. It heavily relies on the next.js template "Documents"(deployed at [rubix-documents.vercel.app](rubix-documents.vercel.app) by rubixvi. 
 
 
 ---
@@ -29,9 +29,13 @@ pnpm run start
 
 ## Overview
 
-Documents enables businesses to deliver clear, structured, and accessible product documentation — with a focus on performance, usability, and maintainability.
+the Web app is built using the following:
 
-Built for technical and content-driven projects, this starter kit supports Markdown (MDX), React components, and a flexible content architecture designed for scale.
+* **Next.js** and **React** as the framework
+* **Tailwind CSS** to manage styling
+* **TypeScript**
+* **d3.js** and **leaflet.js** to render geographic data visualizations.
+* **remark-mdx** for handling markdown pages.
 
 ---
 
@@ -49,7 +53,6 @@ Built for technical and content-driven projects, this starter kit supports Markd
 - Multi-level navigation
 - Auto-generated table of contents
 - Content pagination
-- Code snippet switcher with copy functionality
 
 ### Development Experience
 
@@ -61,7 +64,6 @@ Built for technical and content-driven projects, this starter kit supports Markd
 ### Search & Future Enhancements
 
 - Fuzzy search with term highlighting
-- Planned: AI-powered knowledgebase tools
 
 
 
