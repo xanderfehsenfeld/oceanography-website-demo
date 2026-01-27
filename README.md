@@ -71,12 +71,11 @@ the Web app is built using the following:
 
 ## Usage
 
-Documents is designed to support:
+oceanography-website-demo is designed to support:
 
-- Product documentation
-- Technical manuals
-- Internal guides
-- Business knowledge bases
+- Learning about computer-generated oceanography ocean models at University of Washington.
+- Viewing the oceanographic characteristics of the Puget Sound and Salish Sea. 
+- Maintaining a scientific knowledge base.
 
 ---
 
@@ -84,7 +83,7 @@ Documents is designed to support:
 
 ## Contributing
 
-We welcome contributions to improve this project.
+We welcome contributions to improve this project. 
 
 1. Fork the repository
 2. Create a feature branch
