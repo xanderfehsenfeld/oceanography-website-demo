@@ -3,7 +3,6 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import DriftersPugetSound from "./DriftersPugetSound"
 import LazyLoadedViewer from "./LazyLoadedViewer"
 
 export default function Pages() {

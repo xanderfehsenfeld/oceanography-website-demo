@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic"
 
-const ObservationsViewer = dynamic(() => import("./ObservationsViewer"), {
+const ObservationsViewer = dynamic(() => import("./DriftersPugetSound"), {
   ssr: false,
 })
 
