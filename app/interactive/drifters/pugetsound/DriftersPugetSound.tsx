@@ -5,6 +5,7 @@ import {
   useCallback,
   useEffect,
   useEffectEvent,
+  useMemo,
   useRef,
   useState,
 } from "react"
@@ -126,7 +127,21 @@ function MapChart({ children }: { children: ReactNode }) {
 
   const { theme } = useTheme()
 
-  const displayValue = timeOptions[sliderValue]
+  const displayValue = useMemo(() => {
+    //01/11/2026 - 04PM PST
+    const dateString = timeOptions[sliderValue]
+      .replace("-", "")
+      .replace("PM", ":00 PM")
+      .replace("AM", ":00 AM")
+      .replace("PST", "")
+
+    return new Intl.DateTimeFormat("en-US", {
+      timeStyle: "short",
+      dateStyle: "medium",
+
+      timeZone: "PST",
+    }).format(new Date(dateString))
+  }, [sliderValue])
 
   const reset = useEffectEvent(() => {
     // For simplicity I hard-coded this! I'm taking
@@ -242,7 +257,6 @@ function MapChart({ children }: { children: ReactNode }) {
 
   const handleDrifterClick = useEffectEvent(function (event: any, d: IFeature) {
     const id = d.properties.id
-    console.log("id of clicked", id)
     isIn = {
       [id]: true,
     }
