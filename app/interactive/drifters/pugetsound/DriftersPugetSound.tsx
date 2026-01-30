@@ -180,10 +180,15 @@ function MapChart({ children }: { children: ReactNode }) {
     const existingCircles = g.selectAll("circle").data(data)
 
     existingCircles
-      .attr("fill", function (_, i) {
-        const isSelected = isIn[i.toString()]
+      .attr("fill", function (data) {
+        const isSelected = isIn[data.properties.id]
 
         return isSelected ? "red" : "blue"
+      })
+      .attr("opacity", function (data) {
+        const isSelected = isIn[data.properties.id]
+
+        return isSelected ? "1" : "0.3"
       })
 
       .attr("transform", function (d) {
@@ -201,6 +206,33 @@ function MapChart({ children }: { children: ReactNode }) {
   const initialLong = -122.5
 
   const ref = useRef<HTMLDivElement>(null)
+
+  const handleMapClick = useEffectEvent((e: L.LeafletMouseEvent) => {
+    const drifters = points[sliderValue].features
+
+    const clickLocation = e.latlng
+
+    let drifterLocation: L.LatLngExpression
+
+    const scaleMultiplier = getScaleMultiplier()
+
+    for (let i = 0; i < drifters.length; i++) {
+      const properties = drifters[i].properties
+      const { latitude, longitude, id } = properties
+
+      drifterLocation = new L.LatLng(latitude, longitude)
+
+      const distance = clickLocation.distanceTo(drifterLocation)
+
+      const isSelected = distance < 25000 / scaleMultiplier
+
+      isIn[id] = isSelected
+    }
+
+    if (playbackSpeed === 0) renderData(points[sliderValue].features)
+
+    return
+  })
 
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
@@ -224,6 +256,8 @@ function MapChart({ children }: { children: ReactNode }) {
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
+
+    map.on("click", handleMapClick)
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
@@ -256,22 +290,6 @@ function MapChart({ children }: { children: ReactNode }) {
       .attr("fill", "blue")
       .attr("id", function (e, i) {
         return i
-      })
-
-      .style("pointer-events", "all")
-
-      .on("click", function (e) {
-        const id = this.getAttribute("id")
-
-        if (id) {
-          isIn[id] = !isIn[id]
-
-          this.setAttribute("fill", isIn[id] ? "red" : "blue")
-
-          this.setAttribute("opacity", isIn[id] ? "1" : "0.3")
-        }
-
-        // this.setAttribute()
       })
 
     // Here we will make the points into a single

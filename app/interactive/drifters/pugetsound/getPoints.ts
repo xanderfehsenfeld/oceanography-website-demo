@@ -26,7 +26,7 @@ interface Properties2 {
   latitude: number
   longitude: number
   //   time: number
-  //   id: string
+  id: string
   //   name: string
 }
 
@@ -42,7 +42,7 @@ export const getPoints = (): IPoints[] => {
   return points[0].x.map((_, timeIndex) => {
     return {
       type: "FeatureCollection",
-      features: points.map(({ x, y }) => {
+      features: points.map(({ x, y }, id) => {
         const latitude = y[timeIndex]
         const longitude = x[timeIndex]
 
@@ -51,6 +51,7 @@ export const getPoints = (): IPoints[] => {
           properties: {
             latitude,
             longitude,
+            id: id.toString(),
           },
           geometry: {
             type: "Point",

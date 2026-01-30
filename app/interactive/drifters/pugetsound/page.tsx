@@ -38,12 +38,13 @@ export default function Pages() {
             <h4>Selecting and tracking drifters</h4>
 
             <p>
-              If you click on a drifter (zoom in if necessary) it will turn red.
-              They will stay red when you use the Time Slider. By selecting
-              different groups of particles at different times you can explore
-              questions such as: Where do all the particles from one place go?
-              or Where did all the particles that ended up in some place come
-              from?
+              If you click on the map, all the drifters within a certain
+              distance will turn red. Increase or decrease the amount of
+              drifters selected by zooming in or out of the map. They will stay
+              red when you use the Time Slider. By selecting different groups of
+              particles at different times you can explore questions such as:
+              Where do all the particles from one place go? or Where did all the
+              particles that ended up in some place come from?
             </p>
           </LazyLoadedViewer>
         </section>
