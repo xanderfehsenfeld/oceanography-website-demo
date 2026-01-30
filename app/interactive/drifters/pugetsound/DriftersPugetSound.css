@@ -1,0 +1,20 @@
+#map .drifter {
+  fill: blue;
+  opacity: 0.3;
+}
+
+
+#map .drifter.selected {
+  fill: red;
+  opacity: 1;
+}
+
+
+.rt-SegmentedControlRoot button {
+  cursor: pointer;
+}
+
+.rt-SliderRoot .rt-SliderThumb {
+  cursor: grab;
+
+}

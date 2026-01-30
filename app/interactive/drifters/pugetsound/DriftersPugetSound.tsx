@@ -17,6 +17,8 @@ import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 import { getPoints, IFeature } from "./getPoints"
 import times from "./PS_times.json"
 
+import "./DriftersPugetSound.css"
+
 const timeOptions: string[] = times[0].t
 
 const points = getPoints()
@@ -180,15 +182,11 @@ function MapChart({ children }: { children: ReactNode }) {
     const existingCircles = g.selectAll("circle").data(data)
 
     existingCircles
-      .attr("fill", function (data) {
+
+      .attr("class", function (data) {
         const isSelected = isIn[data.properties.id]
 
-        return isSelected ? "red" : "blue"
-      })
-      .attr("opacity", function (data) {
-        const isSelected = isIn[data.properties.id]
-
-        return isSelected ? "1" : "0.3"
+        return isSelected ? "drifter selected" : "drifter"
       })
 
       .attr("transform", function (d) {
@@ -286,8 +284,8 @@ function MapChart({ children }: { children: ReactNode }) {
       .enter()
       .append("circle")
       .attr("r", initialCircleRadius)
-      .attr("opacity", 0.3)
-      .attr("fill", "blue")
+      .attr("class", "drifter")
+
       .attr("id", function (e, i) {
         return i
       })
