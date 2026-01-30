@@ -35,16 +35,24 @@ export default function Pages() {
               forecast at different speeds.
             </p>
 
-            <h4>Selecting and tracking drifters</h4>
+            <h4>Selecting a single drifter</h4>
 
             <p>
-              If you click on the map, all the drifters within a certain
-              distance will turn red. Increase or decrease the amount of
-              drifters selected by zooming in or out of the map. They will stay
-              red when you use the Time Slider. By selecting different groups of
-              particles at different times you can explore questions such as:
-              Where do all the particles from one place go? or Where did all the
-              particles that ended up in some place come from?
+              If you click on a drifter, a green line will appear showing its
+              path over the length of the forecast. Use this feature to
+              determine the origin and destination of any single drifter.
+            </p>
+
+            <h4>Selecting and tracking groups of drifters</h4>
+
+            <p>
+              If you click on the map (not a single drifter), all the drifters
+              within a certain distance will turn red. Increase or decrease the
+              area of selection by zooming in or out of the map. By selecting
+              different groups of particles at different times you can explore
+              questions such as: Where do all the particles from one place go?
+              or Where did all the particles that ended up in some place come
+              from?
             </p>
           </LazyLoadedViewer>
         </section>
