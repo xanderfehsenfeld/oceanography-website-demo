@@ -1,12 +1,18 @@
 "use client"
 
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react"
 import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import * as d3 from "d3"
 import L from "leaflet"
+import { useTheme } from "next-themes"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
-
-import { Button } from "@/components/ui/button"
 
 import { getPoints, IFeature } from "./getPoints"
 import times from "./PS_times.json"
@@ -28,12 +34,7 @@ const allPointsInOneCollection = points.reduce((previous, current) => {
 
 var map: L.Map
 
-interface ISource {
-  attribution: string
-  url: string
-}
-
-const mapSources: { [name: string]: ISource } = {
+const mapSources = {
   voyagerNoLabels: {
     url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
     attribution:
@@ -54,7 +55,7 @@ const initialCircleRadius = 3
 // the latLngToLayerPoint is a Leaflet conversion method:
 //Returns the map layer point that corresponds to the given geographical
 // coordinates (useful for placing overlays on the map).
-function projectPoint(x: number, y: number) {
+function projectPoint(this: any, x: number, y: number) {
   var point = map.latLngToLayerPoint(new L.LatLng(y, x))
   this.stream.point(point.x, point.y)
 } //end projectPoint
@@ -101,15 +102,17 @@ const getScaleMultiplier = (): number => {
 
 const isIn: { [key: string]: boolean } = {}
 
-function applyLatLngToLayer(d) {
+function applyLatLngToLayer(d: any) {
   var y = d.geometry.coordinates[1]
   var x = d.geometry.coordinates[0]
   return map.latLngToLayerPoint(new L.LatLng(y, x))
 }
 
-function MapChart() {
+function MapChart({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
+
+  const { theme } = useTheme()
 
   const displayValue = timeOptions[sliderValue]
 
@@ -180,8 +183,9 @@ function MapChart() {
       .attr("fill", function (_, i) {
         const isSelected = isIn[i.toString()]
 
-        return isSelected ? "red" : "teal"
+        return isSelected ? "red" : "blue"
       })
+
       .attr("transform", function (d) {
         return (
           "translate(" +
@@ -198,8 +202,8 @@ function MapChart() {
 
   const ref = useRef<HTMLDivElement>(null)
 
+  //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
-    console.log("use effect")
     map?.remove()
 
     map = L.map(ref.current as any, {
@@ -211,10 +215,6 @@ function MapChart() {
     const bounds = map.getBounds()
 
     map.setMaxBounds(bounds.pad(2))
-
-    L.tileLayer(mapSources.darkMatterNoLabels.url, {
-      attribution: mapSources.darkMatterNoLabels.attribution,
-    }).addTo(map)
 
     // we will be appending the SVG to the Leaflet map pane
     // g (group) element will be inside the svg
@@ -253,7 +253,7 @@ function MapChart() {
       .append("circle")
       .attr("r", initialCircleRadius)
       .attr("opacity", 0.3)
-      .attr("fill", "teal")
+      .attr("fill", "blue")
       .attr("id", function (e, i) {
         return i
       })
@@ -266,7 +266,7 @@ function MapChart() {
         if (id) {
           isIn[id] = !isIn[id]
 
-          this.setAttribute("fill", isIn[id] ? "red" : "teal")
+          this.setAttribute("fill", isIn[id] ? "red" : "blue")
 
           this.setAttribute("opacity", isIn[id] ? "1" : "0.3")
         }
@@ -294,62 +294,18 @@ function MapChart() {
     // this puts stuff on the map!
     reset()
     // transition()
-
-    // the transition function could have been done above using
-    // chaining but it's cleaner to have a separate function.
-    // the transition. Dash array expects "500, 30" where
-    // 500 is the length of the "dash" 30 is the length of the
-    // gap. So if you had a line that is 500 long and you used
-    // "500, 0" you would have a solid line. If you had "500,500"
-    // you would have a 500px line followed by a 500px gap. This
-    // can be manipulated by starting with a complete gap "0,500"
-    // then a small line "1,500" then bigger line "2,500" and so
-    // on. The values themselves ("0,500", "1,500" etc) are being
-    // fed to the attrTween operator
-    function transition() {
-      linePath
-        .transition()
-        .duration(7500)
-        .attrTween("stroke-dasharray", tweenDash)
-        .on("end", function () {
-          d3.select(this).call(transition) // infinite loop
-        })
-    } //end transition
-
-    // this function feeds the attrTween operator above with the
-    // stroke and dash lengths
-    function tweenDash() {
-      return function (t) {
-        //total length of path (single value)
-        var l = linePath.node().getTotalLength()
-
-        // this is creating a function called interpolate which takes
-        // as input a single value 0-1. The function will interpolate
-        // between the numbers embedded in a string. An example might
-        // be interpolatString("0,500", "500,500") in which case
-        // the first number would interpolate through 0-500 and the
-        // second number through 500-500 (always 500). So, then
-        // if you used interpolate(0.5) you would get "250, 500"
-        // when input into the attrTween above this means give me
-        // a line of length 250 followed by a gap of 500. Since the
-        // total line length, though is only 500 to begin with this
-        // essentially says give me a line of 250px followed by a gap
-        // of 250px.
-        const interpolate = d3.interpolateString("0," + l, l + "," + l)
-        //t is fraction of time 0-1 since transition began
-        var marker = d3.select("#marker")
-
-        // p is the point on the line (coordinates) at a given length
-        // along the line. In this case if l=50 and we're midway through
-        // the time then this would 25.
-        var p = linePath.node().getPointAtLength(t * l)
-
-        //Move the marker to that point
-        marker.attr("transform", "translate(" + p.x + "," + p.y + ")") //move marker
-        return interpolate(t)
-      }
-    } //end tweenDash
   }, [])
+
+  useEffect(() => {
+    const tileset =
+      theme === "dark"
+        ? mapSources.darkMatterNoLabels
+        : mapSources.voyagerNoLabels
+
+    L.tileLayer(tileset.url, {
+      attribution: tileset.attribution,
+    }).addTo(map)
+  }, [theme])
 
   const maxSliderValue = points.length - 1
   const increment = useCallback(() => {
@@ -369,18 +325,20 @@ function MapChart() {
   }, [sliderValue])
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="gap-4 sm:flex">
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
-      />{" "}
-      <div className="not-prose z-10 h-[500px] md:h-[70vh]" key={"key"}>
-        <div className="h-full" id="map" ref={ref}></div>
-      </div>
-      <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
-      <div className="flex flex-col gap-2">
+      />
+      <div
+        className="not-prose z-10 min-h-[60vh] flex-1 md:h-[70vh]"
+        key={"key"}
+        id="map"
+        ref={ref}
+      ></div>
+      <div className="flex-1 gap-2">
         <div className={"w-full"}>
           <p>
             Time Slider: <span id="demo">{displayValue}</span>
@@ -435,6 +393,8 @@ function MapChart() {
             id="myRange"
           />
         </div>
+
+        {children}
       </div>
     </div>
   )

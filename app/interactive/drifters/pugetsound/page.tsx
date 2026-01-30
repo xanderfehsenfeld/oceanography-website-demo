@@ -23,18 +23,29 @@ export default function Pages() {
 
       <Typography>
         <section>
-          <LazyLoadedViewer />
-          <h3>Puget Sound Drifter Tracks</h3>
-          The map plot shows tracks from simulated surface drifter tracks over
-          three days from the most recent LiveOcean daily forecast. At the start
-          time you can see the initial drifter release locations as blue dots.
-          Using the "Time Slider" you can see where each particle goes in time.
-          If you click and drag across a region of the map with some drifters in
-          it they will turn red. They will stay red when you use the Time
-          Slider. By selecting different groups of particles at different times
-          you can explore questions such as: Where do all the particles from one
-          place go? or Where did all the particles that ended up in some place
-          come from?
+          <LazyLoadedViewer>
+            <h3>Puget Sound Drifter Tracks</h3>
+
+            <p>
+              The map plot shows tracks from simulated surface drifter tracks
+              over three days from the most recent LiveOcean daily forecast. At
+              the start time you can see the initial drifter release locations
+              as blue dots. Using the "Time Slider" you can see where each
+              particle goes in time. Use the playback buttons to play the
+              forecast at different speeds.
+            </p>
+
+            <h4>Selecting and tracking drifters</h4>
+
+            <p>
+              If you click on a drifter (zoom in if necessary) it will turn red.
+              They will stay red when you use the Time Slider. By selecting
+              different groups of particles at different times you can explore
+              questions such as: Where do all the particles from one place go?
+              or Where did all the particles that ended up in some place come
+              from?
+            </p>
+          </LazyLoadedViewer>
         </section>
         <Pagination pathname={"drifters/pugetsound"} prefix="interactive" />
       </Typography>
