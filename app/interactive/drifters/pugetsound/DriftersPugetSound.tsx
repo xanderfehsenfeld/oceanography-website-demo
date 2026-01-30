@@ -14,7 +14,7 @@ import L from "leaflet"
 import { useTheme } from "next-themes"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
-import { getPoints, IFeature } from "./getPoints"
+import { getPoints, getTrack, IFeature } from "./getPoints"
 import times from "./PS_times.json"
 
 import "./DriftersPugetSound.css"
@@ -222,6 +222,21 @@ function MapChart({ children }: { children: ReactNode }) {
     }
     event.stopPropagation()
     renderData(points[sliderValue].features)
+
+    const drifterTrack = getTrack(id)
+
+    console.log("track", drifterTrack)
+
+    const coordinates = drifterTrack.features.map((v) => v.geometry.coordinates)
+
+    // Loop over all tracks and plot them, one line per track.
+    svg
+      .append("path")
+      .attr("d", d3.line()(coordinates))
+      .attr("stroke", "green")
+      .attr("fill", "none")
+      .attr("opacity", 0.5)
+      .enter()
   })
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
