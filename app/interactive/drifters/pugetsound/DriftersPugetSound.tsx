@@ -11,7 +11,6 @@ import {
 } from "react"
 import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import * as d3 from "d3"
-import L from "leaflet"
 import { useTheme } from "next-themes"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
@@ -19,6 +18,10 @@ import { getPoints, getTrack, IFeature } from "./getPoints"
 import times from "./PS_times.json"
 
 import "./DriftersPugetSound.css"
+
+import { LatLng } from "leaflet"
+
+import MapView from "@/components/map/map-view"
 
 const timeOptions: string[] = times[0].t
 
@@ -37,20 +40,9 @@ const allPointsInOneCollection = points.reduce((previous, current) => {
 
 var map: L.Map
 
-const mapSources = {
-  voyagerNoLabels: {
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-  darkMatterNoLabels: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-}
-
 const initialZoomLevel = 9
+const initialLat = 48
+const initialLong = -122.5
 
 const initialCircleRadius = 3
 
@@ -59,7 +51,7 @@ const initialCircleRadius = 3
 //Returns the map layer point that corresponds to the given geographical
 // coordinates (useful for placing overlays on the map).
 function projectPoint(this: any, x: number, y: number) {
-  var point = map.latLngToLayerPoint(new L.LatLng(y, x))
+  var point = map.latLngToLayerPoint(new LatLng(y, x))
   this.stream.point(point.x, point.y)
 } //end projectPoint
 
@@ -108,7 +100,7 @@ let isIn: { [key: string]: boolean } = {}
 function applyLatLngToLayer(d: any) {
   var y = d.geometry.coordinates[1]
   var x = d.geometry.coordinates[0]
-  return map.latLngToLayerPoint(new L.LatLng(y, x))
+  return map.latLngToLayerPoint(new LatLng(y, x))
 }
 
 var toLine = d3
@@ -221,9 +213,6 @@ function MapChart({ children }: { children: ReactNode }) {
       })
   })
 
-  const initialLat = 48
-  const initialLong = -122.5
-
   const ref = useRef<HTMLDivElement>(null)
 
   const handleMapClick = useEffectEvent((e: L.LeafletMouseEvent) => {
@@ -241,7 +230,7 @@ function MapChart({ children }: { children: ReactNode }) {
       const properties = drifters[i].properties
       const { latitude, longitude, id } = properties
 
-      drifterLocation = new L.LatLng(latitude, longitude)
+      drifterLocation = new LatLng(latitude, longitude)
 
       const distance = clickLocation.distanceTo(drifterLocation)
 
@@ -270,18 +259,8 @@ function MapChart({ children }: { children: ReactNode }) {
     reset()
   })
   //This effect ideally is called once per page load. This initializes the map and d3
-  useEffect(() => {
-    map?.remove()
-
-    map = L.map(ref.current as any, {
-      zoomControl: false,
-      maxZoom: 15,
-      minZoom: 7,
-    }).setView([initialLat, initialLong], initialZoomLevel)
-
-    const bounds = map.getBounds()
-
-    map.setMaxBounds(bounds.pad(2))
+  const onMapMount = useEffectEvent((mountedMap: L.Map) => {
+    map = mountedMap
 
     // we will be appending the SVG to the Leaflet map pane
     // g (group) element will be inside the svg
@@ -291,8 +270,6 @@ function MapChart({ children }: { children: ReactNode }) {
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
-
-    map.on("click", handleMapClick)
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
@@ -334,26 +311,7 @@ function MapChart({ children }: { children: ReactNode }) {
     // single line. For now these are basically points
     // but below we set the "d" attribute using the
     // line creator function from above.
-
-    // when the user zooms in or out you need to reset
-    // the view
-    map.on("zoom", reset)
-
-    // this puts stuff on the map!
-    reset()
-    // transition()
-  }, [])
-
-  useEffect(() => {
-    const tileset =
-      theme === "dark"
-        ? mapSources.darkMatterNoLabels
-        : mapSources.voyagerNoLabels
-
-    L.tileLayer(tileset.url, {
-      attribution: tileset.attribution,
-    }).addTo(map)
-  }, [theme])
+  })
 
   const maxSliderValue = points.length - 1
   const increment = useCallback(() => {
@@ -374,18 +332,14 @@ function MapChart({ children }: { children: ReactNode }) {
 
   return (
     <div className="gap-4 sm:flex">
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
+      <MapView
+        initialLat={initialLat}
+        initialLong={initialLong}
+        zoom={initialZoomLevel}
+        onZoomChange={reset}
+        onMapClick={handleMapClick}
+        onMapMount={onMapMount}
       />
-      <div
-        className="not-prose z-10 min-h-[60vh] flex-1 md:h-[70vh]"
-        key={"key"}
-        id="map"
-        ref={ref}
-      ></div>
       <div className="flex-1 gap-2">
         <div className={"w-full"}>
           <p>
