@@ -107,11 +107,9 @@ function applyLatLngToLayer(d) {
   return map.latLngToLayerPoint(new L.LatLng(y, x))
 }
 
-let currentInterval: NodeJS.Timeout | undefined
-
 function MapChart() {
   const [sliderValue, setSliderValue] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
+  const [playbackSpeed, setPlaybackSpeed] = useState(1)
 
   const displayValue = timeOptions[sliderValue]
 
@@ -184,10 +182,6 @@ function MapChart() {
 
         return isSelected ? "red" : "teal"
       })
-
-      .transition()
-      .duration(200)
-
       .attr("transform", function (d) {
         return (
           "translate(" +
@@ -267,13 +261,10 @@ function MapChart() {
       .style("pointer-events", "all")
 
       .on("click", function (e) {
-        console.log(this.getAttribute("id"))
         const id = this.getAttribute("id")
 
         if (id) {
           isIn[id] = !isIn[id]
-
-          console.log(isIn[id])
 
           this.setAttribute("fill", isIn[id] ? "red" : "teal")
 
@@ -360,19 +351,22 @@ function MapChart() {
     } //end tweenDash
   }, [])
 
+  const maxSliderValue = points.length - 1
   const increment = useCallback(() => {
-    console.log("increment")
-    setSliderValue(sliderValue + 1)
+    setSliderValue((sliderValue + 1) % maxSliderValue)
   }, [sliderValue])
 
   useEffect(() => {
-    if (isPlaying && !currentInterval) {
-      currentInterval = setInterval(increment, 100)
-    } else {
-      clearInterval(currentInterval)
-      currentInterval = undefined
+    if (playbackSpeed) {
+      const timeOut = setTimeout(increment, 100 / playbackSpeed)
+
+      return () => clearTimeout(timeOut)
     }
-  }, [isPlaying])
+  }, [playbackSpeed, sliderValue])
+
+  useEffect(() => {
+    renderData(points[sliderValue].features)
+  }, [sliderValue])
 
   return (
     <div className="flex flex-col gap-2">
@@ -392,31 +386,35 @@ function MapChart() {
             Time Slider: <span id="demo">{displayValue}</span>
           </p>
         </div>
-        <div className="flex w-full items-center gap-2">
+        <div className="flex w-full items-center gap-4">
           <SegmentedControl.Root
             className="cursor-pointer"
-            defaultValue="play"
+            defaultValue="1"
+            value={playbackSpeed.toString()}
             size={"3"}
           >
             <SegmentedControl.Item
               className="h-9 w-9 cursor-pointer"
-              onClick={() => setIsPlaying(false)}
-              value="pause"
+              onClick={() => setPlaybackSpeed(0)}
+              value="0"
             >
               <FaPause />{" "}
             </SegmentedControl.Item>
             <SegmentedControl.Item
               className="h-9 w-9 cursor-pointer"
               onClick={() => {
-                setIsPlaying(true)
+                setPlaybackSpeed(1)
               }}
-              value="play"
+              value="1"
             >
               <FaPlay />
             </SegmentedControl.Item>
             <SegmentedControl.Item
               className="h-9 w-9 cursor-pointer"
-              value="fast-forward"
+              value="2"
+              onClick={() => {
+                setPlaybackSpeed(2)
+              }}
             >
               <FaFastForward />
             </SegmentedControl.Item>
@@ -424,14 +422,16 @@ function MapChart() {
 
           <Slider
             size={"3"}
+            className="cursor-grab"
             onValueChange={(v) => {
+              setPlaybackSpeed(0)
+
               const value = v[0]
               setSliderValue(value)
-              renderData(points[value].features)
             }}
             value={[sliderValue]}
             min={0}
-            max={points.length - 1}
+            max={maxSliderValue}
             id="myRange"
           />
         </div>
