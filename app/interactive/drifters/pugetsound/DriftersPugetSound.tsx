@@ -102,7 +102,7 @@ const getScaleMultiplier = (): number => {
 // svg coordinates except that it accepts a point from our
 // GeoJSON
 
-const isIn: { [key: string]: boolean } = {}
+let isIn: { [key: string]: boolean } = {}
 
 function applyLatLngToLayer(d: any) {
   var y = d.geometry.coordinates[1]
@@ -143,21 +143,6 @@ function MapChart({ children }: { children: ReactNode }) {
 
       .attr("r", initialCircleRadius * zoomScale)
 
-    // again, not best practice, but I'm harding coding
-    // the starting point
-
-    // marker.attr("transform", function () {
-    //   var y = featuresdata[0].geometry.coordinates[1]
-    //   var x = featuresdata[0].geometry.coordinates[0]
-    //   return (
-    //     "translate(" +
-    //     map.latLngToLayerPoint(new L.LatLng(y, x)).x +
-    //     "," +
-    //     map.latLngToLayerPoint(new L.LatLng(y, x)).y +
-    //     ")"
-    //   )
-    // })
-
     var bounds = d3path.bounds(allPointsInOneCollection),
       topLeft = bounds[0],
       bottomRight = bounds[1]
@@ -169,9 +154,6 @@ function MapChart({ children }: { children: ReactNode }) {
       .style("left", topLeft[0] - 50 + "px")
       .style("top", topLeft[1] - 50 + "px")
 
-    // linePath.attr("d", d3path);
-    // linePath.attr("d", toLine)
-    // ptPath.attr("d", d3path);
     g.attr(
       "transform",
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
@@ -232,6 +214,15 @@ function MapChart({ children }: { children: ReactNode }) {
     return
   })
 
+  const handleDrifterClick = useEffectEvent(function (event: any, d: IFeature) {
+    const id = d.properties.id
+    console.log("id of clicked", id)
+    isIn = {
+      [id]: true,
+    }
+    event.stopPropagation()
+    renderData(points[sliderValue].features)
+  })
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
     map?.remove()
@@ -290,6 +281,7 @@ function MapChart({ children }: { children: ReactNode }) {
         return i
       })
 
+      .on("click", handleDrifterClick)
     // Here we will make the points into a single
     // line/path. Note that we surround the featuresdata
     // with [] to tell d3 to treat all the points as a

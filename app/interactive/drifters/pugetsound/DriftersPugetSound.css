@@ -1,7 +1,24 @@
-#map .drifter {
+#map {
+  .drifter {
+    fill: blue;
+    opacity: 0.3;
+    cursor: pointer;
+
+
+  }
+
+  .drifter:hover {
+
+    fill: green;
+    opacity: 1;
+
+  }
+}
+
+/* #map .drifter:hover {
   fill: blue;
   opacity: 0.3;
-}
+} */
 
 
 #map .drifter.selected {
