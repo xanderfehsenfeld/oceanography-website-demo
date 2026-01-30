@@ -95,7 +95,7 @@ for (let s = 0; s < nCoast; s++) {
 // sxyAll is packed as:
 // [ [ [x,y], [x,y], ...], [], ...]
 // where each item in the list is one track, packed as a list of [x,y] points.
-let sxyAll = []
+let sxyAll: number[][][] = []
 for (let j = 0; j < nTracks; j++) {
   // pull out a single track
   var xdata = trackVal[j].x
@@ -145,36 +145,33 @@ const DriftersWillapaAndGrays = () => {
 
   const displayValue = tlist[sliderValue]
 
-
   const update_points = useEffectEvent(() => {
-          const svg = d3
-        .select(ref.current)
+    const svg = d3.select(ref.current)
 
-        // get rid of any circles
-        svg.selectAll("circle").remove()
-        for (let j = 0; j < nTracks; j++) {
-          // plot the point
-          if (isin[j] == 2.0) {
-            svg
-              .append("circle")
-              .attr("cx", sxyNow[j][0])
-              .attr("cy", sxyNow[j][1])
-              .attr("r", 3)
-              .attr("opacity", 0.2)
-              .style("fill", "blue")
-          } else if (isin[j] == 1.0) {
-            svg
-              .append("circle")
-              .attr("cx", sxyNow[j][0])
-              .attr("cy", sxyNow[j][1])
-              .attr("r", 3)
-              .style("fill", "red")
-          }
-        }
+    // get rid of any circles
+    svg.selectAll("circle").remove()
+    for (let j = 0; j < nTracks; j++) {
+      // plot the point
+      if (isin[j] == 2.0) {
+        svg
+          .append("circle")
+          .attr("cx", sxyNow[j][0])
+          .attr("cy", sxyNow[j][1])
+          .attr("r", 3)
+          .attr("opacity", 0.2)
+          .style("fill", "blue")
+      } else if (isin[j] == 1.0) {
+        svg
+          .append("circle")
+          .attr("cx", sxyNow[j][0])
+          .attr("cy", sxyNow[j][1])
+          .attr("r", 3)
+          .style("fill", "red")
+      }
+    }
   })
 
   useEffect(() => {
-
     if (ref) {
       const svg = d3
         .select(ref.current)
@@ -208,7 +205,6 @@ const DriftersWillapaAndGrays = () => {
 
       // Loop over all tracks and plot them, one line per track.
       for (let j = 0; j < nTracks; j++) {
-        
         svg
           .append("path")
           .attr("d", d3.line()(sxyAll[j] as any))
@@ -297,12 +293,9 @@ const DriftersWillapaAndGrays = () => {
         }
       }
 
- 
-
       initBrush()
       update_isin()
       update_points()
-
     }
   }, [ref])
 
@@ -333,17 +326,29 @@ const DriftersWillapaAndGrays = () => {
 
         <h3> Willapa Bay & Grays Harbor Drifter Tracks</h3>
 
-        <p>The map plot shows tracks from simulated drifter tracks over three days from the most recent LiveOcean daily forecast. At the start time you can see the initial drifter release locations as two clusters of blue dots near the beaches north and south of Willapa Bay. The green lines show the tracks that the drifters take over the full three days, about six tidal cycles.
-
-
+        <p>
+          The map plot shows tracks from simulated drifter tracks over three
+          days from the most recent LiveOcean daily forecast. At the start time
+          you can see the initial drifter release locations as two clusters of
+          blue dots near the beaches north and south of Willapa Bay. The green
+          lines show the tracks that the drifters take over the full three days,
+          about six tidal cycles.
         </p>
-        <p>Using the "Time Slider" you can see where each particle goes in time. If you click and drag across a region of the map with some drifters in it they will turn red. They will stay red when you use the Time Slider. By selecting different groups of particles at different times you can explore questions such as: Where do all the particles from the North release site go? or Where did all the particles that ended up in some place come from?
-
-
+        <p>
+          Using the "Time Slider" you can see where each particle goes in time.
+          If you click and drag across a region of the map with some drifters in
+          it they will turn red. They will stay red when you use the Time
+          Slider. By selecting different groups of particles at different times
+          you can explore questions such as: Where do all the particles from the
+          North release site go? or Where did all the particles that ended up in
+          some place come from?
         </p>
-        <p>The model used here is a high-resolution model of these two estuaries, nested inside the larger LiveOcean model. It has 200 m horizontal resolution, 30 vertical layers, and wetting-and-drying of the intertidal. The particles are tracked in 3-D, including dispersion due to turbulence.
-
-
+        <p>
+          The model used here is a high-resolution model of these two estuaries,
+          nested inside the larger LiveOcean model. It has 200 m horizontal
+          resolution, 30 vertical layers, and wetting-and-drying of the
+          intertidal. The particles are tracked in 3-D, including dispersion due
+          to turbulence.
         </p>
       </div>
     </div>

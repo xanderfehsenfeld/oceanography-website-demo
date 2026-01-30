@@ -89,14 +89,14 @@ export const Documents: Paths[] = [
         title: "Drifters: Willapa & Grays",
         href: "/drifters/willapaandgrays",
       },
-      // {
-      //   title: "Drifters: Willapa 2025 Custom",
-      //   href: "/tracks2_willapa25",
-      // },
-      // {
-      //   title: "Observation Viewer",
-      //   href: "/obs",
-      // },
+      {
+        title: "Drifters: Willapa 2025 Custom",
+        href: "/drifters/custom",
+      },
+      {
+        title: "Observation Viewer",
+        href: "/observationsviewer",
+      },
       // {
       //   title: "Model vs. Observations Viewer",
       //   href: "/obsmod",
