@@ -110,6 +110,16 @@ function applyLatLngToLayer(d: any) {
   return map.latLngToLayerPoint(new L.LatLng(y, x))
 }
 
+var toLine = d3
+  .line()
+  //.interpolate("linear")
+  .x(function (d) {
+    return applyLatLngToLayer(d).x
+  })
+  .y(function (d) {
+    return applyLatLngToLayer(d).y
+  })
+
 function MapChart({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
@@ -158,9 +168,23 @@ function MapChart({ children }: { children: ReactNode }) {
       "transform",
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
     )
+    var linePath = g.selectAll(".lineConnect")
+
+    // linePath.attr("d", d3path);
+    linePath.attr("d", toLine as any)
   })
 
-  const renderData = useEffectEvent((data: IFeature[]) => {
+  const renderDrifterTrackLine = useEffectEvent((data: IFeature[]) => {
+    g.selectAll(".lineConnect")
+      .data([data])
+      .enter()
+
+      .append("path")
+
+      .attr("class", "lineConnect")
+  })
+
+  const renderDrifters = useEffectEvent((data: IFeature[]) => {
     const existingCircles = g.selectAll("circle").data(data)
 
     existingCircles
@@ -196,6 +220,8 @@ function MapChart({ children }: { children: ReactNode }) {
 
     const scaleMultiplier = getScaleMultiplier()
 
+    g.selectAll(".lineConnect").remove()
+
     for (let i = 0; i < drifters.length; i++) {
       const properties = drifters[i].properties
       const { latitude, longitude, id } = properties
@@ -209,7 +235,7 @@ function MapChart({ children }: { children: ReactNode }) {
       isIn[id] = isSelected
     }
 
-    if (playbackSpeed === 0) renderData(points[sliderValue].features)
+    if (playbackSpeed === 0) renderDrifters(points[sliderValue].features)
 
     return
   })
@@ -221,22 +247,13 @@ function MapChart({ children }: { children: ReactNode }) {
       [id]: true,
     }
     event.stopPropagation()
-    renderData(points[sliderValue].features)
 
     const drifterTrack = getTrack(id)
 
-    console.log("track", drifterTrack)
+    renderDrifterTrackLine(drifterTrack.features)
 
-    const coordinates = drifterTrack.features.map((v) => v.geometry.coordinates)
-
-    // Loop over all tracks and plot them, one line per track.
-    svg
-      .append("path")
-      .attr("d", d3.line()(coordinates))
-      .attr("stroke", "green")
-      .attr("fill", "none")
-      .attr("opacity", 0.5)
-      .enter()
+    renderDrifters(points[sliderValue].features)
+    reset()
   })
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
@@ -303,12 +320,6 @@ function MapChart({ children }: { children: ReactNode }) {
     // single line. For now these are basically points
     // but below we set the "d" attribute using the
     // line creator function from above.
-    var linePath = g
-      .selectAll(".lineConnect")
-      .data([featuresdata])
-      .enter()
-      .append("path")
-      .attr("class", "lineConnect")
 
     // when the user zooms in or out you need to reset
     // the view
@@ -344,7 +355,7 @@ function MapChart({ children }: { children: ReactNode }) {
   }, [playbackSpeed, sliderValue])
 
   useEffect(() => {
-    renderData(points[sliderValue].features)
+    renderDrifters(points[sliderValue].features)
   }, [sliderValue])
 
   return (
