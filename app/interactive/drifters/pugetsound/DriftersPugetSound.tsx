@@ -1,10 +1,12 @@
 "use client"
 
-import { useEffect, useEffectEvent, useRef, useState } from "react"
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
+import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import * as d3 from "d3"
 import L from "leaflet"
+import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
-import { Slider } from "@/components/slider"
+import { Button } from "@/components/ui/button"
 
 import { getPoints, IFeature } from "./getPoints"
 import times from "./PS_times.json"
@@ -105,8 +107,11 @@ function applyLatLngToLayer(d) {
   return map.latLngToLayerPoint(new L.LatLng(y, x))
 }
 
+let currentInterval: NodeJS.Timeout | undefined
+
 function MapChart() {
   const [sliderValue, setSliderValue] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
 
   const displayValue = timeOptions[sliderValue]
 
@@ -355,6 +360,20 @@ function MapChart() {
     } //end tweenDash
   }, [])
 
+  const increment = useCallback(() => {
+    console.log("increment")
+    setSliderValue(sliderValue + 1)
+  }, [sliderValue])
+
+  useEffect(() => {
+    if (isPlaying && !currentInterval) {
+      currentInterval = setInterval(increment, 100)
+    } else {
+      clearInterval(currentInterval)
+      currentInterval = undefined
+    }
+  }, [isPlaying])
+
   return (
     <div className="flex flex-col gap-2">
       <link
@@ -367,23 +386,55 @@ function MapChart() {
         <div className="h-full" id="map" ref={ref}></div>
       </div>
       <link href="/scripts/jspm/style1.css" rel="stylesheet" type="text/css" />
-      <div>
+      <div className="flex flex-col gap-2">
         <div className={"w-full"}>
           <p>
             Time Slider: <span id="demo">{displayValue}</span>
           </p>
         </div>
-        <Slider
-          onChange={(input) => {
-            setSliderValue(input.target.valueAsNumber)
-            renderData(points[input.target.valueAsNumber].features)
-          }}
-          defaultValue={0}
-          min={0}
-          max={points.length - 1}
-          className="slider"
-          id="myRange"
-        />
+        <div className="flex w-full items-center gap-2">
+          <SegmentedControl.Root
+            className="cursor-pointer"
+            defaultValue="play"
+            size={"3"}
+          >
+            <SegmentedControl.Item
+              className="h-9 w-9 cursor-pointer"
+              onClick={() => setIsPlaying(false)}
+              value="pause"
+            >
+              <FaPause />{" "}
+            </SegmentedControl.Item>
+            <SegmentedControl.Item
+              className="h-9 w-9 cursor-pointer"
+              onClick={() => {
+                setIsPlaying(true)
+              }}
+              value="play"
+            >
+              <FaPlay />
+            </SegmentedControl.Item>
+            <SegmentedControl.Item
+              className="h-9 w-9 cursor-pointer"
+              value="fast-forward"
+            >
+              <FaFastForward />
+            </SegmentedControl.Item>
+          </SegmentedControl.Root>
+
+          <Slider
+            size={"3"}
+            onValueChange={(v) => {
+              const value = v[0]
+              setSliderValue(value)
+              renderData(points[value].features)
+            }}
+            value={[sliderValue]}
+            min={0}
+            max={points.length - 1}
+            id="myRange"
+          />
+        </div>
       </div>
     </div>
   )
