@@ -120,7 +120,7 @@ function MapView({
       <MapScale isHorizontal min={left} max={right} />
 
       <div
-        className="not-prose relative z-10 h-full min-h-[60vh] w-full"
+        className="not-prose md:h-inherit relative z-10 max-h-[80vh] min-h-[60vh] flex-1"
         id="map"
         ref={ref}
       ></div>
