@@ -19,8 +19,6 @@ const mapSources = {
   },
 }
 
-const initialZoomLevel = 9
-
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
@@ -28,6 +26,7 @@ function MapView({
   onMapMount,
   onMapClick,
   onZoomChange,
+  zoom: initialZoomLevel,
 }: {
   initialLat: number
   initialLong: number

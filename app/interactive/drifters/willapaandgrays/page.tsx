@@ -37,12 +37,12 @@ export default function Pages() {
             </p>
             <p>
               Using the "Time Slider" you can see where each particle goes in
-              time. If you click and drag across a region of the map with some
-              drifters in it they will turn red. They will stay red when you use
-              the Time Slider. By selecting different groups of particles at
-              different times you can explore questions such as: Where do all
-              the particles from the North release site go? or Where did all the
-              particles that ended up in some place come from?
+              time. If you click on the map with some drifters nearby they will
+              turn red. They will stay red when you use the Time Slider. By
+              selecting different groups of particles at different times you can
+              explore questions such as: Where do all the particles from the
+              North release site go? or Where did all the particles that ended
+              up in some place come from?
             </p>
             <p>
               The model used here is a high-resolution model of these two
