@@ -32,7 +32,7 @@ export default function Pages() {
               days from the most recent LiveOcean daily forecast. At the start
               time you can see the initial drifter release locations as two
               clusters of blue dots near the beaches north and south of Willapa
-              Bay. The green lines show the tracks that the drifters take over
+              Bay. The magenta lines show the tracks that the drifters take over
               the full three days, about six tidal cycles.
             </p>
             <p>

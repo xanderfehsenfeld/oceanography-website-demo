@@ -3,33 +3,29 @@
     fill: blue;
     opacity: 0.3;
     cursor: pointer;
-
-
   }
 
   .drifter:hover {
-
     fill: green;
     opacity: 1;
-
   }
 }
-
-
-
 
 #map .drifter.selected {
   fill: red;
   opacity: 1;
 }
 
-
 .lineConnect {
-  /* fill: magenta; */
-  /* stroke: black; */
   opacity: 1;
   fill: none;
   stroke: green;
-  opacity: 0.5;
+  stroke-width: 3;
+}
+
+.backgroundLineConnect {
+  fill: none;
+  stroke: magenta;
+  opacity: 0.3;
   stroke-width: 3;
 }

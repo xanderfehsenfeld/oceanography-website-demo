@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
+import { Control, LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
 import { useTheme } from "next-themes"
 
 var leafletMap: Map
@@ -55,6 +55,7 @@ function MapView({
     const bounds = leafletMap.getBounds()
 
     leafletMap.setMaxBounds(bounds.pad(2))
+    leafletMap.addControl(new Control.Scale())
 
     onMapMount(leafletMap)
 

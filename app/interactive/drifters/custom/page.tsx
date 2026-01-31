@@ -20,7 +20,7 @@ export default function Pages() {
           The map plot shows tracks from simulated drifter tracks over three
           days from the most recent LiveOcean daily forecast. At the start time
           you can see the initial drifter release locations as six clusters of
-          blue dots at locations in and near Willapa Bay. The green lines show
+          blue dots at locations in and near Willapa Bay. The magenta lines show
           the tracks that the drifters take over the full three days, about six
           tidal cycles.
         </p>
@@ -36,7 +36,7 @@ export default function Pages() {
               days from the most recent LiveOcean daily forecast. At the start
               time you can see the initial drifter release locations as six
               clusters of blue dots at locations in and near Willapa Bay. The
-              green lines show the tracks that the drifters take over the full
+              magenta lines show the tracks that the drifters take over the full
               three days, about six tidal cycles.
             </p>
             <p>
