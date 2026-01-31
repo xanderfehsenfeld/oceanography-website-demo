@@ -1,4 +1,6 @@
-import { ComponentProps, useEffect, useEffectEvent } from "react"
+"use client"
+
+import { Component, ComponentProps } from "react"
 import * as d3 from "d3"
 
 import "./map-chart-view.css"
@@ -7,7 +9,7 @@ import { LatLng } from "leaflet"
 
 import MapView from "@/components/map/map-view"
 
-import { getPoints, IFeature, IPoints } from "./getPoints"
+import { getBoundsOfData, getPoints, IFeature, IPoints } from "./getPoints"
 import MapScale from "./map-scale"
 
 var map: L.Map
@@ -71,13 +73,7 @@ var toLine = d3
     return applyLatLngToLayer(d).y
   })
 
-function MapChartView({
-  circles,
-  lines,
-  showAllLines,
-  allPoints,
-  ...mapProps
-}: Pick<
+type IProps = Pick<
   ComponentProps<typeof MapView>,
   "initialLat" | "initialLong" | "zoom"
 > & {
@@ -85,8 +81,23 @@ function MapChartView({
   lines: { [key: string]: IPoints }
   allPoints: IPoints[]
   showAllLines?: boolean
-}) {
-  const getScaleMultiplier = (): number => {
+}
+class MapChartView extends Component<IProps> {
+  constructor(props: IProps) {
+    super(props)
+  }
+
+  componentDidUpdate(
+    prevProps: Readonly<IProps>,
+    prevState: Readonly<{}>,
+    snapshot?: any
+  ): void {
+    const { renderDrifters } = this
+    const { circles } = this.props
+    renderDrifters(circles)
+  }
+
+  getScaleMultiplier = (): number => {
     if (map) {
       const currentZoomLevel = map?.getZoom() || 1
       const zoomScale = map.getZoomScale(currentZoomLevel, defaultZoom)
@@ -97,7 +108,8 @@ function MapChartView({
     }
   }
 
-  const generateBounds = useEffectEvent(() => {
+  generateBounds = () => {
+    const { allPoints } = this.props
     const positionsAtTimeZero = allPoints[0]
 
     const allPointsInOneCollection = allPoints.reduce((previous, current) => {
@@ -109,9 +121,11 @@ function MapChartView({
       }
     }, positionsAtTimeZero)
     return d3path.bounds(allPointsInOneCollection)
-  })
+  }
 
-  const reset = useEffectEvent(() => {
+  reset = () => {
+    const { generateBounds, getScaleMultiplier } = this
+
     // For simplicity I hard-coded this! I'm taking
     // the first and the last object (the origin)
     // and destination and adding them separately to
@@ -153,6 +167,9 @@ function MapChartView({
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
     )
 
+    const [x0, y1] = topLeft
+    const [x1, y0] = bottomRight
+
     var backgroundLines = g.selectAll(".backgroundLineConnect")
 
     // linePath.attr("d", d3path);
@@ -162,21 +179,19 @@ function MapChartView({
 
     // linePath.attr("d", d3path);
     linePath.attr("d", toLine as any)
-  })
+  }
 
-  const renderLines = useEffectEvent(
-    (data: IFeature[][], className = "lineConnect") => {
-      g.selectAll(`.${className}`)
-        .data(data)
-        .enter()
+  renderLines = (data: IFeature[][], className = "lineConnect") => {
+    g.selectAll(`.${className}`)
+      .data(data)
+      .enter()
 
-        .append("path")
+      .append("path")
 
-        .attr("class", className)
-    }
-  )
+      .attr("class", className)
+  }
 
-  const renderDrifters = useEffectEvent((data: IFeature[]) => {
+  renderDrifters = (data: IFeature[]) => {
     const existingCircles = g.selectAll("circle").data(data)
 
     existingCircles
@@ -196,15 +211,16 @@ function MapChartView({
           ")"
         )
       })
-  })
+  }
 
-  const handleMapClick = useEffectEvent((e: L.LeafletMouseEvent) => {
+  handleMapClick = (e: L.LeafletMouseEvent) => {
+    const { circles } = this.props
+    const { renderDrifters, getScaleMultiplier } = this
     const drifters = circles
 
     const clickLocation = e.latlng
 
     let drifterLocation: L.LatLngExpression
-
     const scaleMultiplier = getScaleMultiplier()
 
     g.selectAll(".lineConnect").remove()
@@ -225,9 +241,12 @@ function MapChartView({
     renderDrifters(drifters)
 
     return
-  })
+  }
 
-  const handleDrifterClick = useEffectEvent(function (event: any, d: IFeature) {
+  handleDrifterClick = (event: any, d: IFeature) => {
+    const { lines, circles } = this.props
+    const { renderLines, reset, renderDrifters } = this
+
     const id = d.properties.id
     isIn = {
       [id]: true,
@@ -238,10 +257,13 @@ function MapChartView({
 
     renderDrifters(circles)
     reset()
-  })
+  }
 
-  //This effect ideally is called once per page load. This initializes the map and d3
-  const onMapMount = useEffectEvent((mountedMap: L.Map) => {
+  onMapMount = (mountedMap: L.Map) => {
+    const { allPoints, showAllLines, circles, lines } = this.props
+
+    const { renderLines, handleDrifterClick } = this
+
     map = mountedMap
 
     // we will be appending the SVG to the Leaflet map pane
@@ -252,6 +274,36 @@ function MapChartView({
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
+
+    const { minLatitude, minLongitude, maxLatitude, maxLongitude } =
+      getBoundsOfData(allPoints)
+
+    console.log("maxLongitude", maxLongitude)
+    console.log("minLongitude", minLongitude)
+
+    const [topLeft, bottomRight] = d3path.bounds({
+      type: "FeatureCollection",
+      features: [
+        {
+          type: "Point",
+
+          properties: {},
+          geometry: {
+            type: "Point",
+            coordinates: [minLatitude, maxLongitude],
+          },
+        },
+        {
+          type: "Point",
+
+          properties: {},
+          geometry: {
+            type: "Point",
+            coordinates: [maxLatitude, minLongitude],
+          },
+        },
+      ],
+    })
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
@@ -294,21 +346,20 @@ function MapChartView({
       })
 
     ptFeatures.on("click", handleDrifterClick)
-  })
+  }
+  render() {
+    const { circles, lines, showAllLines, allPoints, ...mapProps } = this.props
+    const { reset, handleMapClick, onMapMount } = this
 
-  useEffect(() => {
-    renderDrifters(circles)
-  }, [circles])
-
-  return (
-    <MapView
-      {...mapProps}
-      key={"key"}
-      onZoomChange={reset}
-      onMapClick={handleMapClick}
-      onMapMount={onMapMount}
-    />
-  )
+    return (
+      <MapView
+        {...mapProps}
+        onZoomChange={reset}
+        onMapClick={handleMapClick}
+        onMapMount={onMapMount}
+      />
+    )
+  }
 }
 
 export default MapChartView

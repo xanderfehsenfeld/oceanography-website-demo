@@ -10,6 +10,7 @@ import {
 } from "leaflet"
 import { useTheme } from "next-themes"
 
+import { generateMapScale } from "./generateSVG"
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
 

@@ -97,7 +97,6 @@ export const getBoundsOfData = (tracksTyped: IPoints[]) => {
     allPointsInOneCollection,
     (v) => v.properties.latitude
   ) as number
-
   const minLongitude = d3.min(
     allPointsInOneCollection,
     (v) => v.properties.longitude
@@ -110,11 +109,6 @@ export const getBoundsOfData = (tracksTyped: IPoints[]) => {
     allPointsInOneCollection,
     (v) => v.properties.longitude
   ) as number
-
-  console.log("minimum latitude of data", minLatitude)
-  console.log("maximum latitude of data", maxLatitude)
-  console.log("minimum  longitude of data", minLongitude)
-  console.log("maximum longitude of data", maxLongitude)
 
   return {
     minLatitude,
