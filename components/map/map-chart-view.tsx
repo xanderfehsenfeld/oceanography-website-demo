@@ -167,8 +167,8 @@ class MapChartView extends Component<IProps> {
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
     )
 
-    const [x0, y1] = topLeft
-    const [x1, y0] = bottomRight
+    // var scale = g.selectAll(".mapScale")
+    // scale.attr("d", toLine as any)
 
     var backgroundLines = g.selectAll(".backgroundLineConnect")
 
@@ -274,36 +274,6 @@ class MapChartView extends Component<IProps> {
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
-
-    const { minLatitude, minLongitude, maxLatitude, maxLongitude } =
-      getBoundsOfData(allPoints)
-
-    console.log("maxLongitude", maxLongitude)
-    console.log("minLongitude", minLongitude)
-
-    const [topLeft, bottomRight] = d3path.bounds({
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Point",
-
-          properties: {},
-          geometry: {
-            type: "Point",
-            coordinates: [minLatitude, maxLongitude],
-          },
-        },
-        {
-          type: "Point",
-
-          properties: {},
-          geometry: {
-            type: "Point",
-            coordinates: [maxLatitude, minLongitude],
-          },
-        },
-      ],
-    })
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in
