@@ -2,7 +2,6 @@
 
 import { ReactNode, useEffect, useEffectEvent, useRef, useState } from "react"
 import {
-  Control,
   LeafletEvent,
   LeafletMouseEvent,
   Map,
@@ -13,8 +12,6 @@ import { useTheme } from "next-themes"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
-
-var leafletMap: Map
 
 const mapSources = {
   voyagerNoLabels: {
