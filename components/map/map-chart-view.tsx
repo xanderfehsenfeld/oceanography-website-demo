@@ -14,6 +14,7 @@ import { getPoints, IFeature, IPoints } from "./getPoints"
 var map: L.Map
 
 const initialCircleRadius = 3
+const defaultZoom = 9
 
 // Use Leaflet to implement a D3 geometric transformation.
 // the latLngToLayerPoint is a Leaflet conversion method:
@@ -74,6 +75,7 @@ var toLine = d3
 function MapChartView({
   circles,
   lines,
+  showAllLines,
   allPoints,
   ...mapProps
 }: Pick<
@@ -83,11 +85,12 @@ function MapChartView({
   circles: IFeature[]
   lines: { [key: string]: IPoints }
   allPoints: IPoints[]
+  showAllLines?: boolean
 }) {
   const getScaleMultiplier = (): number => {
     if (map) {
       const currentZoomLevel = map?.getZoom() || 1
-      const zoomScale = map.getZoomScale(currentZoomLevel, mapProps.zoom)
+      const zoomScale = map.getZoomScale(currentZoomLevel, defaultZoom)
 
       return zoomScale
     } else {
@@ -156,9 +159,9 @@ function MapChartView({
     linePath.attr("d", toLine as any)
   })
 
-  const renderLines = useEffectEvent((data: IFeature[]) => {
+  const renderLines = useEffectEvent((data: IFeature[][]) => {
     g.selectAll(".lineConnect")
-      .data([data])
+      .data(data)
       .enter()
 
       .append("path")
@@ -197,7 +200,9 @@ function MapChartView({
 
     const scaleMultiplier = getScaleMultiplier()
 
-    g.selectAll(".lineConnect").remove()
+    if (!showAllLines) {
+      g.selectAll(".lineConnect").remove()
+    }
 
     for (let i = 0; i < drifters.length; i++) {
       const properties = drifters[i].properties
@@ -224,7 +229,7 @@ function MapChartView({
     }
     event.stopPropagation()
 
-    renderLines(lines[id].features)
+    renderLines([lines[id].features])
 
     renderDrifters(circles)
     reset()
@@ -257,6 +262,10 @@ function MapChartView({
         return applyLatLngToLayer(d).y
       })
 
+    if (showAllLines) {
+      renderLines(circles.map((v) => lines[v.properties.id].features))
+    }
+
     // From now on we are essentially appending our features to the
     // group element. We're adding a class with the line name
     // and we're making them invisible
@@ -276,7 +285,9 @@ function MapChartView({
         return i
       })
 
-      .on("click", handleDrifterClick)
+    if (!showAllLines) {
+      ptFeatures.on("click", handleDrifterClick)
+    }
   })
 
   useEffect(() => {
