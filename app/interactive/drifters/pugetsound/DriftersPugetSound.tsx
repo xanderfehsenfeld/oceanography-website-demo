@@ -10,12 +10,11 @@ import {
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
+import MapChartView from "@/components/map/map-chart-view"
+import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
-
-
-import MapChartView from "@/components/map/map-chart-view"
 
 const timeOptions: string[] = times[0].t
 
@@ -83,55 +82,16 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
             Time Slider: <span id="demo">{displayValue}</span>
           </p>
         </div>
-        <div className="flex w-full items-center gap-4">
-          <SegmentedControl.Root
-            className="cursor-pointer"
-            defaultValue="1"
-            value={playbackSpeed.toString()}
-            size={"3"}
-          >
-            <SegmentedControl.Item
-              className="h-9 w-9 cursor-pointer"
-              onClick={() => setPlaybackSpeed(0)}
-              value="0"
-            >
-              <FaPause />{" "}
-            </SegmentedControl.Item>
-            <SegmentedControl.Item
-              className="h-9 w-9 cursor-pointer"
-              onClick={() => {
-                setPlaybackSpeed(1)
-              }}
-              value="1"
-            >
-              <FaPlay />
-            </SegmentedControl.Item>
-            <SegmentedControl.Item
-              className="h-9 w-9 cursor-pointer"
-              value="2"
-              onClick={() => {
-                setPlaybackSpeed(2)
-              }}
-            >
-              <FaFastForward />
-            </SegmentedControl.Item>
-          </SegmentedControl.Root>
-
-          <Slider
-            size={"3"}
-            className="cursor-grab"
-            onValueChange={(v) => {
-              setPlaybackSpeed(0)
-
-              const value = v[0]
-              setSliderValue(value)
-            }}
-            value={[sliderValue]}
-            min={0}
-            max={maxSliderValue}
-            id="myRange"
-          />
-        </div>
+        <TimeControls
+          value={sliderValue}
+          onPlaybackChange={setPlaybackSpeed}
+          maxSliderValue={maxSliderValue}
+          onSliderChange={(v) => {
+            setPlaybackSpeed(0)
+            setSliderValue(v)
+          }}
+          playbackSpeed={playbackSpeed}
+        />
 
         {children}
       </div>
