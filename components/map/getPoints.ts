@@ -1,3 +1,5 @@
+import * as d3 from "d3"
+
 interface Track {
   x: number[]
   y: number[]
@@ -82,4 +84,36 @@ export const getPoints = (tracksTyped: Track[]): IPoints[] => {
       }),
     }
   })
+}
+
+export const getBoundsOfData = (tracksTyped: IPoints[]) => {
+  const positionsAtTimeZero = tracksTyped[0].features
+
+  const allPointsInOneCollection = tracksTyped.reduce((previous, current) => {
+    return [...previous, ...current.features]
+  }, positionsAtTimeZero)
+
+  const minLatitude = d3.min(
+    allPointsInOneCollection,
+    (v) => v.properties.latitude
+  ) as number
+  const minLongitude = d3.min(
+    allPointsInOneCollection,
+    (v) => v.properties.longitude
+  ) as number
+  const maxLatitude = d3.max(
+    allPointsInOneCollection,
+    (v) => v.properties.latitude
+  ) as number
+  const maxLongitude = d3.max(
+    allPointsInOneCollection,
+    (v) => v.properties.longitude
+  ) as number
+
+  return {
+    minLatitude,
+    minLongitude,
+    maxLatitude,
+    maxLongitude,
+  }
 }
