@@ -94,7 +94,7 @@ function MapView({
         crossOrigin=""
       />
       <div
-        className="not-prose z-10 min-h-[60vh] flex-1 md:h-[70vh]"
+        className="not-prose md:h-inherit z-10 max-h-[80vh] min-h-[60vh] flex-1"
         id="map"
         ref={ref}
       ></div>
