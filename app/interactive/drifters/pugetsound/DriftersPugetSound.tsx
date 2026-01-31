@@ -14,7 +14,6 @@ import {
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
 
-import "./DriftersPugetSound.css"
 
 import MapChartView from "@/components/map/map-chart-view"
 
