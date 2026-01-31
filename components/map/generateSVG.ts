@@ -1,5 +1,5 @@
 import * as d3 from "d3"
-import { LatLng, Map } from "leaflet"
+import { LatLng, Map, Point } from "leaflet"
 
 interface IInfo {
   x0: number
@@ -11,15 +11,16 @@ interface IInfo {
   position: LatLng
 }
 
-let margin = 0
+let margin = 8
 
 export function generateMapScale(
   this_info: IInfo,
   parent: d3.Selection<SVGGElement, any, any, any>
 ) {
-  console.log(this_info)
+  const { position, x0, x1, y0, y1 } = this_info
 
-  const { position } = this_info
+  if (x0 > x1) throw Error("x0 should be less than x1")
+  if (y0 > y1) throw Error("y0 should be less than y1")
 
   if (this_info.w0 < 0 || this_info.h0 < 0) throw Error()
   // Create an svg with axes specific to a pair of variables, e.g.
@@ -39,24 +40,25 @@ export function generateMapScale(
     .range([height - margin, margin])
 
   // Create the SVG container.
-  const svg = parent
-    .append("svg")
-    .attr("class", ".mapScale")
-    .attr("width", width)
-    .attr("height", height)
+  const svg = parent.append("svg").attr("width", width).attr("height", height)
   // Fix for displaying negative ticklabels
   const formatLocale = d3.formatDefaultLocale({
     minus: "-", // Use the regular hyphen-minus
   } as any)
   // Add the x-axis.
-  // svg
-  //   .append("g") // NOTE: the svg "g" element groups things together.
-  //   .attr("transform", `translate(${position.lat},${height - margin})`)
-  //   .call(d3.axisTop(x).ticks(4).tickFormat(formatLocale.format("d")))
+
+  svg
+    .append("g") // NOTE: the svg "g" element groups things together.
+    .attr("transform", `translate(${0},${margin})`)
+    .attr("class", ".mapScale")
+
+    .call(d3.axisBottom(x).ticks(4).tickFormat(formatLocale.format("d")))
   // Add the y-axis.
   svg
     .append("g")
-    .attr("transform", `translate(${margin},${position.lng})`)
+    .attr("transform", `translate(${margin},${0})`)
+    .attr("class", ".mapScale")
+
     .call(d3.axisRight(y).ticks(4).tickFormat(formatLocale.format("d")))
   return svg
 }

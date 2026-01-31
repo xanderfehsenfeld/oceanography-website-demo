@@ -1,6 +1,6 @@
 "use client"
 
-import { Component, ComponentProps, useEffect, useEffectEvent } from "react"
+import { Component, ComponentProps } from "react"
 import * as d3 from "d3"
 
 import "./map-chart-view.css"
@@ -9,8 +9,7 @@ import { LatLng } from "leaflet"
 
 import MapView from "@/components/map/map-view"
 
-import { generateMapScale } from "./generateSVG"
-import { getBoundsOfData, getPoints, IFeature, IPoints } from "./getPoints"
+import { IFeature, IPoints } from "./getPoints"
 
 var map: L.Map
 
@@ -167,8 +166,8 @@ class MapChartView extends Component<IProps> {
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
     )
 
-    const [x0, y1] = topLeft
-    const [x1, y0] = bottomRight
+    // var scale = g.selectAll(".mapScale")
+    // scale.attr("d", toLine as any)
 
     var backgroundLines = g.selectAll(".backgroundLineConnect")
 
@@ -274,53 +273,6 @@ class MapChartView extends Component<IProps> {
     // user zooms in or out you will still see the phantom
     // original SVG
     g = svg.append("g").attr("class", "leaflet-zoom-hide")
-
-    const { minLatitude, minLongitude, maxLatitude, maxLongitude } =
-      getBoundsOfData(allPoints)
-
-    console.log("maxLongitude", maxLongitude)
-    console.log("minLongitude", minLongitude)
-
-    const [topLeft, bottomRight] = d3path.bounds({
-      type: "FeatureCollection",
-      features: [
-        {
-          type: "Point",
-
-          properties: {},
-          geometry: {
-            type: "Point",
-            coordinates: [minLatitude, maxLongitude],
-          },
-        },
-        {
-          type: "Point",
-
-          properties: {},
-          geometry: {
-            type: "Point",
-            coordinates: [maxLatitude, minLongitude],
-          },
-        },
-      ],
-    })
-
-    const mapBounds = map.getBounds()
-    console.log("bounds", topLeft, bottomRight)
-    const scaleSVG = generateMapScale(
-      {
-        y0: minLatitude,
-        y1: maxLatitude,
-
-        x0: minLongitude,
-        x1: maxLongitude,
-
-        w0: 1000,
-        h0: 1000,
-        position: mapBounds.getSouthWest(),
-      },
-      g
-    )
 
     // Here we're creating a FUNCTION to generate a line
     // from input points. Since input points will be in

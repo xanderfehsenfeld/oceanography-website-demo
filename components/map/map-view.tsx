@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react"
 import { LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
 import { useTheme } from "next-themes"
 
-import { generateMapScale } from "./generateSVG"
 import { applyAllPolyfills } from "./leaflet-polyfill"
 
 var leafletMap: Map
