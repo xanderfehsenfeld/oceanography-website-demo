@@ -4,6 +4,10 @@ import { useEffect, useRef } from "react"
 import { Control, LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
 import { useTheme } from "next-themes"
 
+import { applyAllPolyfills } from "./leaflet-polyfill"
+
+import "leaflet-graticule"
+
 var leafletMap: Map
 
 const mapSources = {
@@ -44,6 +48,9 @@ function MapView({
   useEffect(() => {
     leafletMap?.remove()
 
+    // // Add the polyfills
+    applyAllPolyfills()
+
     leafletMap = new Map(ref.current as any, {
       zoomControl: false,
       maxZoom: 15,
@@ -55,9 +62,18 @@ function MapView({
     const bounds = leafletMap.getBounds()
 
     leafletMap.setMaxBounds(bounds.pad(2))
-    leafletMap.addControl(new Control.Scale())
 
     onMapMount(leafletMap)
+
+    L.latlngGraticule({
+      showLabel: true,
+      zoomInterval: [
+        { start: 2, end: 3, interval: 0.5 },
+        { start: 4, end: 4, interval: 0.5 },
+        { start: 5, end: 7, interval: 1 },
+        { start: 8, end: 10, interval: 1 },
+      ],
+    }).addTo(leafletMap)
 
     leafletMap.on("click", onMapClick)
 
