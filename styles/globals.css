@@ -4,7 +4,6 @@
 
 @plugin "@tailwindcss/typography";
 
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -121,6 +120,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-inter), Arial, Helvetica, sans-serif;
@@ -128,16 +128,13 @@
 }
 
 .typography {
-  @apply prose dark:prose-invert prose-zinc prose-headings:scroll-m-20 prose-code:rounded-md prose-code:p-1 prose-code:leading-6 prose-code:before:content-none prose-code:after:content-none prose-pre:border prose-pre:bg-neutral-100 prose-img:rounded-md prose-img:border;
+  @apply prose prose-zinc dark:prose-invert prose-headings:scroll-m-20 prose-code:rounded-md prose-code:p-1 prose-code:leading-6 prose-code:before:content-none prose-code:after:content-none prose-pre:border prose-pre:bg-neutral-100 prose-img:rounded-md prose-img:border;
   @apply w-[85vw] min-w-full! pt-2 text-sm sm:mx-auto sm:w-full prose-code:text-xs;
   @apply dark:prose-invert prose-code:text-neutral-800 dark:prose-code:bg-neutral-900 dark:prose-code:text-white dark:prose-pre:bg-neutral-900;
 }
 
-
-
 .prose {
   margin: 0 !important;
-
 }
 
 .prose .flex > img {
@@ -169,7 +166,6 @@ article h3 {
 .code-line {
   padding: 0.75px 12.5px;
 }
-
 
 pre {
   padding: 0 !important;
@@ -302,6 +298,7 @@ span.katex-html {
 .CollapsibleContent {
   overflow: hidden;
 }
+
 .CollapsibleContent[data-state="open"] {
   animation: slideDown 300ms ease-out;
 }
@@ -314,6 +311,7 @@ span.katex-html {
   from {
     height: 0;
   }
+
   to {
     height: var(--radix-collapsible-content-height);
   }
@@ -323,13 +321,20 @@ span.katex-html {
   from {
     height: var(--radix-collapsible-content-height);
   }
+
   to {
     height: 0;
   }
 }
 
-
-
 article.typography section a {
-  @apply underline text-blue-600 hover:text-blue-800 visited:text-purple-600
+  @apply text-blue-600 underline visited:text-purple-600 hover:text-blue-800;
+}
+
+.rt-SegmentedControlRoot button {
+  cursor: pointer;
+}
+
+.rt-SliderRoot .rt-SliderThumb {
+  cursor: grab;
 }

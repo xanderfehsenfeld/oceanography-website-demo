@@ -6,7 +6,6 @@ description: LiveOcean works a lot like the weather forecast models that we all 
 
 ### The grid
 
-
 <HorizontalLayout>
 <>
 <Image width={925} height={1200} alt="Close up of Puget Sound cas7 grid and rivers" src="/images/Figs_how_it_works/grid1.png"/>
@@ -16,9 +15,7 @@ The model grid is shown here for the full domain and for a close up of Puget Sou
 </>
 <Image width={957} height={1200} alt="Full cas7 grid and rivers" src="/images/Figs_how_it_works/grid2.png"/>
 
-
 </HorizontalLayout>
-
 
 ### The model framework
 
@@ -30,9 +27,12 @@ To format the model for our region we first need to define the region and the gr
 
 ### Model forcing
 
-
-<Image width={2000} height={1125} alt="LiveOcean system sketch" src="/images/Figs_how_it_works/lo_system.png"/>
-
+<Image
+  width={2000}
+  height={1125}
+  alt="LiveOcean system sketch"
+  src="/images/Figs_how_it_works/lo_system.png"
+/>
 
 The environmental information we use to force the model comes from the outer boundaries. At the sea surface we force the model with winds, heating by sunshine, and other exchanges of heat with the atmosphere like evaporation. The atmospheric fields come from the regional weather forecast model run by Dr. Cliff Mass' group at UW. Weather models tend to make fairly good forecasts (at least for a few days) because they are initialized each day using observations from the real world. The same is true of the forcing of the ocean state we use at the open boundaries in the Pacific, which come from a global ocean model run by the Navy called [HYCOM](https://hycom.org/). HYCOM assimilates observations from satellites, drifting [ARGO](http://www.argo.ucsd.edu/About_Argo.html) floats, and other sources that ensure that the currents and stratification we are imposing at our open boundaries are very close to what is really happening. For water properties HYCOM only gives us temperature and salinity but we need information on Dissolved Oxygen, Nitrate, Alkalinity, and Total Inorganic Carbon. We get these by using regressions against salinity using data collected by NOAA. Forcing for the rivers comes from the flow gauges maintained by USGS and Environment Canada, and from climatologies developed from the Dept. of Ecology. The data from Ecology has been critical for getting detailed information on nutirent loading from small rivers and wastewater treatment plants. The last type of forcing needed is for tides. We use a global estimate of 8 tidal frequencies created by researchers at Oregon State University to generate tidal variation at our open ocean boundaries, and this in turn generates the tides all the way into the Salish Sea. Getting the tides right in Seattle is one of the first tests of model skill that we look at because tides drive the mixing in the Salish Sea, an essential ingredient governing our water quality and ecosystem function.
 
@@ -48,6 +48,6 @@ A really important part of the LiveOcean model is that it simulates chemical and
 
 ### Want to learn more?
 
-To learn more about how the model fields compare to observations, go to [this page](https://faculty.washington.edu/pmacc/LO/how_we_test_it.html). To learn more about the details of model construction the best source is in our [published papers](https://faculty.washington.edu/pmacc/LO/references.html).
+To learn more about how the model fields compare to observations, go to [this page](/docs/aboutthemodel/how_we_test_it). To learn more about the details of model construction the best source is in our [published papers](https://faculty.washington.edu/pmacc/LO/references.html).
 
 ### _Got a specific question, or have an idea for something you would like to see in the forecast? Please contact the project lead, Dr. Parker MacCready at UW School of Oceanography: pmacc@uw.edu, (206) 685-9588._

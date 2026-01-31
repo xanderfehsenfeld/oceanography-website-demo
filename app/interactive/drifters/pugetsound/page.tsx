@@ -3,7 +3,7 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import LazyLoadedViewer from "./LazyLoadedViewer"
+import DriftersPugetSound from "./DriftersPugetSound"
 
 export default function Pages() {
   return (
@@ -23,7 +23,7 @@ export default function Pages() {
 
       <Typography>
         <section>
-          <LazyLoadedViewer>
+          <DriftersPugetSound>
             <h3>Puget Sound Drifter Tracks</h3>
 
             <p>
@@ -54,7 +54,7 @@ export default function Pages() {
               or Where did all the particles that ended up in some place come
               from?
             </p>
-          </LazyLoadedViewer>
+          </DriftersPugetSound>
         </section>
         <Pagination pathname={"drifters/pugetsound"} prefix="interactive" />
       </Typography>

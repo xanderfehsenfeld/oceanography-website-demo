@@ -24,16 +24,6 @@
 }
 
 
-.rt-SegmentedControlRoot button {
-  cursor: pointer;
-}
-
-.rt-SliderRoot .rt-SliderThumb {
-  cursor: grab;
-
-}
-
-
 .lineConnect {
   /* fill: magenta; */
   /* stroke: black; */
@@ -41,4 +31,5 @@
   fill: none;
   stroke: green;
   opacity: 0.5;
+  stroke-width: 3;
 }
