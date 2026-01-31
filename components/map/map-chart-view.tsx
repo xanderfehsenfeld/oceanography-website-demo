@@ -8,11 +8,8 @@ import "./map-chart-view.css"
 import { LatLng } from "leaflet"
 
 import MapView from "@/components/map/map-view"
-import {
-  getPoints,
-  IFeature,
-  IPoints,
-} from "@/app/interactive/drifters/pugetsound/getPoints"
+
+import { getPoints, IFeature, IPoints } from "./getPoints"
 
 var map: L.Map
 
@@ -26,19 +23,6 @@ function projectPoint(this: any, x: number, y: number) {
   var point = map.latLngToLayerPoint(new LatLng(y, x))
   this.stream.point(point.x, point.y)
 } //end projectPoint
-
-const points = getPoints()
-
-const positionsAtTimeZero = points[0]
-
-const allPointsInOneCollection = points.reduce((previous, current) => {
-  previous.features.concat(current.features)
-
-  return {
-    ...positionsAtTimeZero,
-    features: [...previous.features, ...current.features],
-  }
-}, positionsAtTimeZero)
 
 // this is not needed right now, but for future we may need
 // to implement some filtering. This uses the d3 filter function
@@ -90,6 +74,7 @@ var toLine = d3
 function MapChartView({
   circles,
   lines,
+  allPoints,
   ...mapProps
 }: Pick<
   ComponentProps<typeof MapView>,
@@ -97,6 +82,7 @@ function MapChartView({
 > & {
   circles: IFeature[]
   lines: { [key: string]: IPoints }
+  allPoints: IPoints[]
 }) {
   const getScaleMultiplier = (): number => {
     if (map) {
@@ -108,6 +94,20 @@ function MapChartView({
       return 1
     }
   }
+
+  const generateBounds = useEffectEvent(() => {
+    const positionsAtTimeZero = allPoints[0]
+
+    const allPointsInOneCollection = allPoints.reduce((previous, current) => {
+      previous.features.concat(current.features)
+
+      return {
+        ...positionsAtTimeZero,
+        features: [...previous.features, ...current.features],
+      }
+    }, positionsAtTimeZero)
+    return d3path.bounds(allPointsInOneCollection)
+  })
 
   const reset = useEffectEvent(() => {
     // For simplicity I hard-coded this! I'm taking
@@ -133,7 +133,8 @@ function MapChartView({
       })
 
       .attr("r", initialCircleRadius * zoomScale)
-    var bounds = d3path.bounds(allPointsInOneCollection)
+
+    var bounds = generateBounds()
 
     var topLeft = bounds[0],
       bottomRight = bounds[1]

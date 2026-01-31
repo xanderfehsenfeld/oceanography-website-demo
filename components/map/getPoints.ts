@@ -1,43 +1,35 @@
-import times from "./PS_times.json"
-import tracks from "./PS_tracks.json"
-
 interface Track {
   x: number[]
   y: number[]
 }
-
-const tracksTyped = tracks as Track[]
 
 export interface IPoints {
   type: "FeatureCollection"
   features: IFeature[]
 }
 
-interface Properties {
-  name: string
-}
-
 export interface IFeature {
   type: "Feature"
-  properties: Properties2
+  properties: IProperties
   geometry: Geometry
 }
 
-interface Properties2 {
+interface IProperties {
   latitude: number
   longitude: number
-  //   time: number
   id: string
-  //   name: string
 }
 
 interface Geometry {
   type: "Point"
-
   coordinates: [number, number]
 }
 
-export const getTrack = (id: string): IPoints => {
+export const getTrack = (
+  id: string,
+  tracksTyped: Track[],
+  times: string[]
+): IPoints => {
   const points = tracksTyped
 
   const track = points[parseInt(id)]
@@ -50,7 +42,7 @@ export const getTrack = (id: string): IPoints => {
       properties: {
         latitude,
         longitude,
-        id: times[0].t[index] + "_" + id,
+        id: times[index] + "_" + id,
       },
       geometry: {
         type: "Point",
@@ -65,7 +57,7 @@ export const getTrack = (id: string): IPoints => {
   }
 }
 
-export const getPoints = (): IPoints[] => {
+export const getPoints = (tracksTyped: Track[]): IPoints[] => {
   const points = tracksTyped
 
   return points[0].x.map((_, timeIndex) => {

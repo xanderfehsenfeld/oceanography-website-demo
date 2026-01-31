@@ -4,8 +4,15 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
-import { getPoints, getTrack, IFeature, IPoints } from "./getPoints"
+import {
+  getPoints,
+  getTrack,
+  IFeature,
+  IPoints,
+} from "@/components/map/getPoints"
+
 import times from "./PS_times.json"
+import tracks from "./PS_tracks.json"
 
 import "./DriftersPugetSound.css"
 
@@ -17,12 +24,12 @@ const initialZoomLevel = 9
 const initialLat = 48
 const initialLong = -122.5
 
-const points = getPoints()
+const points = getPoints(tracks as any)
 const lines: { [key: string]: IPoints } = points[0].features.reduce(
   (previous, v: IFeature) => {
     return {
       ...previous,
-      [v.properties.id]: getTrack(v.properties.id),
+      [v.properties.id]: getTrack(v.properties.id, tracks as any, times[0].t),
     }
   },
   {}
@@ -65,6 +72,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
     <div className="gap-4 sm:flex">
       <MapChartView
         circles={points[sliderValue].features}
+        allPoints={points}
         lines={lines}
         initialLat={initialLat}
         initialLong={initialLong}
