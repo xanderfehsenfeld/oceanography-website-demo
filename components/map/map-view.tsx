@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect, useEffectEvent, useRef, useState } from "react"
 import {
+  Control,
   LeafletEvent,
   LeafletMouseEvent,
   Map,
@@ -82,6 +83,7 @@ function MapView({
     const bounds = leafletMap.getBounds()
 
     leafletMap.setMaxBounds(bounds.pad(2))
+    leafletMap.addControl(new Control.Scale())
 
     onMapMount(leafletMap)
 
