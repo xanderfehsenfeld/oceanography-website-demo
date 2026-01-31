@@ -14,6 +14,8 @@ import { useTheme } from "next-themes"
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
 
+var leafletMap: Map
+
 const mapSources = {
   voyagerNoLabels: {
     url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
@@ -83,7 +85,6 @@ function MapView({
     const bounds = leafletMap.getBounds()
 
     leafletMap.setMaxBounds(bounds.pad(2))
-    leafletMap.addControl(new Control.Scale())
 
     onMapMount(leafletMap)
 
