@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentProps, useEffect, useEffectEvent, useRef } from "react"
+import { ComponentProps, useEffect, useEffectEvent } from "react"
 import * as d3 from "d3"
 
 import "./map-chart-view.css"
@@ -10,7 +10,6 @@ import { LatLng } from "leaflet"
 import MapView from "@/components/map/map-view"
 import {
   getPoints,
-  getTrack,
   IFeature,
   IPoints,
 } from "@/app/interactive/drifters/pugetsound/getPoints"

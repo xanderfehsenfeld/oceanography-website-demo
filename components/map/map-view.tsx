@@ -1,10 +1,10 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import L from "leaflet"
+import { LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
 import { useTheme } from "next-themes"
 
-var map: L.Map
+var leafletMap: Map
 
 const mapSources = {
   voyagerNoLabels: {
@@ -33,9 +33,9 @@ function MapView({
   initialLong: number
   zoom: number
   onZoomChange: () => void
-  options?: L.MapOptions
-  onMapClick: (e: L.LeafletMouseEvent) => void
-  onMapMount: (map: L.Map) => void
+  options?: MapOptions
+  onMapClick: (e: LeafletMouseEvent) => void
+  onMapMount: (map: Map) => void
 }) {
   const { theme } = useTheme()
 
@@ -43,9 +43,9 @@ function MapView({
 
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
-    map?.remove()
+    leafletMap?.remove()
 
-    map = L.map(ref.current as any, {
+    leafletMap = new Map(ref.current as any, {
       zoomControl: false,
       maxZoom: 15,
       minZoom: 7,
@@ -53,17 +53,17 @@ function MapView({
       ...options,
     }).setView([initialLat, initialLong], initialZoomLevel)
 
-    const bounds = map.getBounds()
+    const bounds = leafletMap.getBounds()
 
-    map.setMaxBounds(bounds.pad(2))
+    leafletMap.setMaxBounds(bounds.pad(2))
 
-    onMapMount(map)
+    onMapMount(leafletMap)
 
-    map.on("click", onMapClick)
+    leafletMap.on("click", onMapClick)
 
     // when the user zooms in or out you need to reset
     // the view
-    map.on("zoom", onZoomChange)
+    leafletMap.on("zoom", onZoomChange)
 
     // this puts stuff on the map!
     onZoomChange()
@@ -76,9 +76,9 @@ function MapView({
         ? mapSources.darkMatterNoLabels
         : mapSources.voyagerNoLabels
 
-    L.tileLayer(tileset.url, {
+    new TileLayer(tileset.url, {
       attribution: tileset.attribution,
-    }).addTo(map)
+    }).addTo(leafletMap)
   }, [theme])
 
   return (

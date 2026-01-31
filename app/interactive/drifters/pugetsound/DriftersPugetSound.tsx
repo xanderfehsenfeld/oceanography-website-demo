@@ -28,7 +28,7 @@ const lines: { [key: string]: IPoints } = points[0].features.reduce(
   {}
 )
 
-function MapChart({ children }: { children: ReactNode }) {
+function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
 
@@ -132,4 +132,4 @@ function MapChart({ children }: { children: ReactNode }) {
   )
 }
 
-export default MapChart
+export default DriftersPugetSound
