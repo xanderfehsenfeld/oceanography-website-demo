@@ -29,9 +29,9 @@ function MapView({
   onMapClick,
   onZoomChange,
 }: {
-  initialLat?: number
-  initialLong?: number
-  zoom?: number
+  initialLat: number
+  initialLong: number
+  zoom: number
   onZoomChange: () => void
   options?: L.MapOptions
   onMapClick: (e: L.LeafletMouseEvent) => void

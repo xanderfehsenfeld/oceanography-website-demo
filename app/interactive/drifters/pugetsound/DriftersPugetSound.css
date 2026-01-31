@@ -1,29 +1,3 @@
-#map {
-  .drifter {
-    fill: blue;
-    opacity: 0.3;
-    cursor: pointer;
-
-
-  }
-
-  .drifter:hover {
-
-    fill: green;
-    opacity: 1;
-
-  }
-}
-
-
-
-
-#map .drifter.selected {
-  fill: red;
-  opacity: 1;
-}
-
-
 .rt-SegmentedControlRoot button {
   cursor: pointer;
 }
