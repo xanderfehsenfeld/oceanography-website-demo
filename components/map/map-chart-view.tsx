@@ -83,13 +83,7 @@ type IProps = Pick<
   showAllLines?: boolean
 }
 
-interface IState {
-  left: number
-  right: number
-  top: number
-  bottom: number
-}
-class MapChartView extends Component<IProps, IState> {
+class MapChartView extends Component<IProps> {
   constructor(props: IProps) {
     super(props)
   }
@@ -262,36 +256,12 @@ class MapChartView extends Component<IProps, IState> {
     reset()
   }
 
-  updateMapScale = () => {
-    const bounds = map.getBounds()
-
-    this.setState({
-      left: bounds.getWest(),
-      right: bounds.getEast(),
-      top: bounds.getNorth(),
-      bottom: bounds.getSouth(),
-    })
-
-    // // let height = this_info.h0 + 2 * margin
-    // // Declare the x (horizontal position) scale.
-    // const x = d3
-    //   .scaleLinear()
-    //   .domain([bounds.getWest(), bounds.getEast()])
-    //   .range([margin, width - margin])
-  }
-
   onMapMount = (mountedMap: L.Map) => {
     const { allPoints, showAllLines, circles, lines } = this.props
 
-    const { renderLines, handleDrifterClick, updateMapScale } = this
+    const { renderLines, handleDrifterClick } = this
 
     map = mountedMap
-
-    map.on("moveend", () => {
-      updateMapScale()
-    })
-
-    updateMapScale()
 
     // we will be appending the SVG to the Leaflet map pane
     // g (group) element will be inside the svg
@@ -355,18 +325,10 @@ class MapChartView extends Component<IProps, IState> {
         onMapClick={handleMapClick}
         onMapMount={onMapMount}
       >
-        {this.state && (
+        {map && (
           <>
-            <MapScale
-              isHorizontal
-              min={this.state.left}
-              max={this.state.right}
-            />
-            <MapScale
-              isHorizontal={false}
-              min={this.state.bottom}
-              max={this.state.top}
-            />
+            <MapScale map={map} isHorizontal />
+            <MapScale isHorizontal={false} map={map} />
           </>
         )}
       </MapView>
