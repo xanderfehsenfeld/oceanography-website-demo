@@ -53,8 +53,6 @@ function MapView({
   const [{ left, right }, setHorizontalView] = useState({ left: 100, right: 0 })
 
   const updateMapViewBounds = useEffectEvent((event: LeafletEvent) => {
-    console.log(event.sourceTarget)
-
     if (leafletMapRef.current) {
       const bounds = leafletMapRef.current.getBounds()
 
@@ -112,7 +110,7 @@ function MapView({
   }, [theme])
 
   return (
-    <div className="md:h-inherit max-h-[80vh] min-h-[60vh] flex-1">
+    <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -122,10 +120,11 @@ function MapView({
       <MapScale isHorizontal min={left} max={right} />
 
       <div
-        className="not-prose z-10 min-h-[60vh] w-full md:h-full"
+        className="not-prose z-10 h-full min-h-[60vh] w-full"
         id="map"
         ref={ref}
       ></div>
+      <MapScale isHorizontal={false} min={top} max={bottom} />
     </div>
   )
 }

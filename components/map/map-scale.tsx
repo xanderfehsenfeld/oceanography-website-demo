@@ -32,10 +32,14 @@ const MapScale = ({
     const container = d3
       .select(ref.current)
       .select("svg")
-      .attr(isHorizontal ? "width" : "height", `${length}px`)
+      .attr(isHorizontal ? "width" : "height", `100%`)
+      .attr(isHorizontal ? "height" : "width", `30px`)
       .select("g")
-      .attr("transform", `translate(${0},${20})`)
-      .attr("class", ".mapScale")
+      .attr(
+        "transform",
+        `translate(${isHorizontal ? 0 : 30},${isHorizontal ? 25 : 0})`
+      )
+      .attr("class", ".mapScale ")
 
     if (isHorizontal) {
       container.call(
@@ -47,7 +51,7 @@ const MapScale = ({
     } else {
       container.call(
         d3
-          .axisRight(scale)
+          .axisLeft(scale)
 
           .ticks(4) as any
       )
@@ -57,7 +61,7 @@ const MapScale = ({
   return (
     <div
       ref={ref}
-      className={`z-500 ${isHorizontal ? "mb-2 h-5 w-full" : "mr-2 h-full w-5"} pointer-events-auto`}
+      className={`z-500 ${isHorizontal ? "h-6 w-full" : "absolute top-[28px] left-0 -ml-3 h-full w-7"} pointer-events-auto hidden md:block`}
     >
       <svg>
         <g></g>
