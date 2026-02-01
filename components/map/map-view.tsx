@@ -34,7 +34,6 @@ function MapView({
   onMapClick,
   onZoomChange,
   zoom: initialZoomLevel,
-  children,
 }: {
   initialLat: number
   initialLong: number
@@ -43,7 +42,6 @@ function MapView({
   options?: MapOptions
   onMapClick: (e: LeafletMouseEvent) => void
   onMapMount: (map: Map) => void
-  children?: ReactNode
 }) {
   const { theme } = useTheme()
 

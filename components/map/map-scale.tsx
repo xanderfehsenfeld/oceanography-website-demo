@@ -61,7 +61,7 @@ const MapScale = ({
   return (
     <div
       ref={ref}
-      className={`absolute ${isHorizontal ? "top-0" : "left-0"} z-500 ${isHorizontal ? "h-5 w-full" : "h-full w-5"} pointer-events-auto`}
+      className={`z-500 ${isHorizontal ? "mb-2 h-5 w-full" : "mr-2 h-full w-5"} pointer-events-auto`}
     >
       <svg>
         <g></g>
