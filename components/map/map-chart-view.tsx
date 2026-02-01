@@ -4,7 +4,7 @@ import { transform as d3Transform } from "d3-transform"
 
 import "./map-chart-view.css"
 
-import { Canvas, LatLng } from "leaflet"
+import { Canvas, LatLng, ZoomAnimEvent } from "leaflet"
 
 import MapView from "@/components/map/map-view"
 
@@ -113,6 +113,8 @@ function MapChartView({
     return d3path.bounds(allPointsInOneCollection)
   })
 
+  const onZoomStartAnimation = useEffectEvent((event: ZoomAnimEvent) => {})
+
   const onZoomChange = useEffectEvent(() => {
     const zoomScale = getScaleMultiplier()
     setZoomScale(zoomScale)
@@ -121,7 +123,7 @@ function MapChartView({
     const pointTransform = d3Transform()
       .translate(function (d) {
         const { x, y } = applyLatLngToLayer(d)
-
+        console.log("finished with transform", x, y)
         return [x, y]
       })
       .scale(zoomScale)
@@ -301,6 +303,7 @@ function MapChartView({
       onZoomChange={onZoomChange}
       onMapClick={handleMapClick}
       onMapMount={onMapMount}
+      onZoomStartAnimation={onZoomStartAnimation}
     />
   )
 }

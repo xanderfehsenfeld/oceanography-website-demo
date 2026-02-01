@@ -7,6 +7,7 @@ import {
   Map,
   MapOptions,
   TileLayer,
+  ZoomAnimEvent,
 } from "leaflet"
 import { useTheme } from "next-themes"
 
@@ -33,12 +34,14 @@ function MapView({
   onMapMount,
   onMapClick,
   onZoomChange,
+  onZoomStartAnimation,
   zoom: initialZoomLevel,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
   onZoomChange: () => void
+  onZoomStartAnimation?: (event: ZoomAnimEvent) => void
   options?: MapOptions
   onMapClick: (e: LeafletMouseEvent) => void
   onMapMount: (map: Map) => void
@@ -90,6 +93,8 @@ function MapView({
     // when the user zooms in or out you need to reset
     // the view
     leafletMap.on("zoom", onZoomChange)
+    leafletMap.on("zoomanim", onZoomStartAnimation as any)
+
     leafletMap.on("moveend", updateMapViewBounds)
 
     // this puts stuff on the map!
