@@ -50,6 +50,9 @@ importers:
       d3:
         specifier: ^7.9.0
         version: 7.9.0
+      d3-transform:
+        specifier: ^1.0.5
+        version: 1.0.5
       gray-matter:
         specifier: ^4.0.3
         version: 4.0.3
@@ -2206,6 +2209,9 @@ packages:
   d3-timer@3.0.1:
     resolution: {integrity: sha512-ndfJ/JxxMd3nw31uyKoY2naivF+r29V+Lc0svZxe1JvvIRmi8hUsrMvdOwgS1o6uBHmiz91geQ0ylPP0aj1VUA==}
     engines: {node: '>=12'}
+
+  d3-transform@1.0.5:
+    resolution: {integrity: sha512-8CpfEzNYxmq+fgWS8SUgPovDi2o649fLijFPpkGxzGu9SX/MqTce3qAqklBWvEN07ayVBP4IFDTnUYnDocYfWw==}
 
   d3-transition@3.0.1:
     resolution: {integrity: sha512-ApKvfjsSR6tg06xrL434C0WydLr7JewBB3V+/39RMHsaXTOG0zmt/OAXeng5M5LBm0ojmxJrpomQVZ1aPvBL4w==}
@@ -6221,6 +6227,8 @@ snapshots:
       d3-array: 3.2.4
 
   d3-timer@3.0.1: {}
+
+  d3-transform@1.0.5: {}
 
   d3-transition@3.0.1(d3-selection@3.0.0):
     dependencies:

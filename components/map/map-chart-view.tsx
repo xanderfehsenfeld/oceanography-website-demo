@@ -1,9 +1,10 @@
-import { ComponentProps, useEffect, useEffectEvent } from "react"
+import { ComponentProps, useEffect, useEffectEvent, useState } from "react"
 import * as d3 from "d3"
+import { transform as d3Transform } from "d3-transform"
 
 import "./map-chart-view.css"
 
-import { LatLng } from "leaflet"
+import { Canvas, LatLng } from "leaflet"
 
 import MapView from "@/components/map/map-view"
 
@@ -86,7 +87,8 @@ function MapChartView({
   allPoints: IPoints[]
   showAllLines?: boolean
 }) {
-  const getScaleMultiplier = (): number => {
+  const [zoomScale, setZoomScale] = useState(1)
+  const getScaleMultiplier = useEffectEvent((): number => {
     if (map) {
       const currentZoomLevel = map?.getZoom() || 1
       const zoomScale = map.getZoomScale(currentZoomLevel, defaultZoom)
@@ -95,7 +97,7 @@ function MapChartView({
     } else {
       return 1
     }
-  }
+  })
 
   const generateBounds = useEffectEvent(() => {
     const positionsAtTimeZero = allPoints[0]
@@ -111,30 +113,22 @@ function MapChartView({
     return d3path.bounds(allPointsInOneCollection)
   })
 
-  const reset = useEffectEvent(() => {
-    // For simplicity I hard-coded this! I'm taking
-    // the first and the last object (the origin)
-    // and destination and adding them separately to
-    // better style them. There is probably a better
-    // way to do this!
-    // var originANDdestination = [featuresdata[0], featuresdata[17]]
-
+  const onZoomChange = useEffectEvent(() => {
+    const zoomScale = getScaleMultiplier()
+    setZoomScale(zoomScale)
     var renderedPoints = g.selectAll("circle")
 
-    const zoomScale = getScaleMultiplier()
+    const pointTransform = d3Transform()
+      .translate(function (d) {
+        const { x, y } = applyLatLngToLayer(d)
 
-    renderedPoints
-      .attr("transform", function (d) {
-        return (
-          "translate(" +
-          applyLatLngToLayer(d).x +
-          "," +
-          applyLatLngToLayer(d).y +
-          ")"
-        )
+        return [x, y]
       })
+      .scale(zoomScale)
 
-      .attr("r", initialCircleRadius * zoomScale)
+    renderedPoints.attr("transform", pointTransform)
+
+    // .attr("r", initialCircleRadius * zoomScale)
 
     var bounds = generateBounds()
 
@@ -179,6 +173,14 @@ function MapChartView({
   const renderDrifters = useEffectEvent((data: IFeature[]) => {
     const existingCircles = g.selectAll("circle").data(data)
 
+    const pointTransform = d3Transform()
+      .translate(function (d) {
+        const { x, y } = applyLatLngToLayer(d)
+
+        return [x, y]
+      })
+      .scale(zoomScale)
+
     existingCircles
 
       .attr("class", function (data) {
@@ -187,15 +189,7 @@ function MapChartView({
         return isSelected ? "drifter selected" : "drifter"
       })
 
-      .attr("transform", function (d) {
-        return (
-          "translate(" +
-          applyLatLngToLayer(d).x +
-          "," +
-          applyLatLngToLayer(d).y +
-          ")"
-        )
-      })
+      .attr("transform", pointTransform)
   })
 
   const handleMapClick = useEffectEvent((e: L.LeafletMouseEvent) => {
@@ -237,7 +231,7 @@ function MapChartView({
     renderLines([lines[id].features])
 
     renderDrifters(circles)
-    reset()
+    onZoomChange()
   })
 
   //This effect ideally is called once per page load. This initializes the map and d3
@@ -304,7 +298,7 @@ function MapChartView({
     <MapView
       {...mapProps}
       key={"key"}
-      onZoomChange={reset}
+      onZoomChange={onZoomChange}
       onMapClick={handleMapClick}
       onMapMount={onMapMount}
     />
