@@ -9,7 +9,7 @@ import { LatLng } from "leaflet"
 
 import MapView from "@/components/map/map-view"
 
-import { getBoundsOfData, getPoints, IFeature, IPoints } from "./getPoints"
+import { IFeature, IPoints } from "./getPoints"
 import MapScale from "./map-scale"
 
 var map: L.Map
@@ -82,16 +82,19 @@ type IProps = Pick<
   allPoints: IPoints[]
   showAllLines?: boolean
 }
-class MapChartView extends Component<IProps> {
+
+interface IState {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+class MapChartView extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
   }
 
-  componentDidUpdate(
-    prevProps: Readonly<IProps>,
-    prevState: Readonly<{}>,
-    snapshot?: any
-  ): void {
+  componentDidUpdate(): void {
     const { renderDrifters } = this
     const { circles } = this.props
     renderDrifters(circles)
@@ -259,12 +262,36 @@ class MapChartView extends Component<IProps> {
     reset()
   }
 
+  updateMapScale = () => {
+    const bounds = map.getBounds()
+
+    this.setState({
+      left: bounds.getWest(),
+      right: bounds.getEast(),
+      top: bounds.getNorth(),
+      bottom: bounds.getSouth(),
+    })
+
+    // // let height = this_info.h0 + 2 * margin
+    // // Declare the x (horizontal position) scale.
+    // const x = d3
+    //   .scaleLinear()
+    //   .domain([bounds.getWest(), bounds.getEast()])
+    //   .range([margin, width - margin])
+  }
+
   onMapMount = (mountedMap: L.Map) => {
     const { allPoints, showAllLines, circles, lines } = this.props
 
-    const { renderLines, handleDrifterClick } = this
+    const { renderLines, handleDrifterClick, updateMapScale } = this
 
     map = mountedMap
+
+    map.on("moveend", () => {
+      updateMapScale()
+    })
+
+    updateMapScale()
 
     // we will be appending the SVG to the Leaflet map pane
     // g (group) element will be inside the svg
@@ -317,17 +344,32 @@ class MapChartView extends Component<IProps> {
 
     ptFeatures.on("click", handleDrifterClick)
   }
+
   render() {
     const { circles, lines, showAllLines, allPoints, ...mapProps } = this.props
     const { reset, handleMapClick, onMapMount } = this
-
     return (
       <MapView
         {...mapProps}
         onZoomChange={reset}
         onMapClick={handleMapClick}
         onMapMount={onMapMount}
-      />
+      >
+        {this.state && (
+          <>
+            <MapScale
+              isHorizontal
+              min={this.state.left}
+              max={this.state.right}
+            />
+            <MapScale
+              isHorizontal={false}
+              min={this.state.bottom}
+              max={this.state.top}
+            />
+          </>
+        )}
+      </MapView>
     )
   }
 }
