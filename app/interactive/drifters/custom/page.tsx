@@ -20,7 +20,7 @@ export default function Pages() {
           The map plot shows tracks from simulated drifter tracks over three
           days from the most recent LiveOcean daily forecast. At the start time
           you can see the initial drifter release locations as six clusters of
-          blue dots at locations in and near Willapa Bay. The green lines show
+          blue dots at locations in and near Willapa Bay. The magenta lines show
           the tracks that the drifters take over the full three days, about six
           tidal cycles.
         </p>
@@ -36,17 +36,17 @@ export default function Pages() {
               days from the most recent LiveOcean daily forecast. At the start
               time you can see the initial drifter release locations as six
               clusters of blue dots at locations in and near Willapa Bay. The
-              green lines show the tracks that the drifters take over the full
+              magenta lines show the tracks that the drifters take over the full
               three days, about six tidal cycles.
             </p>
             <p>
               Using the "Time Slider" you can see where each particle goes in
-              time. If you click and drag across a region of the map with some
-              drifters in it they will turn red. They will stay red when you use
-              the Time Slider. By selecting different groups of particles at
-              different times you can explore questions such as: Where do all
-              the particles from a given release site go? or Where did all the
-              particles that ended up in some place come from?
+              time. If you click on the map with some drifters nearby they will
+              turn red. They will stay red when you use the Time Slider. By
+              selecting different groups of particles at different times you can
+              explore questions such as: Where do all the particles from a given
+              release site go? or Where did all the particles that ended up in
+              some place come from?
             </p>
             <p>
               The model used here is a high-resolution model of these two

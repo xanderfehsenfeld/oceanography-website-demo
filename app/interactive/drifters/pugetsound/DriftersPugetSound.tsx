@@ -18,7 +18,7 @@ import tracks from "./PS_tracks.json"
 
 const timeOptions: string[] = times[0].t
 
-const initialZoomLevel = 9
+const initialZoomLevel = 8
 const initialLat = 48
 const initialLong = -122.5
 

@@ -1,10 +1,17 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
+import { ReactNode, useEffect, useEffectEvent, useRef, useState } from "react"
+import {
+  LeafletEvent,
+  LeafletMouseEvent,
+  Map,
+  MapOptions,
+  TileLayer,
+} from "leaflet"
 import { useTheme } from "next-themes"
 
-var leafletMap: Map
+import { applyAllPolyfills } from "./leaflet-polyfill"
+import MapScale from "./map-scale"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -19,8 +26,6 @@ const mapSources = {
   },
 }
 
-const initialZoomLevel = 9
-
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
@@ -28,6 +33,7 @@ function MapView({
   onMapMount,
   onMapClick,
   onZoomChange,
+  zoom: initialZoomLevel,
 }: {
   initialLat: number
   initialLong: number
@@ -41,17 +47,37 @@ function MapView({
 
   const ref = useRef<HTMLDivElement>(null)
 
+  const leafletMapRef = useRef<Map>(null)
+
+  const [{ top, bottom }, setVerticalView] = useState({ top: 100, bottom: 0 })
+  const [{ left, right }, setHorizontalView] = useState({ left: 100, right: 0 })
+
+  const updateMapViewBounds = useEffectEvent((event: LeafletEvent) => {
+    if (leafletMapRef.current) {
+      const bounds = leafletMapRef.current.getBounds()
+
+      setHorizontalView({ left: bounds.getWest(), right: bounds.getEast() })
+
+      setVerticalView({ top: bounds.getNorth(), bottom: bounds.getSouth() })
+    }
+  })
+
   //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
-    leafletMap?.remove()
+    leafletMapRef.current?.remove()
 
-    leafletMap = new Map(ref.current as any, {
+    // // Add the polyfills
+    applyAllPolyfills()
+
+    leafletMapRef.current = new Map(ref.current as any, {
       zoomControl: false,
       maxZoom: 15,
       minZoom: 7,
 
       ...options,
     }).setView([initialLat, initialLong], initialZoomLevel)
+
+    const leafletMap = leafletMapRef.current
 
     const bounds = leafletMap.getBounds()
 
@@ -64,6 +90,7 @@ function MapView({
     // when the user zooms in or out you need to reset
     // the view
     leafletMap.on("zoom", onZoomChange)
+    leafletMap.on("move", updateMapViewBounds)
 
     // this puts stuff on the map!
     onZoomChange()
@@ -76,25 +103,29 @@ function MapView({
         ? mapSources.darkMatterNoLabels
         : mapSources.voyagerNoLabels
 
-    new TileLayer(tileset.url, {
-      attribution: tileset.attribution,
-    }).addTo(leafletMap)
+    if (leafletMapRef.current)
+      new TileLayer(tileset.url, {
+        attribution: tileset.attribution,
+      }).addTo(leafletMapRef.current)
   }, [theme])
 
   return (
-    <>
+    <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />
+      <MapScale isHorizontal min={left} max={right} />
+
       <div
-        className="not-prose z-10 min-h-[60vh] flex-1 md:h-[70vh]"
+        className="not-prose z-10 h-full min-h-[60vh] w-full"
         id="map"
         ref={ref}
       ></div>
-    </>
+      <MapScale isHorizontal={false} min={top} max={bottom} />
+    </div>
   )
 }
 

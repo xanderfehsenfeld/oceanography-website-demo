@@ -1,5 +1,3 @@
-"use client"
-
 import { ComponentProps, useEffect, useEffectEvent } from "react"
 import * as d3 from "d3"
 
@@ -10,6 +8,7 @@ import { LatLng } from "leaflet"
 import MapView from "@/components/map/map-view"
 
 import { getPoints, IFeature, IPoints } from "./getPoints"
+import MapScale from "./map-scale"
 
 var map: L.Map
 
@@ -153,21 +152,29 @@ function MapChartView({
       "transform",
       "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
     )
+
+    var backgroundLines = g.selectAll(".backgroundLineConnect")
+
+    // linePath.attr("d", d3path);
+    backgroundLines.attr("d", toLine as any)
+
     var linePath = g.selectAll(".lineConnect")
 
     // linePath.attr("d", d3path);
     linePath.attr("d", toLine as any)
   })
 
-  const renderLines = useEffectEvent((data: IFeature[][]) => {
-    g.selectAll(".lineConnect")
-      .data(data)
-      .enter()
+  const renderLines = useEffectEvent(
+    (data: IFeature[][], className = "lineConnect") => {
+      g.selectAll(`.${className}`)
+        .data(data)
+        .enter()
 
-      .append("path")
+        .append("path")
 
-      .attr("class", "lineConnect")
-  })
+        .attr("class", className)
+    }
+  )
 
   const renderDrifters = useEffectEvent((data: IFeature[]) => {
     const existingCircles = g.selectAll("circle").data(data)
@@ -200,9 +207,7 @@ function MapChartView({
 
     const scaleMultiplier = getScaleMultiplier()
 
-    if (!showAllLines) {
-      g.selectAll(".lineConnect").remove()
-    }
+    g.selectAll(".lineConnect").remove()
 
     for (let i = 0; i < drifters.length; i++) {
       const properties = drifters[i].properties
@@ -263,7 +268,10 @@ function MapChartView({
       })
 
     if (showAllLines) {
-      renderLines(circles.map((v) => lines[v.properties.id].features))
+      renderLines(
+        circles.map((v) => lines[v.properties.id].features),
+        "backgroundLineConnect"
+      )
     }
 
     // From now on we are essentially appending our features to the
@@ -285,9 +293,7 @@ function MapChartView({
         return i
       })
 
-    if (!showAllLines) {
-      ptFeatures.on("click", handleDrifterClick)
-    }
+    ptFeatures.on("click", handleDrifterClick)
   })
 
   useEffect(() => {
