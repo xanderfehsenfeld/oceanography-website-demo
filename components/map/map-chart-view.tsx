@@ -8,6 +8,7 @@ import { LatLng } from "leaflet"
 import MapView from "@/components/map/map-view"
 
 import { getPoints, IFeature, IPoints } from "./getPoints"
+import MapScale from "./map-scale"
 
 var map: L.Map
 

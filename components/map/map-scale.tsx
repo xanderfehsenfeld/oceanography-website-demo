@@ -10,21 +10,18 @@ import { LeafletEvent, Map } from "leaflet"
 
 const MapScale = ({
   isHorizontal,
-  map,
+  min,
+  max,
 }: {
   isHorizontal: boolean
-  map: Map
+  min: number
+  max: number
 }) => {
   const ref = useRef<HTMLDivElement>(null)
 
-  const updateMapScale = useEffectEvent(() => {
+  useEffect(() => {
     // d3.select(ref.current).select("svg").remove()
     // d3.select(ref.current).select("g").remove()
-
-    const bounds = map.getBounds()
-
-    const min = isHorizontal ? bounds.getWest() : bounds.getSouth()
-    const max = isHorizontal ? bounds.getEast() : bounds.getNorth()
 
     const boundingDiv = ref.current?.getBoundingClientRect() as DOMRect
 
@@ -37,13 +34,13 @@ const MapScale = ({
       .select("svg")
       .attr(isHorizontal ? "width" : "height", `${length}px`)
       .select("g")
-      .attr("transform", `translate(${0},${0})`)
+      .attr("transform", `translate(${0},${20})`)
       .attr("class", ".mapScale")
 
     if (isHorizontal) {
       container.call(
         d3
-          .axisBottom(scale)
+          .axisTop(scale)
 
           .ticks(4) as any
       )
@@ -55,17 +52,12 @@ const MapScale = ({
           .ticks(4) as any
       )
     }
-  })
-
-  useEffect(() => {
-    map.on("move", updateMapScale)
-    updateMapScale()
-  }, [])
-
+  }, [min, max])
+  //absolute ${isHorizontal ? "top-0" : "left-0"}
   return (
     <div
       ref={ref}
-      className={`absolute ${isHorizontal ? "top-0" : "left-0"} z-500 ${isHorizontal ? "h-5 w-full" : "h-full w-5"} pointer-events-auto`}
+      className={`z-500 ${isHorizontal ? "mb-2 h-5 w-full" : "mr-2 h-full w-5"} pointer-events-auto`}
     >
       <svg>
         <g></g>
