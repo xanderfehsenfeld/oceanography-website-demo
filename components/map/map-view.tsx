@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { ReactNode, useEffect, useRef } from "react"
 import { LeafletMouseEvent, Map, MapOptions, TileLayer } from "leaflet"
 import { useTheme } from "next-themes"
 
@@ -29,6 +29,7 @@ function MapView({
   onMapClick,
   onZoomChange,
   zoom: initialZoomLevel,
+  children,
 }: {
   initialLat: number
   initialLong: number
@@ -37,6 +38,7 @@ function MapView({
   options?: MapOptions
   onMapClick: (e: LeafletMouseEvent) => void
   onMapMount: (map: Map) => void
+  children?: ReactNode
 }) {
   const { theme } = useTheme()
 
@@ -93,11 +95,14 @@ function MapView({
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
         crossOrigin=""
       />
+
       <div
         className="not-prose md:h-inherit z-10 max-h-[80vh] min-h-[60vh] flex-1"
         id="map"
         ref={ref}
-      ></div>
+      >
+        {children}
+      </div>
     </>
   )
 }
