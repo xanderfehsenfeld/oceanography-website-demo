@@ -1,3 +1,7 @@
+.dark #map .drifter {
+  fill: lightskyblue;
+}
+
 #map {
   .drifter {
     fill: blue;
