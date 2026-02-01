@@ -90,7 +90,7 @@ function MapView({
     // when the user zooms in or out you need to reset
     // the view
     leafletMap.on("zoom", onZoomChange)
-    leafletMap.on("move", updateMapViewBounds)
+    leafletMap.on("moveend", updateMapViewBounds)
 
     // this puts stuff on the map!
     onZoomChange()
