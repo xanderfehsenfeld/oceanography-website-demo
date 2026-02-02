@@ -8,9 +8,13 @@ import {
   MapOptions,
   TileLayer,
 } from "leaflet"
+// Named export (recommended)
 import { useTheme } from "next-themes"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
+
+import "leaflet.fullscreen/dist/Control.FullScreen.css"
+
 import MapScale from "./map-scale"
 
 const mapSources = {
@@ -78,6 +82,15 @@ function MapView({
     }).setView([initialLat, initialLong], initialZoomLevel)
 
     const leafletMap = leafletMapRef.current
+
+    import("leaflet.fullscreen").then(({ FullScreen }) => {
+      // Add control to your map
+      leafletMap.addControl(
+        new FullScreen({
+          position: "topleft",
+        })
+      )
+    })
 
     const bounds = leafletMap.getBounds()
 

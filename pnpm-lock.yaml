@@ -56,6 +56,9 @@ importers:
       leaflet:
         specifier: 2.0.0-alpha.1
         version: 2.0.0-alpha.1
+      leaflet.fullscreen:
+        specifier: ^5.3.0
+        version: 5.3.0(leaflet@2.0.0-alpha.1)
       lib:
         specifier: ^5.1.0
         version: 5.1.0
@@ -2969,6 +2972,11 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+
+  leaflet.fullscreen@5.3.0:
+    resolution: {integrity: sha512-ZWlu30qf9qNysYtJtI8d1Akw9tpQcELBHvizhlE2vNKlnn0dt7vgg5xM81oalqd5QRf/JyJ1M9fu+I9NjJsS6Q==}
+    peerDependencies:
+      leaflet: ^1.7.0 || >=2.0.0-alpha.1
 
   leaflet@2.0.0-alpha.1:
     resolution: {integrity: sha512-2EJU27z/wljOgQCyybRkfrm5Xc3uy6huKehh0UAPsrAdwnSMxaplsqCl9cXPAuDm6D7uL6PCznYMDVIsaAdSdA==}
@@ -7243,6 +7251,10 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
+
+  leaflet.fullscreen@5.3.0(leaflet@2.0.0-alpha.1):
+    dependencies:
+      leaflet: 2.0.0-alpha.1
 
   leaflet@2.0.0-alpha.1: {}
 
