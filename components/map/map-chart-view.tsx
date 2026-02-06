@@ -285,6 +285,23 @@ function MapChartView({
       .selectAll("circle")
       .data(circles)
       .enter()
+
+      .append("g")
+      .attr("class", "drifter-group")
+      .attr("id", function (e, i) {
+        return `drifter-group-${i}`
+      })
+
+    ptFeatures
+
+      .append("path")
+      .data(circles.map((v) => lines[v.properties.id].features))
+
+      .attr("class", "lineConnect")
+      .attr("d", toLine as any)
+
+    const circleObjects = ptFeatures
+
       .append("circle")
       .attr("r", initialCircleRadius)
       .attr("class", "drifter")
@@ -293,7 +310,7 @@ function MapChartView({
         return i
       })
 
-    ptFeatures.on("click", handleDrifterClick)
+    circleObjects.on("click", handleDrifterClick)
   })
 
   useEffect(() => {
