@@ -15,16 +15,44 @@
   }
 }
 
-#map .drifter.selected {
-  fill: red;
+.drifter {
+  cursor: pointer;
+}
+
+.drifter:hover {
+  fill: green;
+}
+
+.drifter-group {
+  pointer-events: auto;
+}
+
+#map {
+  .drifter-group.selected .drifter,
+  .drifter.selected {
+    fill: red;
+    opacity: 1;
+  }
+}
+
+.drifter-group.selected .lineConnect {
+  visibility: visible;
+  stroke: green;
   opacity: 1;
 }
 
+.drifter-group:hover .lineConnect {
+  visibility: visible;
+  stroke: green;
+}
+
 .lineConnect {
-  opacity: 1;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0.5;
   fill: none;
   stroke: green;
-  stroke-width: 3;
+  stroke-width: 3px;
 }
 
 .backgroundLineConnect {

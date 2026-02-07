@@ -172,7 +172,7 @@ function MapChartView({
 
         .append("path")
 
-        .attr("class", className)
+        .attr("class", `${className} leaflet-zoom-hide`)
     }
   )
 
@@ -207,7 +207,7 @@ function MapChartView({
 
     const scaleMultiplier = getScaleMultiplier()
 
-    g.selectAll(".lineConnect").remove()
+    g.selectAll(".selected").classed("selected", false)
 
     for (let i = 0; i < drifters.length; i++) {
       const properties = drifters[i].properties
@@ -232,9 +232,10 @@ function MapChartView({
     isIn = {
       [id]: true,
     }
+
     event.stopPropagation()
 
-    renderLines([lines[id].features])
+    d3.select(event.target.parentNode).classed("selected", true)
 
     renderDrifters(circles)
     reset()
@@ -285,6 +286,23 @@ function MapChartView({
       .selectAll("circle")
       .data(circles)
       .enter()
+
+      .append("g")
+      .attr("class", "drifter-group leaflet-zoom-hide")
+      .attr("id", function (e, i) {
+        return `drifter-group-${i}`
+      })
+
+    ptFeatures
+
+      .append("path")
+      .data(circles.map((v) => lines[v.properties.id].features))
+
+      .attr("class", "lineConnect")
+      .attr("d", toLine as any)
+
+    const circleObjects = ptFeatures
+
       .append("circle")
       .attr("r", initialCircleRadius)
       .attr("class", "drifter")
@@ -293,7 +311,7 @@ function MapChartView({
         return i
       })
 
-    ptFeatures.on("click", handleDrifterClick)
+    circleObjects.on("click", handleDrifterClick)
   })
 
   useEffect(() => {
