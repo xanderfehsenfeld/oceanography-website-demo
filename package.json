@@ -1,6 +1,5 @@
 {
-  "name": "rubix-documents",
-  "version": "1.0.1",
+  "name": "oceanography-website-demo",
   "private": false,
   "scripts": {
     "dev": "next dev --turbopack",
