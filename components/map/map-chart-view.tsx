@@ -172,7 +172,7 @@ function MapChartView({
 
         .append("path")
 
-        .attr("class", className)
+        .attr("class", `${className} leaflet-zoom-hide`)
     }
   )
 
@@ -207,7 +207,9 @@ function MapChartView({
 
     const scaleMultiplier = getScaleMultiplier()
 
-    g.selectAll(".lineConnect").remove()
+    console.log("map clicked")
+
+    g.selectAll(".selected").classed("selected", false)
 
     for (let i = 0; i < drifters.length; i++) {
       const properties = drifters[i].properties
@@ -235,7 +237,7 @@ function MapChartView({
 
     event.stopPropagation()
 
-    renderLines([lines[id].features], "selected-line")
+    d3.select(`#drifter-group-${id}`).classed("selected", true)
 
     renderDrifters(circles)
     reset()
@@ -288,7 +290,7 @@ function MapChartView({
       .enter()
 
       .append("g")
-      .attr("class", "drifter-group")
+      .attr("class", "drifter-group leaflet-zoom-hide")
       .attr("id", function (e, i) {
         return `drifter-group-${i}`
       })
