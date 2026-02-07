@@ -37,6 +37,15 @@
 .lineConnect {
   visibility: hidden;
   pointer-events: none;
+  opacity: 0.5;
+  fill: none;
+  stroke: green;
+  stroke-width: 3px;
+}
+
+
+.selected-line {
+  pointer-events: none;
   opacity: 1;
   fill: none;
   stroke: green;

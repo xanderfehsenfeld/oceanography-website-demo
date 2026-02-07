@@ -232,9 +232,10 @@ function MapChartView({
     isIn = {
       [id]: true,
     }
+
     event.stopPropagation()
 
-    renderLines([lines[id].features])
+    renderLines([lines[id].features], "selected-line")
 
     renderDrifters(circles)
     reset()
