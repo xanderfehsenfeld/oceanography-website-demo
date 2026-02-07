@@ -207,8 +207,6 @@ function MapChartView({
 
     const scaleMultiplier = getScaleMultiplier()
 
-    console.log("map clicked")
-
     g.selectAll(".selected").classed("selected", false)
 
     for (let i = 0; i < drifters.length; i++) {
@@ -237,7 +235,7 @@ function MapChartView({
 
     event.stopPropagation()
 
-    d3.select(`#drifter-group-${id}`).classed("selected", true)
+    d3.select(event.target.parentNode).classed("selected", true)
 
     renderDrifters(circles)
     reset()
