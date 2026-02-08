@@ -21,8 +21,6 @@ export const PixiOverlayComponent = () => {
 
       return pixi
     })
-
-    return () => overlay.then((pixi) => pixi.destroy())
   }, [])
 
   return <></>
