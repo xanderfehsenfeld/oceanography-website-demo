@@ -1,19 +1,12 @@
 "use client"
 
-import {
-  ReactNode,
-  Ref,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from "react"
-import { LeafletEvent, LeafletMouseEvent, Map, MapOptions } from "leaflet"
+import { ReactNode, useEffect, useState } from "react"
+import { Map } from "leaflet"
 
 import "leaflet/dist/leaflet.css"
 
 import { useTheme } from "next-themes"
-import { MapContainer, SVGOverlay, TileLayer, useMap } from "react-leaflet"
+import { MapContainer, TileLayer } from "react-leaflet"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"

@@ -63,10 +63,7 @@ export default function Pages() {
             Total Alkalinity.
           </p>
         </section>
-        <Pagination
-          pathname={"drifters/willapaandgrays"}
-          prefix="interactive"
-        />
+        <Pagination pathname={"observationsviewer"} prefix="interactive" />
       </Typography>
     </section>
   )
