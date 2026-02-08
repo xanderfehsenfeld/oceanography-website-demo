@@ -19,7 +19,7 @@ import tracks from "./willapa25_tracks.json"
 
 const timeOptions: string[] = times[0].t
 
-const initialZoomLevel = 11
+const initialZoomLevel = 9
 const initialLat = 46.725
 const initialLong = -124.05
 
@@ -78,6 +78,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
           circles={points[sliderValue].features}
           allPoints={points}
           lines={lines}
+          showAllLines
         />
       </MapView>
 

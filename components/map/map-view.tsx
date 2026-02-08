@@ -13,7 +13,7 @@ import { LeafletEvent, LeafletMouseEvent, Map, MapOptions } from "leaflet"
 import "leaflet/dist/leaflet.css"
 
 import { useTheme } from "next-themes"
-import { MapContainer, SVGOverlay, TileLayer } from "react-leaflet"
+import { MapContainer, SVGOverlay, TileLayer, useMap } from "react-leaflet"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
@@ -46,40 +46,9 @@ function MapView({
 }) {
   const { theme } = useTheme()
 
-  //This effect ideally is called once per page load. This initializes the map and d3
-  // useEffect(() => {
-  //   leafletMapRef.current?.remove()
-
-  //   // // Add the polyfills
-  //   applyAllPolyfills()
-
-  //   leafletMapRef.current = new Map(ref.current as any, {
-  //     zoomControl: false,
-  //     maxZoom: 15,
-  //     minZoom: 7,
-
-  //     ...options,
-  //   }).setView([initialLat, initialLong], initialZoomLevel)
-
-  //   const leafletMap = leafletMapRef.current
-
-  //   const bounds = leafletMap.getBounds()
-
-  //   leafletMap.setMaxBounds(bounds.pad(2))
-
-  //   onMapMount(leafletMap)
-
-  //   leafletMap.on("click", onMapClick)
-
-  //   // when the user zooms in or out you need to reset
-  //   // the view
-  //   leafletMap.on("zoom", onZoomChange)
-  //   leafletMap.on("move", updateMapViewBounds)
-
-  //   // this puts stuff on the map!
-  //   onZoomChange()
-  //   // transition()
-  // }, [])
+  useEffect(() => {
+    applyAllPolyfills()
+  }, [])
 
   const [map, setMap] = useState<Map | null>(null)
 
@@ -96,6 +65,10 @@ function MapView({
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
+        maxBounds={[
+          [51.67131229155612, -117.89978027343751],
+          [44.320112128003764, -127.10083007812501],
+        ]}
       >
         <TileLayer
           attribution={

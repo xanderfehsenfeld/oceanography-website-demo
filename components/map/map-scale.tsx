@@ -1,12 +1,6 @@
-import {
-  PureComponent,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useEffectEvent, useRef, useState } from "react"
 import * as d3 from "d3"
-import { LeafletEvent, Map } from "leaflet"
+import { Map } from "leaflet"
 
 const MapScale = ({
   isHorizontal,
