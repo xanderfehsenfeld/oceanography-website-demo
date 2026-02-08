@@ -314,9 +314,9 @@ function MapChartView({
     circleObjects.on("click", handleDrifterClick)
   })
 
-  useEffect(() => {
-    renderDrifters(circles)
-  }, [circles])
+  // useEffect(() => {
+  //   renderDrifters(circles)
+  // }, [circles])
 
   return (
     <MapView
