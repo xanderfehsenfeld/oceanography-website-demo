@@ -3,6 +3,7 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
+import { useMap } from "react-leaflet"
 
 import {
   getPoints,
@@ -11,6 +12,7 @@ import {
   IPoints,
 } from "@/components/map/getPoints"
 import MapChartView from "@/components/map/map-chart-view"
+import MapView from "@/components/map/map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
@@ -68,14 +70,17 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
 
   return (
     <div className="gap-4 sm:flex">
-      <MapChartView
-        circles={points[sliderValue].features}
-        allPoints={points}
-        lines={lines}
+      <MapView
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
-      />
+      >
+        <MapChartView
+          circles={points[sliderValue].features}
+          allPoints={points}
+          lines={lines}
+        />
+      </MapView>
       <div className="flex-1 gap-2">
         <div className={"w-full"}>
           <p>

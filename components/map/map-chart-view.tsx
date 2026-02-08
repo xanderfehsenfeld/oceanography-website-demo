@@ -4,6 +4,7 @@ import * as d3 from "d3"
 import "./map-chart-view.css"
 
 import { LatLng } from "leaflet"
+import { SVGOverlay, useMap } from "react-leaflet"
 
 import MapView from "@/components/map/map-view"
 
@@ -76,11 +77,7 @@ function MapChartView({
   lines,
   showAllLines,
   allPoints,
-  ...mapProps
-}: Pick<
-  ComponentProps<typeof MapView>,
-  "initialLat" | "initialLong" | "zoom"
-> & {
+}: {
   circles: IFeature[]
   lines: { [key: string]: IPoints }
   allPoints: IPoints[]
@@ -141,16 +138,18 @@ function MapChartView({
     var topLeft = bounds[0],
       bottomRight = bounds[1]
 
+    const leftOffset = 200
+
     // Setting the size and location of the overall SVG container
     svg
       .attr("width", bottomRight[0] - topLeft[0] + 120)
       .attr("height", bottomRight[1] - topLeft[1] + 120)
-      .style("left", topLeft[0] - 50 + "px")
+      .style("left", topLeft[0] + leftOffset + "px")
       .style("top", topLeft[1] - 50 + "px")
 
     g.attr(
       "transform",
-      "translate(" + (-topLeft[0] + 50) + "," + (-topLeft[1] + 50) + ")"
+      "translate(" + (-topLeft[0] - leftOffset) + "," + (-topLeft[1] + 50) + ")"
     )
 
     var backgroundLines = g.selectAll(".backgroundLineConnect")
@@ -241,13 +240,20 @@ function MapChartView({
     reset()
   })
 
+  const parentMap = useMap()
+
   //This effect ideally is called once per page load. This initializes the map and d3
-  const onMapMount = useEffectEvent((mountedMap: L.Map) => {
-    map = mountedMap
+  useEffect(() => {
+    map = parentMap
+
+    map.on("click", handleMapClick)
+    map.on("zoom", reset)
 
     // we will be appending the SVG to the Leaflet map pane
     // g (group) element will be inside the svg
     svg = d3.select(map.getPanes().overlayPane).append("svg")
+
+    console.log(map.getPanes())
 
     // if you don't include the leaflet-zoom-hide when a
     // user zooms in or out you will still see the phantom
@@ -312,21 +318,20 @@ function MapChartView({
       })
 
     circleObjects.on("click", handleDrifterClick)
-  })
 
-  // useEffect(() => {
-  //   renderDrifters(circles)
-  // }, [circles])
+    reset()
 
-  return (
-    <MapView
-      {...mapProps}
-      key={"key"}
-      onZoomChange={reset}
-      onMapClick={handleMapClick}
-      onMapMount={onMapMount}
-    />
-  )
+    console.log("mount")
+    return () => {
+      d3.select(map.getPanes().overlayPane).selectAll("svg").remove()
+    }
+  }, [])
+
+  useEffect(() => {
+    renderDrifters(circles)
+  }, [circles])
+
+  return <></>
 }
 
 export default MapChartView

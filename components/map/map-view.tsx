@@ -34,19 +34,15 @@ const mapSources = {
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
-  options = {},
-  onMapMount,
-  onMapClick,
-  onZoomChange,
+
   zoom: initialZoomLevel,
+  children,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
-  onZoomChange: () => void
-  options?: MapOptions
-  onMapClick: (e: LeafletMouseEvent) => void
-  onMapMount: (map: Map) => void
+
+  children?: ReactNode
 }) {
   const { theme } = useTheme()
 
@@ -113,6 +109,7 @@ function MapView({
               : mapSources.voyagerNoLabels.url
           }
         />
+        {children}
       </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} />}
