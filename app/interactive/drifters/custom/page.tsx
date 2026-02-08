@@ -59,10 +59,7 @@ export default function Pages() {
             </p>
           </DriftersCustom>
         </section>
-        <Pagination
-          pathname={"drifters/willapaandgrays"}
-          prefix="interactive"
-        />
+        <Pagination pathname={"drifters/custom"} prefix="interactive" />
       </Typography>
     </section>
   )

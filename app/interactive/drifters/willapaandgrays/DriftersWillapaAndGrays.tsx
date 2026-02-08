@@ -1,8 +1,6 @@
 "use client"
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
-import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
-import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
 import {
   getPoints,
