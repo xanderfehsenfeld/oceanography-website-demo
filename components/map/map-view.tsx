@@ -1,14 +1,19 @@
 "use client"
 
-import { ReactNode, useEffect, useEffectEvent, useRef, useState } from "react"
 import {
-  LeafletEvent,
-  LeafletMouseEvent,
-  Map,
-  MapOptions,
-  TileLayer,
-} from "leaflet"
+  ReactNode,
+  Ref,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react"
+import { LeafletEvent, LeafletMouseEvent, Map, MapOptions } from "leaflet"
+
+import "leaflet/dist/leaflet.css"
+
 import { useTheme } from "next-themes"
+import { MapContainer, SVGOverlay, TileLayer, useMap } from "react-leaflet"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
@@ -29,102 +34,58 @@ const mapSources = {
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
-  options = {},
-  onMapMount,
-  onMapClick,
-  onZoomChange,
+
   zoom: initialZoomLevel,
+  children,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
-  onZoomChange: () => void
-  options?: MapOptions
-  onMapClick: (e: LeafletMouseEvent) => void
-  onMapMount: (map: Map) => void
+
+  children?: ReactNode
 }) {
   const { theme } = useTheme()
 
-  const ref = useRef<HTMLDivElement>(null)
-
-  const leafletMapRef = useRef<Map>(null)
-
-  const [{ top, bottom }, setVerticalView] = useState({ top: 100, bottom: 0 })
-  const [{ left, right }, setHorizontalView] = useState({ left: 100, right: 0 })
-
-  const updateMapViewBounds = useEffectEvent((event: LeafletEvent) => {
-    if (leafletMapRef.current) {
-      const bounds = leafletMapRef.current.getBounds()
-
-      setHorizontalView({ left: bounds.getWest(), right: bounds.getEast() })
-
-      setVerticalView({ top: bounds.getNorth(), bottom: bounds.getSouth() })
-    }
-  })
-
-  //This effect ideally is called once per page load. This initializes the map and d3
   useEffect(() => {
-    leafletMapRef.current?.remove()
-
-    // // Add the polyfills
     applyAllPolyfills()
-
-    leafletMapRef.current = new Map(ref.current as any, {
-      zoomControl: false,
-      maxZoom: 15,
-      minZoom: 7,
-
-      ...options,
-    }).setView([initialLat, initialLong], initialZoomLevel)
-
-    const leafletMap = leafletMapRef.current
-
-    const bounds = leafletMap.getBounds()
-
-    leafletMap.setMaxBounds(bounds.pad(2))
-
-    onMapMount(leafletMap)
-
-    leafletMap.on("click", onMapClick)
-
-    // when the user zooms in or out you need to reset
-    // the view
-    leafletMap.on("zoom", onZoomChange)
-    leafletMap.on("move", updateMapViewBounds)
-
-    // this puts stuff on the map!
-    onZoomChange()
-    // transition()
   }, [])
 
-  useEffect(() => {
-    const tileset =
-      theme === "dark"
-        ? mapSources.darkMatterNoLabels
-        : mapSources.voyagerNoLabels
-
-    if (leafletMapRef.current)
-      new TileLayer(tileset.url, {
-        attribution: tileset.attribution,
-      }).addTo(leafletMapRef.current)
-  }, [theme])
+  const [map, setMap] = useState<Map | null>(null)
 
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
-      />
-      <MapScale isHorizontal min={left} max={right} />
+      {map && <MapScale isHorizontal map={map} />}
 
-      <div
-        className="not-prose relative z-10 h-full min-h-[60vh] w-full"
+      <MapContainer
+        center={[initialLat, initialLong]}
+        zoom={initialZoomLevel}
         id="map"
-        ref={ref}
-      ></div>
-      <MapScale isHorizontal={false} min={top} max={bottom} />
+        ref={setMap}
+        className="not-prose relative z-10 h-full min-h-[60vh] w-full"
+        maxZoom={15}
+        minZoom={7}
+        zoomControl={false}
+        maxBounds={[
+          [51.67131229155612, -117.89978027343751],
+          [44.320112128003764, -127.10083007812501],
+        ]}
+      >
+        <TileLayer
+          attribution={
+            theme === "dark"
+              ? mapSources.darkMatterNoLabels.attribution
+              : mapSources.voyagerNoLabels.attribution
+          }
+          url={
+            theme === "dark"
+              ? mapSources.darkMatterNoLabels.url
+              : mapSources.voyagerNoLabels.url
+          }
+        />
+        {children}
+      </MapContainer>
+
+      {map && <MapScale isHorizontal={false} map={map} />}
     </div>
   )
 }

@@ -1,27 +1,32 @@
-import {
-  PureComponent,
-  useEffect,
-  useEffectEvent,
-  useRef,
-  useState,
-} from "react"
+import { useEffect, useEffectEvent, useRef, useState } from "react"
 import * as d3 from "d3"
-import { LeafletEvent, Map } from "leaflet"
+import { Map } from "leaflet"
 
 const MapScale = ({
   isHorizontal,
-  min,
-  max,
+
+  map,
 }: {
   isHorizontal: boolean
-  min: number
-  max: number
+  map: Map
 }) => {
+  const [{ min, max }, setMinMax] = useState({ max: 100, min: 0 })
+
+  const updateMapViewBounds = useEffectEvent(() => {
+    const bounds = map.getBounds()
+
+    if (isHorizontal) {
+      setMinMax({ min: bounds.getWest(), max: bounds.getEast() })
+    } else {
+      setMinMax({ min: bounds.getNorth(), max: bounds.getSouth() })
+    }
+  })
+
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // d3.select(ref.current).select("svg").remove()
-    // d3.select(ref.current).select("g").remove()
+    updateMapViewBounds()
+    map.on("move", updateMapViewBounds)
 
     const boundingDiv = ref.current?.getBoundingClientRect() as DOMRect
 
