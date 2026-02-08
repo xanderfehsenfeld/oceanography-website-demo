@@ -4,279 +4,381 @@ import {
   DomUtil,
   LatLng,
   Layer,
-  LeafletEventHandlerFn,
-  Map,
   Point,
-  ZoomAnimEvent,
+  Util,
+  version,
 } from "leaflet"
-import {
-  autoDetectRenderer,
-  Container,
-  isWebGLSupported,
-  Renderer,
-} from "pixi.js"
+import * as PIXI from "pixi.js"
 
-type AfterDrawCallback = (callback: Callback, event?: unknown) => void
+// Leaflet.PixiOverlay
+// version: 2.0.0
+// author: Manuel Baclet <mbaclet@gmail.com>
+// license: MIT
 
-interface Callback {
-  renderer: Renderer
-  map: Map
-  container: Container
-  getScale: () => number
-  layerPointToLatLng: (point: Point) => LatLng
-  latLngToLayerPoint: (latLng: LatLng) => Point
+const round = Point.prototype._round
+const no_round = function () {
+  return this
 }
 
-interface PixiOverlayOptions {
-  padding?: number
-  forceCanvas?: boolean
-  doubleBuffering?: boolean
-  resolution?: number
-  projectionZoom?: (map: Map) => number
-  destroyInteractionManager?: boolean
-  autoPreventDefault?: boolean
-  preserveDrawingBuffer?: boolean
-  clearBeforeRender?: boolean
-  shouldRedrawOnMove?: (event: Event) => boolean
+function setEventSystem(
+  renderer,
+  destroyInteractionManager,
+  autoPreventDefault
+) {
+  const eventSystem = renderer.events
+  if (destroyInteractionManager) {
+    eventSystem.destroy()
+  } else if (!autoPreventDefault) {
+    eventSystem.autoPreventDefault = false
+  }
 }
 
-interface RendererOptions {
-  resolution: number
-  antialias: boolean
-  forceCanvas: boolean
-  preserveDrawingBuffer: boolean
-  clearBeforeRender: boolean
-  backgroundAlpha: number
+function projectionZoom(map) {
+  const maxZoom = map.getMaxZoom()
+  const minZoom = map.getMinZoom()
+  if (maxZoom === Infinity) return minZoom + 8
+
+  return (maxZoom + minZoom) / 2
 }
 
-export class PixiOverlay extends Layer {
-  private readonly doubleBuffering: boolean
-  private readonly pixiContainer: Container
-  private drawCallback: AfterDrawCallback | undefined
-  private rendererOptions: RendererOptions
-  private renderer!: Renderer
-  private auxRenderer!: Renderer
-  private container!: HTMLElement
-  private initialZoom: number = 0
-  private wgsInitialShift: Point = new Point(0, 0)
-  private wgsOrigin: LatLng = new LatLng(0, 0)
-  private zoom: number = 0
-  private center: LatLng = new LatLng(0, 0)
-  private roundFn = Point.prototype._round
-  declare _map: Map
-
-  pixiOptions: Required<PixiOverlayOptions> = {
+const pixiOverlayClass = {
+  options: {
+    // @option padding: Number = 0.1
+    // How much to extend the clip area around the map view (relative to its size)
+    // e.g. 0.1 would be 10% of map view in each direction
     padding: 0.1,
-    forceCanvas: false,
+    // @option doubleBuffering: Boolean = false
+    // Help to prevent flicker when refreshing display on some devices (e.g. iOS devices)
     doubleBuffering: false,
+    // @option resolution: Number = 1
+    // Resolution of the renderer canvas
     resolution: Browser.retina ? 2 : 1,
-    projectionZoom: (map: Map) => {
-      if (map.getMaxZoom() === Infinity) return map.getMinZoom() + 8
-      return (map.getMaxZoom() + map.getMinZoom()) / 2
-    },
+    // @option projectionZoom(map: map): Number
+    // return the layer projection zoom level
+    projectionZoom: projectionZoom,
+    // @option destroyInteractionManager:  Boolean = false
+    // Destroy PIXI EventSystem
     destroyInteractionManager: false,
-    autoPreventDefault: true,
+    // @option
+    // Customize PIXI EventSystem autoPreventDefault property
+    // This option is ignored if destroyInteractionManager is set
+    autoPreventDefault: false,
+    // @option preserveDrawingBuffer: Boolean = false
+    // Enables drawing buffer preservation
     preserveDrawingBuffer: false,
+    // @option clearBeforeRender: Boolean = true
+    // Clear the canvas before the new render pass
     clearBeforeRender: true,
-    shouldRedrawOnMove: () => false,
-  }
+    // @option shouldRedrawOnMove(e: moveEvent): Boolean
+    // filter move events that should trigger a layer redraw
+    shouldRedrawOnMove: function () {
+      return false
+    },
+  },
 
-  constructor(pixiContainer: Container, options?: PixiOverlayOptions) {
-    super()
-    this.pixiOptions = { ...this.pixiOptions, ...options }
-    this.pixiContainer = pixiContainer
+  initialize: function (
+    drawCallback,
+    pixiContainer,
+    renderer,
+    auxRenderer,
+    options
+  ) {
+    Util.setOptions(this, options)
+    Util.stamp(this)
+    this._drawCallback = drawCallback
+    this._pixiContainer = pixiContainer
+    this._renderer = renderer
+    this._auxRenderer = auxRenderer
+    this._doubleBuffering = !!auxRenderer && this.options.doubleBuffering
+  },
 
-    this.rendererOptions = {
-      resolution: this.pixiOptions.resolution,
-      antialias: true,
-      forceCanvas: this.pixiOptions.forceCanvas,
-      preserveDrawingBuffer: this.pixiOptions.preserveDrawingBuffer,
-      clearBeforeRender: this.pixiOptions.clearBeforeRender,
-      backgroundAlpha: 0,
-    }
+  _setMap: function () {},
 
-    this.doubleBuffering =
-      isWebGLSupported() &&
-      !this.pixiOptions.forceCanvas &&
-      this.pixiOptions.doubleBuffering
-  }
+  _setContainerStyle: function () {},
 
-  afterDrawCallback(callback: AfterDrawCallback): void {
-    this.drawCallback = callback
-  }
+  _addContainer: function () {
+    this.getPane().appendChild(this._container)
+  },
 
-  destroy(): void {
-    this.onRemove()
-  }
+  _setEvents: function () {},
 
-  override onAdd(map: Map): this {
-    this._map = map
+  onAdd: function (targetMap) {
+    this._setMap(targetMap)
+    if (!this._container) {
+      const container = (this._container = DomUtil.create(
+        "div",
+        "leaflet-pixi-overlay"
+      ))
+      container.style.position = "absolute"
 
-    this.container = DomUtil.create("div", "leaflet-pixi-overlay")
-    this.container.style.position = "absolute"
-
-    const rendererPromise = autoDetectRenderer(this.rendererOptions).then(
-      (renderer) => {
-        // set event system
-        this.renderer = renderer
-        this.container.appendChild(
-          this.renderer.view.canvas as HTMLCanvasElement
-        )
-      }
-    )
-
-    if (map.options.zoomAnimation) {
-      DomUtil.addClass(this.container, "leaflet-zoom-animated")
-    }
-
-    let auxRendererPromise = Promise.resolve()
-    if (this.doubleBuffering) {
-      auxRendererPromise = autoDetectRenderer(this.rendererOptions).then(
-        (renderer) => {
-          // set event system
-          this.auxRenderer = renderer
-          this.container.appendChild(
-            this.auxRenderer.view.canvas as HTMLCanvasElement
-          )
-        }
+      setEventSystem(
+        this._renderer,
+        this.options.destroyInteractionManager,
+        this.options.autoPreventDefault
       )
+      container.appendChild(this._renderer.canvas)
+
+      if (this._zoomAnimated) {
+        container.classList.add("leaflet-zoom-animated")
+        this._setContainerStyle()
+      }
+
+      if (this._doubleBuffering && this._auxRenderer) {
+        setEventSystem(
+          this._auxRenderer,
+          this.options.destroyInteractionManager,
+          this.options.autoPreventDefault
+        )
+        container.appendChild(this._auxRenderer.canvas)
+        this._renderer.canvas.style.position = "absolute"
+        this._auxRenderer.canvas.style.position = "absolute"
+      }
     }
+    this._addContainer()
+    this._setEvents()
 
-    Promise.all([rendererPromise, auxRendererPromise]).then(() => {
-      map.getPanes().overlayPane.appendChild(this.container)
-      this.initialZoom = this.pixiOptions.projectionZoom(map)
-      this.wgsInitialShift = map.project(this.wgsOrigin, this.initialZoom)
-      this.update()
-    })
-    return this
-  }
+    const map = this._map
+    this._initialZoom = this.options.projectionZoom(map)
+    this._wgsOrigin = new LatLng(0, 0)
+    this._wgsInitialShift = map.project(this._wgsOrigin, this._initialZoom)
+    this._mapInitialZoom = map.getZoom()
+    const _layer = this
 
-  override onRemove(): this {
-    this.renderer.destroy()
-    this.auxRenderer?.destroy()
-    DomUtil.remove(this.container)
-    return this
-  }
-
-  override getEvents(): { [p: string]: LeafletEventHandlerFn } {
-    const events: { [p: string]: LeafletEventHandlerFn } = {
-      zoom: this.onZoom,
-      move: this.onMove,
-      moveend: this.update,
+    this.utils = {
+      latLngToLayerPoint: function (latLng, zoom) {
+        zoom = zoom === undefined ? _layer._initialZoom : zoom
+        const projectedPoint = map.project(latLng, zoom)
+        return projectedPoint
+      },
+      layerPointToLatLng: function (point, zoom) {
+        zoom = zoom === undefined ? _layer._initialZoom : zoom
+        const projectedPoint = point(point)
+        return map.unproject(projectedPoint, zoom)
+      },
+      getScale: function (zoom) {
+        if (zoom === undefined)
+          return map.getZoomScale(map.getZoom(), _layer._initialZoom)
+        else return map.getZoomScale(zoom, _layer._initialZoom)
+      },
+      getRenderer: function () {
+        return _layer._renderer
+      },
+      getContainer: function () {
+        return _layer._pixiContainer
+      },
+      getMap: function () {
+        return _layer._map
+      },
     }
+    this._update({ type: "add" })
+  },
 
-    if (this._map.options.zoomAnimation) {
-      events["zoomanim"] = this.onAnimZoom as LeafletEventHandlerFn
-      // delete events['zoom'];
+  onRemove: function () {
+    DomUtil.remove(this._container)
+  },
+
+  _onAnimZoom: function (e) {
+    // Store animation state
+    this._animatingZoom = true
+    this._animationCenter = e.center
+    this._animationZoom = e.zoom
+
+    this._updateTransform(e.center, e.zoom)
+  },
+
+  _onZoom: function () {
+    // Clear animation state
+    this._animatingZoom = false
+    this._updateTransform(this._map.getCenter(), this._zoom)
+  },
+
+  getEvents: function () {
+    const events = {
+      zoom: this._onZoom,
+      move: this._onMove,
+      moveend: this._onMoveEnd,
+      zoomstart: this._onZoomStart,
+      zoomend: this._onZoomEnd,
     }
-
+    if (this._zoomAnimated) {
+      events.zoomanim = this._onAnimZoom
+    }
     return events
-  }
+  },
 
-  private onZoom(): void {
-    this.updateTransform(this._map.getCenter(), this._map.getZoom())
-  }
+  _onZoomStart: function () {
+    this._zooming = true
+  },
 
-  private onAnimZoom(event: ZoomAnimEvent): void {
-    this.updateTransform(event.center, event.zoom)
-  }
+  _onZoomEnd: function () {
+    this._zooming = false
+    this._animatingZoom = false
+    this._update({ type: "zoomend" })
+  },
 
-  private onMove(): void {}
-
-  private updateTransform(center: LatLng, zoom: number): void {
-    const scale = this._map.getZoomScale(zoom, this.zoom)
-    const viewHalf = this._map
-      .getSize()
-      .multiplyBy(0.5 + this.pixiOptions.padding)
-    const currentCenterPoint = this._map.project(this.center, zoom)
-    const topLeftOffset = viewHalf
-      .multiplyBy(-scale)
-      .add(currentCenterPoint)
-      .subtract(this._map._getNewPixelOrigin(center, zoom))
-
-    if (Browser.any3d) {
-      DomUtil.setTransform(this.container, topLeftOffset, scale)
-    } else {
-      DomUtil.setPosition(this.container, topLeftOffset)
+  _onMoveEnd: function (e) {
+    if (!this._zooming) {
+      this._update(e)
     }
-  }
+  },
 
-  private update(): void {
-    const padding = this.pixiOptions.padding
+  _onMove: function (e) {
+    if (this.options.shouldRedrawOnMove(e)) {
+      this._update(e)
+    }
+  },
+
+  _updateTransform: function (center, zoom) {
+    var scale = this._map.getZoomScale(zoom, this._zoom),
+      viewHalf = this._map.getSize().multiplyBy(0.5 + this.options.padding),
+      currentCenterPoint = this._map.project(this._center, zoom),
+      topLeftOffset = viewHalf
+        .multiplyBy(-scale)
+        .add(currentCenterPoint)
+        .subtract(this._map._getNewPixelOrigin(center, zoom))
+
+    if (Browser.any3d || version >= "2") {
+      DomUtil.setTransform(this._container, topLeftOffset, scale)
+    } else {
+      DomUtil.setPosition(this._container, topLeftOffset)
+    }
+  },
+
+  _redraw: function (offset, e) {
+    this._disableLeafletRounding()
+    const scale = this._map.getZoomScale(this._zoom, this._initialZoom)
+    const shift = this._map
+      .latLngToLayerPoint(this._wgsOrigin)
+      ._subtract(this._wgsInitialShift.multiplyBy(scale))
+      ._subtract(offset)
+
+    this._pixiContainer.scale.set(scale)
+    this._pixiContainer.position.set(shift.x, shift.y)
+    this._drawCallback(this.utils, e)
+    this._enableLeafletRounding()
+  },
+
+  _update: function (e) {
+    // is this really useful?
+    if (this._map._animatingZoom && this._bounds) {
+      return
+    }
+
+    // Update pixel bounds of renderer container
+    const p = this.options.padding
     const mapSize = this._map.getSize()
     const min = this._map
-      .containerPointToLayerPoint(mapSize.multiplyBy(-padding))
+      .containerPointToLayerPoint(mapSize.multiplyBy(-p))
       .round()
-    const bounds = new Bounds(
-      min,
-      min.add(mapSize.multiplyBy(1 + padding * 2)).round()
-    )
-    this.center = this._map.getCenter()
-    this.zoom = this._map.getZoom()
 
-    if (this.doubleBuffering) {
-      const currentRenderer = this.renderer
-      this.renderer = this.auxRenderer
-      this.auxRenderer = currentRenderer
+    this._bounds = new Bounds(
+      min,
+      min.add(mapSize.multiplyBy(1 + p * 2)).round()
+    )
+    // Store previous values for comparison
+    const prevCenter = this._center
+    const prevZoom = this._zoom
+
+    this._center = this._map.getCenter()
+    this._zoom = this._map.getZoom()
+
+    // Only proceed with expensive operations if something actually changed
+    if (prevCenter && prevZoom !== undefined) {
+      const centerChanged = !prevCenter.equals(this._center)
+      const zoomChanged = prevZoom !== this._zoom
+
+      if (!centerChanged && !zoomChanged && e.type !== "add") {
+        return
+      }
     }
 
-    const container = this.container
-    const size = bounds.getSize()
+    if (this._doubleBuffering && this._auxRenderer) {
+      const currentRenderer = this._renderer
+      this._renderer = this._auxRenderer
+      this._auxRenderer = currentRenderer
+    }
+
+    const canvas = this._renderer.canvas
+    const b = this._bounds
+    const container = this._container
+    const size = b.getSize()
 
     if (
-      this.renderer.screen.x !== size.x ||
-      this.renderer.screen.y !== size.y
+      !this._renderer.size ||
+      this._renderer.size.x !== size.x ||
+      this._renderer.size.y !== size.y
     ) {
-      // if ('gl' in this.renderer) {
-      //   this.renderer.resolution = this.pixiOptions.resolution;
-      // }
-      this.renderer.resize(size.x, size.y)
+      this._renderer.resize(size.x, size.y)
+      canvas.style.width = size.x + "px"
+      canvas.style.height = size.y + "px"
+      this._renderer.size = size
     }
 
-    this.redraw(bounds.min!)
-    DomUtil.setPosition(container, bounds.min!)
-  }
-
-  private redraw(offset: Point): void {
-    this.disableRounding()
-    const scale = this._map.getZoomScale(this.zoom, this.initialZoom)
-    const shift = this._map
-      .latLngToLayerPoint(this.wgsOrigin)
-      .subtract(this.wgsInitialShift.multiplyBy(scale))
-      .subtract(offset)
-    this.pixiContainer.scale.set(scale)
-    this.pixiContainer.position.set(shift.x, shift.y)
-    this.triggerUpdate()
-    this.enableRounding()
-  }
-
-  private disableRounding(): void {
-    Point.prototype._round = this.noRound
-  }
-
-  private enableRounding(): void {
-    Point.prototype._round = this.roundFn
-  }
-
-  private noRound = function (this: Point): Point {
-    return this
-  }
-
-  private triggerUpdate(): void {
-    if (this.drawCallback) {
-      this.drawCallback({
-        renderer: this.renderer!,
-        map: this._map,
-        container: this.pixiContainer,
-        getScale: () =>
-          this._map.getZoomScale(this._map.getZoom(), this.initialZoom),
-        layerPointToLatLng: (point) => {
-          return this._map.unproject(point, this.initialZoom)
-        },
-        latLngToLayerPoint: (latLng) => {
-          return this._map.project(latLng, this.initialZoom)
-        },
+    if (this._doubleBuffering && this._auxRenderer) {
+      const self = this
+      requestAnimationFrame(function () {
+        self._redraw(b.min, e)
+        if (self._renderer.gl) {
+          self._renderer.gl.finish()
+        }
+        canvas.style.visibility = "visible"
+        self._auxRenderer.canvas.style.visibility = "hidden"
+        DomUtil.setPosition(container, b.min)
       })
+    } else {
+      this._redraw(b.min, e)
+      DomUtil.setPosition(container, b.min)
     }
-  }
+  },
+
+  _disableLeafletRounding: function () {
+    Point.prototype._round = no_round
+  },
+
+  _enableLeafletRounding: function () {
+    Point.prototype._round = round
+  },
+
+  redraw: function (data) {
+    if (this._map) {
+      this._disableLeafletRounding()
+      this._drawCallback(this.utils, data)
+      this._enableLeafletRounding()
+    }
+    return this
+  },
+
+  _destroy: function () {
+    this._renderer.destroy()
+    if (this._auxRenderer) {
+      this._auxRenderer.destroy()
+    }
+  },
+
+  destroy: function () {
+    this.remove()
+    this._destroy()
+  },
+}
+
+// Extend based on Leaflet version
+let PixiOverlay = Layer.extend(pixiOverlayClass)
+
+// Factory function
+export function pixiOverlay(
+  drawCallback,
+  pixiContainer,
+  renderer,
+  auxRenderer = null,
+  options = {}
+) {
+  return Browser.canvas
+    ? new PixiOverlay(
+        drawCallback,
+        pixiContainer,
+        renderer,
+        auxRenderer,
+        options
+      )
+    : null
 }

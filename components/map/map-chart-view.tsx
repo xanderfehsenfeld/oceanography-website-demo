@@ -4,11 +4,12 @@ import * as d3 from "d3"
 import "./map-chart-view.css"
 
 import L, { LatLng } from "leaflet"
-import { Container } from "pixi.js"
+import { autoDetectRenderer, Container } from "pixi.js"
 import { useMap } from "react-leaflet"
 
 import { IFeature, IPoints } from "./getPoints"
-import { PixiOverlay } from "./pixi-overlay"
+import { pixiOverlay } from "./pixi-overlay"
+import { PixiOverlayComponent } from "./pixi-overlay-component"
 
 var map: L.Map
 
@@ -318,26 +319,6 @@ function MapChartView({
 
     reset()
 
-    const pixiOverlay = new PixiOverlay(new Container())
-    pixiOverlay.afterDrawCallback((callback) => {
-      console.log("afterDraw")
-      // if (firstDraw) {
-      //   const coords = callback.latLngToLayerPoint(latLng([50, 8]))
-      //   circle.x = coords.x
-      //   circle.y = coords.y
-      // }
-
-      // if (firstDraw || prevZoom !== callback.map.getZoom()) {
-      //   circle.scale.set(1 / callback.getScale())
-      // }
-
-      // firstDraw = false
-      // prevZoom = callback.map.getZoom()
-      // callback.renderer.render(callback.container)
-    })
-
-    pixiOverlay.addTo(map)
-
     return () => {
       d3.select(map.getPanes().overlayPane).selectAll("svg").remove()
     }
@@ -347,7 +328,7 @@ function MapChartView({
     renderDrifters(circles)
   }, [circles])
 
-  return <></>
+  return <PixiOverlayComponent />
 }
 
 export default MapChartView
