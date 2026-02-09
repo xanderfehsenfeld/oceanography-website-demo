@@ -4,16 +4,39 @@ import {
   DomUtil,
   LatLng,
   Layer,
+  Map,
   Point,
   Util,
   version,
 } from "leaflet"
-import * as PIXI from "pixi.js"
+import { Application, Container, Renderer } from "pixi.js"
 
 // Leaflet.PixiOverlay
 // version: 2.0.0
 // author: Manuel Baclet <mbaclet@gmail.com>
 // license: MIT
+
+export interface Callback {
+  getRenderer: () => Renderer
+  getMap: () => Map
+  getContainer: () => Container
+  getScale: (zoom: number) => number
+  layerPointToLatLng: (point: Point, zoom: number) => LatLng
+  latLngToLayerPoint: (latLng: LatLng, zoom: number) => Point
+}
+
+interface PixiOverlayOptions {
+  padding?: number
+  forceCanvas?: boolean
+  doubleBuffering?: boolean
+  resolution?: number
+  projectionZoom?: (map: Map) => number
+  destroyInteractionManager?: boolean
+  autoPreventDefault?: boolean
+  preserveDrawingBuffer?: boolean
+  clearBeforeRender?: boolean
+  shouldRedrawOnMove?: (event: Event) => boolean
+}
 
 const round = Point.prototype._round
 const no_round = function () {
@@ -21,9 +44,9 @@ const no_round = function () {
 }
 
 function setEventSystem(
-  renderer,
-  destroyInteractionManager,
-  autoPreventDefault
+  renderer: Renderer,
+  destroyInteractionManager: boolean,
+  autoPreventDefault: boolean
 ) {
   const eventSystem = renderer.events
   if (destroyInteractionManager) {
@@ -33,7 +56,7 @@ function setEventSystem(
   }
 }
 
-function projectionZoom(map) {
+function projectionZoom(map: Map) {
   const maxZoom = map.getMaxZoom()
   const minZoom = map.getMinZoom()
   if (maxZoom === Infinity) return minZoom + 8
@@ -81,7 +104,7 @@ const pixiOverlayClass = {
     pixiContainer,
     renderer,
     auxRenderer,
-    options
+    options: PixiOverlayOptions
   ) {
     Util.setOptions(this, options)
     Util.stamp(this)
@@ -366,19 +389,17 @@ let PixiOverlay = Layer.extend(pixiOverlayClass)
 
 // Factory function
 export function pixiOverlay(
-  drawCallback,
+  drawCallback: (result: Callback) => void,
   pixiContainer,
   renderer,
   auxRenderer = null,
   options = {}
 ) {
-  return Browser.canvas
-    ? new PixiOverlay(
-        drawCallback,
-        pixiContainer,
-        renderer,
-        auxRenderer,
-        options
-      )
-    : null
+  return new PixiOverlay(
+    drawCallback,
+    pixiContainer,
+    renderer,
+    auxRenderer,
+    options
+  ) as typeof pixiOverlayClass & Layer
 }
