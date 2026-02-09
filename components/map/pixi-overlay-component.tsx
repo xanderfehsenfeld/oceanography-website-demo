@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import { LatLng, Popup } from "leaflet"
 import {
   autoDetectRenderer,
+  Color,
   Container,
   EventBoundary,
   Graphics,
@@ -43,7 +44,7 @@ export const PixiOverlayComponent = () => {
 
   const circleCenter = new LatLng(48.5, -123)
   let projectedCenter
-  let circleRadius = 5
+  let circleRadius = 500
 
   const triangle = new Graphics()
   // triangle.popup = new Popup()
@@ -62,14 +63,17 @@ export const PixiOverlayComponent = () => {
     /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
 
   useEffect(() => {
-    const pixiContainer = new Container({})
-    pixiContainer.addChild(
-      marker,
+    const pixiContainer = new Container()
 
-      triangle,
+    const rectangle = new Graphics()
+      .rect(50, 50, 100, 100)
+      .fill(0xff0000)
+      .circle(200, 200, 50)
+      .stroke({ color: 0x00ff00, width: 5 })
+      .moveTo(300, 300)
+      .lineTo(400, 400)
 
-      circle
-    )
+    pixiContainer.addChild(circle)
 
     const draw = (utils: Callback) => {
       if (frame) {
@@ -80,10 +84,11 @@ export const PixiOverlayComponent = () => {
       const zoom = utils.getMap().getZoom()
       const container = utils.getContainer()
       const renderer = utils.getRenderer()
-      const project = utils.latLngToLayerPoint
+      const project = utils.getMap().latLngToLayerPoint
       const scale = utils.getScale(zoom)
 
       if (firstDraw) {
+        console.log("first draw")
         const boundary = new EventBoundary(container)
         map.on("click", (e) => {
           // not really nice but much better than before
@@ -97,47 +102,49 @@ export const PixiOverlayComponent = () => {
             pointerEvent.clientX,
             pointerEvent.clientY
           )
+
+          console.log(pixiPoint.x, pixiPoint.y)
           // get what is below the click if any:
           const target = boundary.hitTest(pixiPoint.x, pixiPoint.y)
           if (target && target.popup) {
             target.popup.openOn(map)
           }
         })
-        const markerCoords = project(markerLatLng, zoom)
-        marker.x = markerCoords.x
-        marker.y = markerCoords.y
-        marker.anchor.set(0.5, 1)
-        marker.scale.set(1 / scale)
-        marker.currentScale = 1 / scale
+        // const markerCoords = project(markerLatLng)
+        // marker.x = markerCoords.x
+        // marker.y = markerCoords.y
+        // marker.anchor.set(0.5, 1)
+        // marker.scale.set(1 / scale)
+        // marker.currentScale = 1 / scale
 
-        projectedPolygon = polygonLatLngs.map((coords) =>
-          project(new LatLng(...coords), zoom)
-        )
+        // projectedPolygon = polygonLatLngs.map((coords) =>
+        //   project(new LatLng(...coords))
+        // )
 
-        projectedCenter = project(circleCenter, zoom)
+        projectedCenter = project(circleCenter)
         circleRadius = circleRadius / scale
       }
       if (firstDraw || prevZoom !== zoom) {
-        marker.currentScale = marker.scale.x
-        marker.targetScale = 1 / scale
+        // marker.currentScale = marker.scale.x
+        // marker.targetScale = 1 / scale
 
-        triangle.clear()
+        // triangle.clear()
 
-        triangle.setStrokeStyle({
-          width: 3 / scale,
-          color: 0x3388ff,
-          alpha: 1,
-        })
-        triangle.fill({
-          color: 0x3388ff,
-          alpha: 0.2,
-        })
-        triangle.x = projectedPolygon[0].x
-        triangle.y = projectedPolygon[0].y
-        projectedPolygon.forEach((coords, index) => {
-          if (index == 0) triangle.moveTo(0, 0)
-          else triangle.lineTo(coords.x - triangle.x, coords.y - triangle.y)
-        })
+        // triangle.setStrokeStyle({
+        //   width: 3 / scale,
+        //   color: 0x3388ff,
+        //   alpha: 1,
+        // })
+        // triangle.fill({
+        //   color: 0x3388ff,
+        //   alpha: 0.2,
+        // })
+        // triangle.x = projectedPolygon[0].x
+        // triangle.y = projectedPolygon[0].y
+        // projectedPolygon.forEach((coords, index) => {
+        //   if (index == 0) triangle.moveTo(0, 0)
+        //   else triangle.lineTo(coords.x - triangle.x, coords.y - triangle.y)
+        // })
 
         circle.clear()
 
@@ -150,6 +157,8 @@ export const PixiOverlayComponent = () => {
         circle.fill({ color: 0xff0033, alpha: 0.5 })
         circle.x = projectedCenter.x
         circle.y = projectedCenter.y
+
+        console.log(projectedCenter)
 
         circle.circle(0, 0, circleRadius)
       }
@@ -184,9 +193,11 @@ export const PixiOverlayComponent = () => {
 
     const overlay = autoDetectRenderer({
       preference: "webgpu", // or 'webgl'
-      background: "transparent",
+      background: new Color("rgba(255,0,0,0)"),
+      backgroundAlpha: 1,
     }).then((renderer) => {
-      const pixi = pixiOverlay(draw, pixiContainer, renderer)
+      console.log(renderer)
+      const pixi = pixiOverlay(draw, pixiContainer, renderer, null)
 
       pixi.addTo(map)
 

@@ -21,8 +21,8 @@ export interface Callback {
   getMap: () => Map
   getContainer: () => Container
   getScale: (zoom: number) => number
-  layerPointToLatLng: (point: Point, zoom: number) => LatLng
-  latLngToLayerPoint: (latLng: LatLng, zoom: number) => Point
+  layerPointToLatLng: (point: Point, zoom?: number) => LatLng
+  latLngToLayerPoint: (latLng: LatLng, zoom?: number) => Point
 }
 
 interface PixiOverlayOptions {
@@ -170,7 +170,10 @@ const pixiOverlayClass = {
     this.utils = {
       latLngToLayerPoint: function (latLng, zoom) {
         zoom = zoom === undefined ? _layer._initialZoom : zoom
+
+        console.log("zoomnn used", zoom)
         const projectedPoint = map.project(latLng, zoom)
+
         return projectedPoint
       },
       layerPointToLatLng: function (point, zoom) {
