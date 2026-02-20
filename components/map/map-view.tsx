@@ -39,10 +39,6 @@ function MapView({
 }) {
   const { theme } = useTheme()
 
-  useEffect(() => {
-    applyAllPolyfills()
-  }, [])
-
   const [map, setMap] = useState<Map | null>(null)
 
   return (

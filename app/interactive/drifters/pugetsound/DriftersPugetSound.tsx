@@ -1,6 +1,7 @@
 "use client"
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
+import dynamic from "next/dynamic"
 
 import {
   getPoints,
@@ -8,12 +9,16 @@ import {
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
-import MapChartView from "@/components/map/map-chart-view"
 import MapView from "@/components/map/map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
+
+const PixiOverlayComponent = dynamic(
+  () => import("@/components/map/pixi-overlay-component"),
+  { ssr: false }
+)
 
 const timeOptions: string[] = times[0].t
 
@@ -72,11 +77,12 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         initialLong={initialLong}
         zoom={initialZoomLevel}
       >
-        <MapChartView
+        {/* <MapChartView
           circles={points[sliderValue].features}
           allPoints={points}
           lines={lines}
-        />
+        /> */}
+        <PixiOverlayComponent />
       </MapView>
       <div className="flex-1 gap-2">
         <div className={"w-full"}>
