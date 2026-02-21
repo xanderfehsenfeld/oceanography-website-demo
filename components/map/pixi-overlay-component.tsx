@@ -20,13 +20,15 @@ import { useMap } from "react-leaflet"
 
 import { getPoints, IFeature, IPoints } from "./getPoints"
 import { Drifter } from "./sprites/drifter"
+import { LineGraphic } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
 
 let prevZoom = 8
 let firstDraw = true
 
 let circleSprites: Drifter[]
-let lineGraphics: Graphics[]
+let lineGraphics: LineGraphic[]
+let backgroundLineGraphics: LineGraphic[]
 
 let isIn: { [key: string]: boolean } = {}
 
@@ -38,6 +40,7 @@ let reticule: Reticule
 const PixiOverlayComponent = ({
   allPoints: points,
   circles,
+  showAllLines,
 }: {
   circles: IFeature[]
   allPoints: IPoints[]
@@ -59,7 +62,7 @@ const PixiOverlayComponent = ({
       const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
       const circle = circleSprites[id]
 
-      circle.setTranslate(x, y)
+      circle?.setTranslate(x, y)
     })
   })
 
@@ -80,12 +83,15 @@ const PixiOverlayComponent = ({
     let zoom = map.getZoom()
     var renderer = utils.getRenderer()
 
-    const initializeLines = (points: IPoints[]): Graphics[] => {
+    const initializeLines = (
+      points: IPoints[],
+      isBackground?: boolean
+    ): LineGraphic[] => {
       return points[0].features.map((feature, id) => {
-        const line = new Graphics()
+        const line = new LineGraphic(isBackground)
         line.eventMode = "none"
-        line.lineStyle({ width: 3, color: "green" })
-        line.visible = false
+        line.lineStyle({ width: 3, color: isBackground ? "magenta" : "green" })
+        line.visible = isBackground || false
 
         return line
       })
@@ -146,6 +152,11 @@ const PixiOverlayComponent = ({
 
         reticule = new Reticule(renderer)
         container.addChild(reticule)
+
+        if (showAllLines) {
+          backgroundLineGraphics = initializeLines(points, true)
+          container.addChild(...backgroundLineGraphics)
+        }
 
         lineGraphics = initializeLines(points)
 
@@ -220,20 +231,34 @@ const PixiOverlayComponent = ({
         //Update drawn lines
         lineGraphics.forEach((line, id) => {
           line.clear()
-          line.eventMode = "none"
-
           line.lineStyle({ width: 3 / scale, color: "green" })
 
-          points.forEach((v, frame) => {
+          const vertices = points.map((v): [number, number] => {
             const { longitude, latitude } = v.features[id].properties
             const { x, y } = project([latitude, longitude] as any)
-            if (frame === 0) {
-              line.moveTo(x, y)
-            } else {
-              line.lineTo(x, y)
-            }
+
+            return [x, y]
           })
+
+          line.setVertices(vertices)
         })
+
+        if (backgroundLineGraphics) {
+          backgroundLineGraphics.forEach((line, id) => {
+            line.clear()
+
+            line.lineStyle({ width: 3 / scale, color: "purple", alpha: 0.3 })
+
+            const vertices = points.map((v): [number, number] => {
+              const { longitude, latitude } = v.features[id].properties
+              const { x, y } = project([latitude, longitude] as any)
+
+              return [x, y]
+            })
+
+            line.setVertices(vertices)
+          })
+        }
 
         //update the drifters
 

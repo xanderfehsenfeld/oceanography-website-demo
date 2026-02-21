@@ -10,16 +10,10 @@ import {
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
-import PixiOverlayComponent from "@/components/map/pixi-overlay-component"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
-
-// const PixiOverlayComponent = dynamic(
-//   () => import("@/components/map/pixi-overlay-component"),
-//   { ssr: false }
-// )
 
 const timeOptions: string[] = times[0].t
 

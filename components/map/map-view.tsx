@@ -28,7 +28,7 @@ const mapSources = {
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
-
+  children,
   zoom: initialZoomLevel,
   circles,
   allPoints,
@@ -37,6 +37,7 @@ function MapView({
   initialLat: number
   initialLong: number
   zoom: number
+  children?: ReactNode
 } & ComponentProps<typeof PixiOverlayComponent>) {
   const { theme } = useTheme()
 
@@ -59,11 +60,13 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
-        <PixiOverlayComponent
-          showAllLines={showAllLines}
-          circles={circles}
-          allPoints={allPoints}
-        />
+        {children || (
+          <PixiOverlayComponent
+            showAllLines={showAllLines}
+            circles={circles}
+            allPoints={allPoints}
+          />
+        )}
 
         <TileLayer
           attribution={
