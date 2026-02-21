@@ -10,6 +10,7 @@ import { MapContainer, TileLayer } from "react-leaflet"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
+import PixiOverlayComponent from "./pixi-overlay-component"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -29,13 +30,10 @@ function MapView({
   initialLat = 48,
 
   zoom: initialZoomLevel,
-  children,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
-
-  children?: ReactNode
 }) {
   const { theme } = useTheme()
 
@@ -58,7 +56,7 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
-        {children}
+        <PixiOverlayComponent />
 
         <TileLayer
           attribution={

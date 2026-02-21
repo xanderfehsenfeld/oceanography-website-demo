@@ -10,15 +10,16 @@ import {
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
+import PixiOverlayComponent from "@/components/map/pixi-overlay-component"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
 import tracks from "./PS_tracks.json"
 
-const PixiOverlayComponent = dynamic(
-  () => import("@/components/map/pixi-overlay-component"),
-  { ssr: false }
-)
+// const PixiOverlayComponent = dynamic(
+//   () => import("@/components/map/pixi-overlay-component"),
+//   { ssr: false }
+// )
 
 const timeOptions: string[] = times[0].t
 
@@ -76,9 +77,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
-      >
-        <PixiOverlayComponent />
-      </ClientMapView>
+      />
       <div className="flex-1 gap-2">
         <div className={"w-full"}>
           <p>
