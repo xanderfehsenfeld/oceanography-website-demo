@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useEffectEvent } from "react"
+import { useEffect, useEffectEvent, useMemo } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -18,17 +18,14 @@ import {
 import { useMap } from "react-leaflet"
 
 import { getPoints, IFeature, IPoints } from "./getPoints"
-import tracks from "./PS_tracks.json"
 import { Drifter } from "./sprites/drifter"
 import { Reticule } from "./sprites/reticule"
-
-const points = getPoints(tracks as any)
 
 let prevZoom = 8
 let firstDraw = true
 
-let circles: Drifter[]
-let lines: Graphics[]
+let circleSprites: Drifter[]
+let lineGraphics: Graphics[]
 
 let isIn: { [key: string]: boolean } = {}
 
@@ -37,8 +34,37 @@ backgroundContainer.eventMode = "dynamic"
 
 let reticule: Reticule
 
-const PixiOverlayComponent = () => {
+const PixiOverlayComponent = ({
+  allPoints: points,
+  circles,
+}: {
+  circles: IFeature[]
+  allPoints: IPoints[]
+  showAllLines?: boolean
+}) => {
   const leafletMap = useMap()
+
+  const latLngToLayerPoint = useEffectEvent(function (
+    latLng: [number, number]
+  ) {
+    const zoom = 11
+    var projectedPoint = leafletMap.project(L.latLng(latLng), zoom)
+    return projectedPoint
+  })
+
+  const updateCircleLocations = useEffectEvent(() => {
+    circles.forEach((feature, id) => {
+      const { longitude, latitude } = feature.properties
+      const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
+      const circle = circleSprites[id]
+
+      circle.setTranslate(x, y)
+    })
+  })
+
+  useEffect(() => {
+    if (circleSprites) updateCircleLocations()
+  }, [circles])
 
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
     let map = utils.getMap()
@@ -58,7 +84,7 @@ const PixiOverlayComponent = () => {
 
     const initializeCircles = (features: IFeature[]): Drifter[] => {
       return features.map((feature, id) => {
-        const line = lines[id]
+        const line = lineGraphics[id]
         const sprite = new Drifter(renderer, line)
 
         sprite.onpointerenter = function (this: Drifter) {
@@ -82,7 +108,7 @@ const PixiOverlayComponent = () => {
           event: FederatedPointerEvent
         ) {
           //   //show as selected
-          circles.forEach((circle) => circle.resetState())
+          circleSprites.forEach((circle) => circle.resetState())
           isIn = {
             [id]: true,
           }
@@ -112,19 +138,19 @@ const PixiOverlayComponent = () => {
         reticule = new Reticule(renderer)
         container.addChild(reticule)
 
-        lines = initializeLines(points)
+        lineGraphics = initializeLines(points)
 
-        container.addChild(...lines)
+        container.addChild(...lineGraphics)
 
-        circles = initializeCircles(points[0].features)
-        container.addChild(...circles)
+        circleSprites = initializeCircles(circles)
+        container.addChild(...circleSprites)
 
         backgroundContainer.onpointerleave = () => {
           reticule.hide()
         }
 
         backgroundContainer.onpointerdown = () => {
-          circles.forEach((circle, id) => {
+          circleSprites.forEach((circle, id) => {
             const reticuleCircle = new Circle(
               reticule.x,
               reticule.y,
@@ -183,7 +209,7 @@ const PixiOverlayComponent = () => {
 
       if (firstDraw || prevZoom !== zoom) {
         //Update drawn lines
-        lines.forEach((line, id) => {
+        lineGraphics.forEach((line, id) => {
           line.clear()
           line.eventMode = "none"
 
@@ -200,13 +226,16 @@ const PixiOverlayComponent = () => {
           })
         })
 
-        points[0].features.forEach((feature, id) => {
-          const { longitude, latitude } = feature.properties
-          const { x, y } = project([latitude, longitude] as any)
-          const circle = circles[id]
+        //update the drifters
 
-          circle.setTranslate(x, y)
-        })
+        updateCircleLocations()
+        // circles.forEach((feature, id) => {
+        //   const { longitude, latitude } = feature.properties
+        //   const { x, y } = latLngToLayerPoint([latitude, longitude])
+        //   const circle = circleSprites[id]
+
+        //   circle.setTranslate(x, y)
+        // })
 
         reticule.scale.set(1 / scale / 10)
       }

@@ -77,6 +77,8 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
+        circles={points[sliderValue].features}
+        allPoints={points}
       />
       <div className="flex-1 gap-2">
         <div className={"w-full"}>

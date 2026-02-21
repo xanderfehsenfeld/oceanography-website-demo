@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ComponentProps, ReactNode, useEffect, useState } from "react"
 import { Map } from "leaflet"
 
 import "leaflet/dist/leaflet.css"
@@ -30,11 +30,14 @@ function MapView({
   initialLat = 48,
 
   zoom: initialZoomLevel,
+  circles,
+  allPoints,
+  showAllLines,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
-}) {
+} & ComponentProps<typeof PixiOverlayComponent>) {
   const { theme } = useTheme()
 
   const [map, setMap] = useState<Map | null>(null)
@@ -56,7 +59,11 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
-        <PixiOverlayComponent />
+        <PixiOverlayComponent
+          showAllLines={showAllLines}
+          circles={circles}
+          allPoints={allPoints}
+        />
 
         <TileLayer
           attribution={
