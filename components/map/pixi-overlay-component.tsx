@@ -70,7 +70,9 @@ const PixiOverlayComponent = ({
   const { theme } = useTheme()
 
   useEffect(() => {
-    reticule?.setIsDark(theme === "dark")
+    const isDark = theme === "dark"
+    reticule?.setIsDark(isDark)
+    circleSprites?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
@@ -92,7 +94,7 @@ const PixiOverlayComponent = ({
     const initializeCircles = (features: IFeature[]): Drifter[] => {
       return features.map((feature, id) => {
         const line = lineGraphics[id]
-        const sprite = new Drifter(renderer, line)
+        const sprite = new Drifter(renderer, line, theme === "dark")
 
         sprite.onpointerenter = function (this: Drifter) {
           if (!isIn[id]) {

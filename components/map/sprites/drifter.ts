@@ -6,7 +6,8 @@ const defaultCircle = new Graphics()
 
 const defaultRadius = 30
 
-const defaultColor = 0x3388ff
+const lightColor = "blue"
+const darkColor = "lightskyblue"
 const defaultAlpha = 0.3
 const defaultScale = 0.5
 
@@ -16,16 +17,18 @@ defaultCircle.endFill()
 
 export class Drifter extends Sprite {
   line: Graphics
-  constructor(renderer: IRenderer, _line: Graphics) {
+  isDark: boolean
+  constructor(renderer: IRenderer, _line: Graphics, _isDark: boolean) {
     const defaultCircleTexture = renderer.generateTexture(defaultCircle)
 
     super(defaultCircleTexture)
+    this.isDark = _isDark
 
     this.scale.set(defaultScale)
 
     this.alpha = defaultAlpha
 
-    this.tint = defaultColor
+    this.tint = _isDark ? darkColor : lightColor
 
     this.cursor = "pointer"
 
@@ -46,7 +49,7 @@ export class Drifter extends Sprite {
   }
 
   resetState() {
-    this.tint = defaultColor
+    this.tint = this.isDark ? darkColor : lightColor
     this.alpha = defaultAlpha
     this.line.visible = false
   }
@@ -67,5 +70,12 @@ export class Drifter extends Sprite {
       this.scale.x,
       this.scale.y
     )
+  }
+
+  setIsDark(_isDark: boolean): void {
+    this.isDark = _isDark
+    if (this.tint !== "red") {
+      this.tint = _isDark ? darkColor : lightColor
+    }
   }
 }
