@@ -40,7 +40,6 @@ function MapView({
   const { theme } = useTheme()
 
   const [map, setMap] = useState<Map | null>(null)
-
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
@@ -59,6 +58,8 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
+        {children}
+
         <TileLayer
           attribution={
             theme === "dark"
@@ -71,7 +72,6 @@ function MapView({
               : mapSources.voyagerNoLabels.url
           }
         />
-        {children}
       </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} />}

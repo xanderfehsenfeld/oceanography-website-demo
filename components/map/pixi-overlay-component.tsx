@@ -1,7 +1,10 @@
 "use client"
 
 import { useEffect, useEffectEvent } from "react"
-import { PixiOverlayUtils } from "leaflet"
+
+import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
+
+import L, { PixiOverlayUtils } from "leaflet"
 import {
   Circle,
   Container,
@@ -15,8 +18,6 @@ import {
 import { useMap } from "react-leaflet"
 
 import { getPoints, IFeature, IPoints } from "./getPoints"
-import L from "./pixi-overlay" // Must be called before the 'leaflet' import
-
 import tracks from "./PS_tracks.json"
 import { Drifter } from "./sprites/drifter"
 import { Reticule } from "./sprites/reticule"

@@ -54,11 +54,11 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       leaflet:
-        specifier: 2.0.0-alpha.1
-        version: 2.0.0-alpha.1
+        specifier: ^1.9.4
+        version: 1.9.4
       leaflet-pixi-overlay:
         specifier: ^1.9.5
-        version: 1.9.5(leaflet@2.0.0-alpha.1)(pixi.js@7.4.2)
+        version: 1.9.5(leaflet@1.9.4)(pixi.js@7.4.2)
       lib:
         specifier: ^5.1.0
         version: 5.1.0
@@ -88,7 +88,7 @@ importers:
         version: 5.5.0(react@19.2.3)
       react-leaflet:
         specifier: 5.0.0-rc.2
-        version: 5.0.0-rc.2(leaflet@2.0.0-alpha.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
@@ -3207,8 +3207,8 @@ packages:
       leaflet: '>=0.7'
       pixi.js: '>=4.6'
 
-  leaflet@2.0.0-alpha.1:
-    resolution: {integrity: sha512-2EJU27z/wljOgQCyybRkfrm5Xc3uy6huKehh0UAPsrAdwnSMxaplsqCl9cXPAuDm6D7uL6PCznYMDVIsaAdSdA==}
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
@@ -5816,9 +5816,9 @@ snapshots:
       '@types/react': 19.2.7
       '@types/react-dom': 19.2.3(@types/react@19.2.7)
 
-  '@react-leaflet/core@3.0.0(leaflet@2.0.0-alpha.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@react-leaflet/core@3.0.0(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
-      leaflet: 2.0.0-alpha.1
+      leaflet: 1.9.4
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
@@ -7708,12 +7708,12 @@ snapshots:
 
   layout-base@2.0.1: {}
 
-  leaflet-pixi-overlay@1.9.5(leaflet@2.0.0-alpha.1)(pixi.js@7.4.2):
+  leaflet-pixi-overlay@1.9.5(leaflet@1.9.4)(pixi.js@7.4.2):
     dependencies:
-      leaflet: 2.0.0-alpha.1
+      leaflet: 1.9.4
       pixi.js: 7.4.2
 
-  leaflet@2.0.0-alpha.1: {}
+  leaflet@1.9.4: {}
 
   levn@0.4.1:
     dependencies:
@@ -8603,10 +8603,10 @@ snapshots:
 
   react-is@16.13.1: {}
 
-  react-leaflet@5.0.0-rc.2(leaflet@2.0.0-alpha.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
-      '@react-leaflet/core': 3.0.0(leaflet@2.0.0-alpha.1)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
-      leaflet: 2.0.0-alpha.1
+      '@react-leaflet/core': 3.0.0(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      leaflet: 1.9.4
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
