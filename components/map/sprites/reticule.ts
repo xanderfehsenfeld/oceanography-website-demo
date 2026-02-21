@@ -2,10 +2,13 @@
 
 import { Graphics, IRenderer, Sprite } from "pixi.js"
 
+const lightcolor = "lightgray"
+const darkcolor = "darkgray"
+
 export class Reticule extends Sprite {
   constructor(renderer: IRenderer) {
     const circle = new Graphics()
-    circle.beginFill("lightgray")
+    circle.beginFill(0xffffff)
 
     circle.lineStyle({
       color: "purple",
@@ -16,6 +19,8 @@ export class Reticule extends Sprite {
     circle.endFill()
 
     super(renderer.generateTexture(circle))
+
+    this.tint = lightcolor
 
     this.anchor.set(0.5)
     this.eventMode = "passive"
@@ -39,5 +44,9 @@ export class Reticule extends Sprite {
       this.scale.x,
       this.scale.y
     )
+  }
+
+  setIsDark(isDark: boolean) {
+    this.tint = isDark ? darkcolor : lightcolor
   }
 }

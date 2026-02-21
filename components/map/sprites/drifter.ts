@@ -4,13 +4,15 @@ import { Circle, Graphics, IRenderer, Sprite } from "pixi.js"
 
 const defaultCircle = new Graphics()
 
-defaultCircle.beginFill(0xffffff)
-defaultCircle.drawShape(new Circle(0, 0, 20))
-defaultCircle.endFill()
+const defaultRadius = 30
 
 const defaultColor = 0x3388ff
 const defaultAlpha = 0.3
 const defaultScale = 0.5
+
+defaultCircle.beginFill(0xffffff)
+defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
+defaultCircle.endFill()
 
 export class Drifter extends Sprite {
   line: Graphics

@@ -5,6 +5,7 @@ import { useEffect, useEffectEvent, useMemo } from "react"
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
 import L, { PixiOverlayUtils } from "leaflet"
+import { useTheme } from "next-themes"
 import {
   Circle,
   Container,
@@ -66,6 +67,12 @@ const PixiOverlayComponent = ({
     if (circleSprites) updateCircleLocations()
   }, [circles])
 
+  const { theme } = useTheme()
+
+  useEffect(() => {
+    reticule?.setIsDark(theme === "dark")
+  }, [theme])
+
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
     let map = utils.getMap()
     let zoom = map.getZoom()
@@ -98,7 +105,7 @@ const PixiOverlayComponent = ({
         sprite.onpointerleave = function (this: Drifter) {
           if (!isIn[id]) {
             this.setInactive()
-          } else {
+          } else if (Object.keys(isIn).length > 1) {
             this.line.visible = false
           }
         }
