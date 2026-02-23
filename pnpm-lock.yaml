@@ -89,6 +89,9 @@ importers:
       react-leaflet:
         specifier: 5.0.0-rc.2
         version: 5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      react-leaflet-fullscreen:
+        specifier: github:eYdr1en/react-leaflet-fullscreen
+        version: https://codeload.github.com/eYdr1en/react-leaflet-fullscreen/tar.gz/35ed7075ccac97354e1931bd53e01236587e312a(react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
       rehype-autolink-headings:
         specifier: ^7.1.0
         version: 7.1.0
@@ -3207,6 +3210,9 @@ packages:
       leaflet: '>=0.7'
       pixi.js: '>=4.6'
 
+  leaflet.fullscreen@4.0.0:
+    resolution: {integrity: sha512-wIV7R6yxtlk95/Er31ptCL0MQCmG4OUU4U0SwNeamEb2xBNDIeU8GtWF2S7PaxV/fdfReNmp+QCT9cUPSNIgdw==}
+
   leaflet@1.9.4:
     resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
@@ -3795,6 +3801,12 @@ packages:
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
+  react-leaflet-fullscreen@https://codeload.github.com/eYdr1en/react-leaflet-fullscreen/tar.gz/35ed7075ccac97354e1931bd53e01236587e312a:
+    resolution: {tarball: https://codeload.github.com/eYdr1en/react-leaflet-fullscreen/tar.gz/35ed7075ccac97354e1931bd53e01236587e312a}
+    version: 4.2.0
+    peerDependencies:
+      react-leaflet: ^5.x
+
   react-leaflet@5.0.0-rc.2:
     resolution: {integrity: sha512-1xQGYG9mEIW+nfkQhqgHImwUuB1UDlnzYFSzv6PrBFDBeYrFmv0BbpwpNAFdJg/UQ2yz5UZSL7ZwlUxjwb8MZw==}
     peerDependencies:
@@ -3947,6 +3959,10 @@ packages:
 
   scheduler@0.27.0:
     resolution: {integrity: sha512-eNv+WrVbKu1f3vbYJT/xtiF5syA5HPIMtf9IgY/nKg0sWqzAUEvqY/xm7OcZc/qafLx/iO9FgOmeSAp4v5ti/Q==}
+
+  screenfull@6.0.2:
+    resolution: {integrity: sha512-AQdy8s4WhNvUZ6P8F6PB21tSPIYKniic+Ogx0AacBMjKP1GUHN2E9URxQHtCusiwxudnCKkdy4GrHXPPJSkCCw==}
+    engines: {node: ^14.13.1 || >=16.0.0}
 
   section-matter@1.0.0:
     resolution: {integrity: sha512-vfD3pmTzGpufjScBh50YHKzEu2lxBWhVEHsNGoEXmCmn2hKGfeNLYMzCJpe8cD7gqX7TJluOVpBkAequ6dgMmA==}
@@ -7713,6 +7729,8 @@ snapshots:
       leaflet: 1.9.4
       pixi.js: 7.4.2
 
+  leaflet.fullscreen@4.0.0: {}
+
   leaflet@1.9.4: {}
 
   levn@0.4.1:
@@ -8603,6 +8621,12 @@ snapshots:
 
   react-is@16.13.1: {}
 
+  react-leaflet-fullscreen@https://codeload.github.com/eYdr1en/react-leaflet-fullscreen/tar.gz/35ed7075ccac97354e1931bd53e01236587e312a(react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)):
+    dependencies:
+      leaflet.fullscreen: 4.0.0
+      react-leaflet: 5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      screenfull: 6.0.2
+
   react-leaflet@5.0.0-rc.2(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@react-leaflet/core': 3.0.0(leaflet@1.9.4)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -8845,6 +8869,8 @@ snapshots:
   safer-buffer@2.1.2: {}
 
   scheduler@0.27.0: {}
+
+  screenfull@6.0.2: {}
 
   section-matter@1.0.0:
     dependencies:
