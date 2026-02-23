@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useEffectEvent, useMemo } from "react"
+import { useEffect, useEffectEvent } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -10,15 +10,12 @@ import {
   Circle,
   Container,
   FederatedPointerEvent,
-  Graphics,
-  Point,
   Rectangle,
-  Sprite,
   Ticker,
 } from "pixi.js"
 import { useMap } from "react-leaflet"
 
-import { getPoints, IFeature, IPoints } from "./getPoints"
+import { IFeature, IPoints } from "./getPoints"
 import { Drifter } from "./sprites/drifter"
 import { LineGraphic } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
@@ -32,7 +29,7 @@ let backgroundLineGraphics: LineGraphic[]
 
 let isIn: { [key: string]: boolean } = {}
 
-const backgroundContainer = new Graphics()
+const backgroundContainer = new Container()
 backgroundContainer.eventMode = "dynamic"
 
 let reticule: Reticule
@@ -215,7 +212,6 @@ const PixiOverlayComponent = ({
       const northWest = project(bounds.getNorthWest())
 
       const southEast = project(bounds.getSouthEast())
-      backgroundContainer.clear()
 
       const clickableArea = new Rectangle(
         northWest.x,
@@ -225,7 +221,6 @@ const PixiOverlayComponent = ({
       )
       backgroundContainer.hitArea = clickableArea
       backgroundContainer.eventMode = "static"
-      backgroundContainer.endFill()
 
       if (firstDraw || prevZoom !== zoom) {
         //Update drawn lines
