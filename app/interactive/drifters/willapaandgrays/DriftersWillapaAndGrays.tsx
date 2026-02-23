@@ -9,8 +9,6 @@ import {
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
-import MapChartView from "@/components/map/map-chart-view"
-import MapView from "@/components/map/map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./wgh0_times.json"
