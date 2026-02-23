@@ -1,15 +1,15 @@
 "use client"
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
+import dynamic from "next/dynamic"
 
+import ClientMapView from "@/components/map/client-map-view"
 import {
   getPoints,
   getTrack,
   IFeature,
   IPoints,
 } from "@/components/map/getPoints"
-import MapChartView from "@/components/map/map-chart-view"
-import MapView from "@/components/map/map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
@@ -67,17 +67,13 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
 
   return (
     <div className="gap-4 sm:flex">
-      <MapView
+      <ClientMapView
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
-      >
-        <MapChartView
-          circles={points[sliderValue].features}
-          allPoints={points}
-          lines={lines}
-        />
-      </MapView>
+        circles={points[sliderValue].features}
+        allPoints={points}
+      />
       <div className="flex-1 gap-2">
         <div className={"w-full"}>
           <p>

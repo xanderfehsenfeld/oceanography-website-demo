@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ComponentProps, ReactNode, useEffect, useState } from "react"
 import { Map } from "leaflet"
 
 import "leaflet/dist/leaflet.css"
@@ -10,6 +10,7 @@ import { MapContainer, TileLayer } from "react-leaflet"
 
 import { applyAllPolyfills } from "./leaflet-polyfill"
 import MapScale from "./map-scale"
+import PixiOverlayComponent from "./pixi-overlay-component"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -27,24 +28,20 @@ const mapSources = {
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
-
-  zoom: initialZoomLevel,
   children,
+  zoom: initialZoomLevel,
+  circles,
+  allPoints,
+  showAllLines,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
-
   children?: ReactNode
-}) {
+} & ComponentProps<typeof PixiOverlayComponent>) {
   const { theme } = useTheme()
 
-  useEffect(() => {
-    applyAllPolyfills()
-  }, [])
-
   const [map, setMap] = useState<Map | null>(null)
-
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
@@ -63,6 +60,14 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
+        {children || (
+          <PixiOverlayComponent
+            showAllLines={showAllLines}
+            circles={circles}
+            allPoints={allPoints}
+          />
+        )}
+
         <TileLayer
           attribution={
             theme === "dark"
@@ -75,7 +80,6 @@ function MapView({
               : mapSources.voyagerNoLabels.url
           }
         />
-        {children}
       </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} />}
