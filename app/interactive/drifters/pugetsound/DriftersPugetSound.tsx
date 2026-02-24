@@ -74,7 +74,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         circles={points[sliderValue].features}
         allPoints={points}
         controls={
-          <div className="flex flex-col gap-2 bg-background p-2">
+          <div className="flex flex-col gap-2 border bg-background p-2">
             <div className="typography">
               <h3>Time Slider: {displayValue}</h3>
             </div>
