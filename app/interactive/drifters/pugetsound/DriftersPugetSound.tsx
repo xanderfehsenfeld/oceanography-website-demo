@@ -66,33 +66,32 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [playbackSpeed, sliderValue])
 
   return (
-    <div className="gap-4 sm:flex">
+    <div className="gap-4 lg:flex">
       <ClientMapView
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
         circles={points[sliderValue].features}
         allPoints={points}
+        controls={
+          <div className="flex flex-col gap-2 bg-background p-2">
+            <div className="typography">
+              <h3>Time Slider: {displayValue}</h3>
+            </div>
+            <TimeControls
+              value={sliderValue}
+              onPlaybackChange={setPlaybackSpeed}
+              maxSliderValue={maxSliderValue}
+              onSliderChange={(v) => {
+                setPlaybackSpeed(0)
+                setSliderValue(v)
+              }}
+              playbackSpeed={playbackSpeed}
+            />
+          </div>
+        }
       />
-      <div className="flex-1 gap-2">
-        <div className={"w-full"}>
-          <p>
-            Time Slider: <span id="demo">{displayValue}</span>
-          </p>
-        </div>
-        <TimeControls
-          value={sliderValue}
-          onPlaybackChange={setPlaybackSpeed}
-          maxSliderValue={maxSliderValue}
-          onSliderChange={(v) => {
-            setPlaybackSpeed(0)
-            setSliderValue(v)
-          }}
-          playbackSpeed={playbackSpeed}
-        />
-
-        {children}
-      </div>
+      <div className="flex-1 gap-2">{children}</div>
     </div>
   )
 }

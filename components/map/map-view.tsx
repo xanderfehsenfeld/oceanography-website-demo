@@ -7,10 +7,16 @@ import "leaflet/dist/leaflet.css"
 
 import { useTheme } from "next-themes"
 import { MapContainer, TileLayer } from "react-leaflet"
+import { FullscreenControl } from "react-leaflet-fullscreen"
 
-import { applyAllPolyfills } from "./leaflet-polyfill"
+import "react-leaflet-fullscreen/styles.css"
+
+import Control from "react-leaflet-custom-control"
+
 import MapScale from "./map-scale"
 import PixiOverlayComponent from "./pixi-overlay-component"
+
+import "./map-view.css"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -33,17 +39,19 @@ function MapView({
   circles,
   allPoints,
   showAllLines,
+  controls,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
   children?: ReactNode
+  controls?: ReactNode
 } & ComponentProps<typeof PixiOverlayComponent>) {
   const { theme } = useTheme()
 
   const [map, setMap] = useState<Map | null>(null)
   return (
-    <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
+    <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
 
       <MapContainer
@@ -51,7 +59,7 @@ function MapView({
         zoom={initialZoomLevel}
         id="map"
         ref={setMap}
-        className="not-prose relative z-10 h-full min-h-[60vh] w-full"
+        className="not-prose relative z-10 h-full min-h-[80vh] w-full"
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
@@ -60,6 +68,8 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
+        <FullscreenControl />
+
         {children || (
           <PixiOverlayComponent
             showAllLines={showAllLines}
@@ -80,6 +90,16 @@ function MapView({
               : mapSources.voyagerNoLabels.url
           }
         />
+
+        {controls && (
+          <Control
+            container={{ className: "w-full bg-red" }}
+            prepend
+            position="bottomleft"
+          >
+            {controls}
+          </Control>
+        )}
       </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} />}
