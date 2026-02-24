@@ -11,21 +11,12 @@ import { FullscreenControl } from "react-leaflet-fullscreen"
 
 import "react-leaflet-fullscreen/styles.css"
 
-import { applyAllPolyfills } from "./leaflet-polyfill"
+import Control from "react-leaflet-custom-control"
+
 import MapScale from "./map-scale"
 import PixiOverlayComponent from "./pixi-overlay-component"
 
-// import "react-leaflet-fullscreen/styles.css"
-
-const options = {
-  position: "topleft", // change the position of the button can be topleft, topright, bottomright or bottomleft, default topleft
-  title: "Show me the fullscreen !", // change the title of the button, default Full Screen
-  titleCancel: "Exit fullscreen mode", // change the title of the button when fullscreen is on, default Exit Full Screen
-  content: null, // change the content of the button, can be HTML, default null
-  forceSeparateButton: true, // force separate button to detach from zoom buttons, default false
-  forcePseudoFullscreen: true, // force use of pseudo full screen even if full screen API is available, default false
-  fullscreenElement: false, // Dom element to render in full screen, false by default, fallback to map._container
-}
+import "./map-view.css"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -48,17 +39,19 @@ function MapView({
   circles,
   allPoints,
   showAllLines,
+  controls,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
   children?: ReactNode
+  controls?: ReactNode
 } & ComponentProps<typeof PixiOverlayComponent>) {
   const { theme } = useTheme()
 
   const [map, setMap] = useState<Map | null>(null)
   return (
-    <div className="md:h-inherit relative max-h-[80vh] min-h-[60vh] flex-1 md:pl-5">
+    <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
 
       <MapContainer
@@ -66,7 +59,7 @@ function MapView({
         zoom={initialZoomLevel}
         id="map"
         ref={setMap}
-        className="not-prose relative z-10 h-full min-h-[60vh] w-full"
+        className="not-prose relative z-10 h-full min-h-[80vh] w-full"
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
@@ -97,6 +90,16 @@ function MapView({
               : mapSources.voyagerNoLabels.url
           }
         />
+
+        {controls && (
+          <Control
+            container={{ className: "w-full bg-red" }}
+            prepend
+            position="bottomleft"
+          >
+            {controls}
+          </Control>
+        )}
       </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} />}
