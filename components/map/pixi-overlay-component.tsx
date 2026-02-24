@@ -167,23 +167,30 @@ const PixiOverlayComponent = ({
         }
 
         backgroundContainer.onpointerdown = () => {
-          circleSprites.forEach((circle, id) => {
-            const reticuleCircle = new Circle(
-              reticule.x,
-              reticule.y,
-              reticule.scale.x * 500
-            )
-
+          const reticuleCircle = new Circle(
+            reticule.x,
+            reticule.y,
+            reticule.scale.x * 500
+          )
+          const anyCirclesAreSelected = circleSprites.find((circle, id) => {
             const isSelected = reticuleCircle.contains(circle.x, circle.y)
-            isIn[id] = isSelected
 
-            if (isSelected) {
-              circle.setSelected()
-              circle.line.visible = false
-            } else {
-              circle.resetState()
-            }
+            return isSelected
           })
+
+          if (anyCirclesAreSelected) {
+            circleSprites.forEach((circle, id) => {
+              const isSelected = reticuleCircle.contains(circle.x, circle.y)
+              isIn[id] = isSelected
+
+              if (isSelected) {
+                circle.setSelected()
+                circle.line.visible = false
+              } else {
+                circle.resetState()
+              }
+            })
+          }
         }
 
         backgroundContainer.onpointermove = (e: FederatedPointerEvent) => {
