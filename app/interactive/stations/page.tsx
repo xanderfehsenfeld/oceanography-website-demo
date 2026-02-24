@@ -1,9 +1,11 @@
+import dynamic from "next/dynamic"
+
 import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import StationsMap from "./StationsMap"
+import ClientStationsMap from "./ClientStationsMap"
 
 export default function Stations() {
   return (
@@ -28,7 +30,7 @@ export default function Stations() {
             comparisons for that station.
           </h3>
 
-          <StationsMap />
+          <ClientStationsMap />
         </section>
         <Pagination pathname={"stations"} prefix="interactive" />
       </Typography>

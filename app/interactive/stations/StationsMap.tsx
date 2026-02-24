@@ -11,7 +11,13 @@ const imagePathPrefix =
 
 function StationsMap() {
   return (
-    <MapView initialLat={48} initialLong={-123} zoom={8}>
+    <MapView
+      initialLat={48}
+      initialLong={-123}
+      zoom={8}
+      circles={[]}
+      allPoints={[]}
+    >
       {stations.map(({ lat, lng, longname, sta }) => {
         return (
           <CircleMarker
