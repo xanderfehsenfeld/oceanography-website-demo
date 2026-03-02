@@ -1,7 +1,7 @@
 "use client"
 
 import { ComponentProps, ReactNode, useEffect, useState } from "react"
-import { Map } from "leaflet"
+import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
 import {
   RxEnterFullScreen,
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 
 import "leaflet/dist/leaflet.css"
 
+// @ts-ignore
 import FullScreen from "leaflet.fullscreen"
 import { MapContainer, TileLayer } from "react-leaflet"
 import Control from "react-leaflet-custom-control"
@@ -66,7 +67,8 @@ function MapView({
     if (map) {
       map.addControl(new FullScreen())
 
-      map.fullscreenControl.link.remove()
+      const fullscreen = map.fullscreenControl as any
+      fullscreen.link?.remove()
 
       map.on("enterFullscreen", function () {
         setIsFullScreen(true)
@@ -77,6 +79,7 @@ function MapView({
       })
     }
   }, [map])
+
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
@@ -150,7 +153,7 @@ function MapView({
 
         {controls && (
           <Control
-            container={{ className: "w-full" }}
+            container={{ className: "w-full m-0" }}
             prepend
             position="bottomleft"
           >

@@ -80,7 +80,9 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         allPoints={points}
         controls={
           <div className={theme === "dark" ? "" : "dark"}>
-            <div className={`flex flex-col gap-2 border bg-background p-2`}>
+            <div
+              className={`flex flex-col gap-2 border bg-background p-2 pb-6`}
+            >
               <div className="typography">
                 <h3>Time Slider: {displayValue}</h3>
               </div>
