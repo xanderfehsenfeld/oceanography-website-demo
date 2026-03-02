@@ -59,8 +59,8 @@ const PixiOverlayComponent = ({
       const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
       const circle = circleSprites[id]
 
-      circle?.setTranslate(x, y)
-      if (scale) circle.scale.set(1 / scale)
+      circle?.setLocation(x, y)
+      if (scale) circle.scale.set(1 / scale / 2)
     })
   })
 
@@ -98,7 +98,15 @@ const PixiOverlayComponent = ({
     const initializeCircles = (features: IFeature[]): Drifter[] => {
       return features.map((feature, id) => {
         const line = lineGraphics[id]
-        const sprite = new Drifter(renderer, line, theme === "dark")
+
+        const vertices = points.map((v) => {
+          const { longitude, latitude } = v.features[id].properties
+          const { x, y } = project([latitude, longitude] as any)
+
+          return { x, y }
+        })
+
+        const sprite = new Drifter(renderer, line, theme === "dark", vertices)
 
         sprite.onpointerenter = function (this: Drifter) {
           if (!isIn[id]) {
