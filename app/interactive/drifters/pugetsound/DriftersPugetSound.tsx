@@ -68,8 +68,6 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
 
   const { theme } = useTheme()
 
-  console.log("theme", theme)
-
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView

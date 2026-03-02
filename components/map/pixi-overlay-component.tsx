@@ -53,13 +53,14 @@ const PixiOverlayComponent = ({
     return projectedPoint
   })
 
-  const updateCircleLocations = useEffectEvent(() => {
+  const updateCircleLocations = useEffectEvent((scale?: number) => {
     circles.forEach((feature, id) => {
       const { longitude, latitude } = feature.properties
       const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
       const circle = circleSprites[id]
 
       circle?.setTranslate(x, y)
+      if (scale) circle.scale.set(1 / scale)
     })
   })
 
@@ -263,17 +264,10 @@ const PixiOverlayComponent = ({
         }
 
         //update the drifters
+        updateCircleLocations(Math.max(scale, 1))
 
-        updateCircleLocations()
-        // circles.forEach((feature, id) => {
-        //   const { longitude, latitude } = feature.properties
-        //   const { x, y } = latLngToLayerPoint([latitude, longitude])
-        //   const circle = circleSprites[id]
-
-        //   circle.setTranslate(x, y)
-        // })
-
-        reticule.scale.set(1 / scale / 10)
+        const reticuleScale = 1 / scale / 5
+        reticule.scale.set(reticuleScale)
       }
       firstDraw = false
       prevZoom = zoom
