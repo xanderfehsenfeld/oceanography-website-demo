@@ -2,6 +2,7 @@
 
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 import dynamic from "next/dynamic"
+import { useTheme } from "next-themes"
 
 import ClientMapView from "@/components/map/client-map-view"
 import {
@@ -65,6 +66,10 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
     }
   }, [playbackSpeed, sliderValue])
 
+  const { theme } = useTheme()
+
+  console.log("theme", theme)
+
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
@@ -74,20 +79,22 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         circles={points[sliderValue].features}
         allPoints={points}
         controls={
-          <div className="flex flex-col gap-2 border bg-background p-2">
-            <div className="typography">
-              <h3>Time Slider: {displayValue}</h3>
+          <div className={theme === "dark" ? "" : "dark"}>
+            <div className={`flex flex-col gap-2 border bg-background p-2`}>
+              <div className="typography">
+                <h3>Time Slider: {displayValue}</h3>
+              </div>
+              <TimeControls
+                value={sliderValue}
+                onPlaybackChange={setPlaybackSpeed}
+                maxSliderValue={maxSliderValue}
+                onSliderChange={(v) => {
+                  setPlaybackSpeed(0)
+                  setSliderValue(v)
+                }}
+                playbackSpeed={playbackSpeed}
+              />
             </div>
-            <TimeControls
-              value={sliderValue}
-              onPlaybackChange={setPlaybackSpeed}
-              maxSliderValue={maxSliderValue}
-              onSliderChange={(v) => {
-                setPlaybackSpeed(0)
-                setSliderValue(v)
-              }}
-              playbackSpeed={playbackSpeed}
-            />
           </div>
         }
       />
