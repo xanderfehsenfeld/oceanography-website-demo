@@ -1,3 +1,6 @@
 .leaflet-bottom.leaflet-left {
-  width: calc(100% - 20px);
+  .leaflet-control {
+    margin: 0;
+  }
+  width: 100%;
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { Circle, Graphics, IRenderer, Sprite } from "pixi.js"
+import { Circle, Graphics, IPointData, IRenderer, Sprite } from "pixi.js"
 
 const defaultCircle = new Graphics()
 
@@ -15,10 +15,34 @@ defaultCircle.beginFill(0xffffff)
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
 defaultCircle.endFill()
 
+const arrowGraphic = new Graphics()
+arrowGraphic.beginFill("purple")
+const arrow = [
+  { x: -43, y: -12 },
+  { x: 13, y: -12 },
+  { x: 13, y: -30 },
+  { x: 43, y: 0 },
+  { x: 13, y: 30 },
+  { x: 13, y: 12 },
+  { x: -43, y: 12 },
+]
+
+arrowGraphic.drawPolygon(arrow)
+
+arrowGraphic.endFill()
+
 export class Drifter extends Sprite {
   line: Graphics
   isDark: boolean
-  constructor(renderer: IRenderer, _line: Graphics, _isDark: boolean) {
+  arrow: Sprite
+  linePoints: IPointData[]
+  arrowAngles: number[]
+  constructor(
+    renderer: IRenderer,
+    _line: Graphics,
+    _isDark: boolean,
+    _linePoints: IPointData[]
+  ) {
     const defaultCircleTexture = renderer.generateTexture(defaultCircle)
 
     super(defaultCircleTexture)
@@ -36,6 +60,28 @@ export class Drifter extends Sprite {
     this.anchor.set(0.5)
 
     this.line = _line
+
+    const arrowTexture = renderer.generateTexture(arrowGraphic)
+    const arrowSprite = new Sprite(arrowTexture)
+    arrowSprite.anchor.set(0.5)
+    arrowSprite.scale.set(0.5)
+    arrowSprite.eventMode = "none"
+    this.interactiveChildren = false
+    this.addChild(arrowSprite)
+    this.arrow = arrowSprite
+
+    this.linePoints = _linePoints
+
+    this.arrowAngles = this.linePoints.map((_, index): number => {
+      const currentIndex = Math.min(index, this.linePoints.length - 2)
+      const { x, y } = this.linePoints[currentIndex]
+      const nextLocation = this.linePoints[currentIndex + 1]
+
+      const dx = nextLocation.x - x
+      const dy = nextLocation.y - y
+
+      return Math.atan2(dy, dx)
+    })
   }
 
   setActive() {
@@ -62,13 +108,19 @@ export class Drifter extends Sprite {
     this.line.visible = true
   }
 
-  setTranslate(x: number, y: number) {
+  setLocation(x: number, y: number) {
+    const currentLocationInLine = this.linePoints.findIndex(
+      ({ x: pointX, y: pointY }) => x === pointX && y === pointY
+    )
+    const rotation = this.arrowAngles[currentLocationInLine]
+
     this.setTransform(
       x,
       y,
 
       this.scale.x,
-      this.scale.y
+      this.scale.y,
+      rotation
     )
   }
 
