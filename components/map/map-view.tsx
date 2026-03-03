@@ -1,27 +1,28 @@
 "use client"
 
 import { ComponentProps, ReactNode, useEffect, useState } from "react"
-import { Map } from "leaflet"
+import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
-import { RxMoon, RxSun } from "react-icons/rx"
+import {
+  RxEnterFullScreen,
+  RxExitFullScreen,
+  RxMoon,
+  RxSun,
+} from "react-icons/rx"
 
 import { Button } from "@/components/ui/button"
 
 import "leaflet/dist/leaflet.css"
 
+// @ts-ignore
+import FullScreen from "leaflet.fullscreen"
 import { MapContainer, TileLayer } from "react-leaflet"
-import { FullscreenControl } from "react-leaflet-fullscreen"
-
-import "react-leaflet-fullscreen/styles.css"
-
 import Control from "react-leaflet-custom-control"
 
 import MapScale from "./map-scale"
 import PixiOverlayComponent from "./pixi-overlay-component"
 
 import "./map-view.css"
-
-import { ModeToggle } from "../theme-toggle"
 
 const mapSources = {
   voyagerNoLabels: {
@@ -64,6 +65,11 @@ function MapView({
 
   useEffect(() => {
     if (map) {
+      map.addControl(new FullScreen())
+
+      const fullscreen = map.fullscreenControl as any
+      fullscreen.link?.remove()
+
       map.on("enterFullscreen", function () {
         setIsFullScreen(true)
       })
@@ -73,6 +79,7 @@ function MapView({
       })
     }
   }, [map])
+
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
@@ -91,8 +98,6 @@ function MapView({
           [44.320112128003764, -127.10083007812501],
         ]}
       >
-        <FullscreenControl />
-
         <Control prepend position="topright">
           {isFullscreen && (
             <Button
@@ -128,9 +133,27 @@ function MapView({
           }
         />
 
+        <Control prepend position="topleft">
+          <Button
+            variant="default"
+            size="icon"
+            title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            className="h-9 w-9 cursor-pointer"
+            onClick={() => {
+              map?.toggleFullscreen()
+            }}
+          >
+            {isFullscreen ? (
+              <RxExitFullScreen className="h-[1.1rem] w-[1.1rem] scale-100" />
+            ) : (
+              <RxEnterFullScreen className="h-[1.1rem] w-[1.1rem] scale-100" />
+            )}
+          </Button>
+        </Control>
+
         {controls && (
           <Control
-            container={{ className: "w-full" }}
+            container={{ className: "w-full m-0" }}
             prepend
             position="bottomleft"
           >
