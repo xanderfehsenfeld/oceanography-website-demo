@@ -35,6 +35,17 @@ const mapSources = {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   },
+  stadiaAlidadeSmoothDark: {
+    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+
+  stadiaAlidadeSmooth: {
+    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
+  },
 }
 
 function MapView({
@@ -123,13 +134,13 @@ function MapView({
         <TileLayer
           attribution={
             theme === "dark"
-              ? mapSources.darkMatterNoLabels.attribution
-              : mapSources.voyagerNoLabels.attribution
+              ? mapSources.stadiaAlidadeSmoothDark.attribution
+              : mapSources.stadiaAlidadeSmooth.attribution
           }
           url={
             theme === "dark"
-              ? mapSources.darkMatterNoLabels.url
-              : mapSources.voyagerNoLabels.url
+              ? mapSources.stadiaAlidadeSmoothDark.url
+              : mapSources.stadiaAlidadeSmooth.url
           }
         />
 
