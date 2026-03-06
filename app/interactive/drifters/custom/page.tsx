@@ -27,7 +27,7 @@ export default function Pages() {
         <Separator />
       </div>
       <Typography>
-        <section>
+        <section className="pb-4">
           <DriftersCustom>
             <h3> Willapa Bay Customized Drifter Tracks</h3>
 
