@@ -7,7 +7,7 @@ import DriftersWillapaAndGrays from "./DriftersWillapaAndGrays"
 
 export default function Pages() {
   return (
-    <section className="flex-3">
+    <section className="flex-3 pb-4">
       <ArticleBreadcrumb
         paths={["drifters", "willapaandgrays"]}
         prefix={"/interactive"}
@@ -23,7 +23,7 @@ export default function Pages() {
         <Separator />
       </div>
       <Typography>
-        <section>
+        <section className="pb-4">
           <DriftersWillapaAndGrays>
             <h3> Willapa Bay & Grays Harbor Drifter Tracks</h3>
 
