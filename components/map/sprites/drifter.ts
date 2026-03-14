@@ -18,13 +18,10 @@ defaultCircle.endFill()
 const arrowGraphic = new Graphics()
 arrowGraphic.beginFill("purple")
 const arrow = [
-  { x: -43, y: -12 },
-  { x: 13, y: -12 },
-  { x: 13, y: -30 },
+  { x: -43, y: -30 },
   { x: 43, y: 0 },
-  { x: 13, y: 30 },
-  { x: 13, y: 12 },
-  { x: -43, y: 12 },
+  { x: -43, y: 30 },
+  { x: -30, y: 0 },
 ]
 
 arrowGraphic.drawPolygon(arrow)

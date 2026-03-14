@@ -49,7 +49,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
       timeStyle: "short",
       dateStyle: "medium",
 
-      timeZone: "PST",
+      timeZone: "America/Los_Angeles",
     }).format(new Date(dateString))
   }, [sliderValue])
 
@@ -79,7 +79,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         controls={
           <div className={theme === "dark" ? "" : "dark"}>
             <div
-              className={`flex flex-col gap-2 border bg-background p-2 pb-6`}
+              className={`flex flex-col gap-2 border bg-background p-4 pb-6`}
             >
               <div className="typography">
                 <h3>Time Slider: {displayValue}</h3>

@@ -175,7 +175,7 @@ const PixiOverlayComponent = ({
           reticule.hide()
         }
 
-        backgroundContainer.onpointerdown = () => {
+        backgroundContainer.onpointerdown = (e: FederatedPointerEvent) => {
           const reticuleCircle = new Circle(
             reticule.x,
             reticule.y,
@@ -203,6 +203,7 @@ const PixiOverlayComponent = ({
         }
 
         backgroundContainer.onpointermove = (e: FederatedPointerEvent) => {
+
           const localPositionToParent = e.getLocalPosition(
             backgroundContainer.parent
           )
