@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useEffectEvent } from "react"
+import { useEffect, useEffectEvent, useState } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
+  Application,
   Circle,
   Container,
   FederatedPointerEvent,
@@ -29,10 +30,10 @@ let backgroundLineGraphics: LineGraphic[]
 
 let isIn: { [key: string]: boolean } = {}
 
-const backgroundContainer = new Container()
-backgroundContainer.eventMode = "dynamic"
-
 let reticule: Reticule
+
+let backgroundContainer: Container
+let ticker: Ticker
 
 const PixiOverlayComponent = ({
   allPoints: points,
@@ -44,6 +45,8 @@ const PixiOverlayComponent = ({
   showAllLines?: boolean
 }) => {
   const leafletMap = useMap()
+
+  const [isMounted, setIsMounted] = useState(false)
 
   const latLngToLayerPoint = useEffectEvent(function (
     latLng: [number, number]
@@ -60,12 +63,12 @@ const PixiOverlayComponent = ({
       const circle = circleSprites[id]
 
       circle?.setLocation(x, y)
-      if (scale) circle.scale.set(1 / scale / 2)
+      if (scale && circle) circle.scale.set(1 / scale / 2)
     })
   })
 
   useEffect(() => {
-    if (circleSprites) updateCircleLocations()
+    if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
 
   const { theme } = useTheme()
@@ -149,12 +152,10 @@ const PixiOverlayComponent = ({
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
+        backgroundContainer = new Container()
+        backgroundContainer.eventMode = "dynamic"
         container.addChild(backgroundContainer)
         container.eventMode = "dynamic"
-
-        // container.onpointerdown = () => {
-        //   console.log("clicked main container");
-        // };
 
         reticule = new Reticule(renderer)
         container.addChild(reticule)
@@ -175,7 +176,23 @@ const PixiOverlayComponent = ({
           reticule.hide()
         }
 
+        const moveReticuleToEvent = (e: FederatedPointerEvent) => {
+          const localPositionToParent = e.getLocalPosition(
+            backgroundContainer.parent
+          )
+
+          //show the reticule
+          reticule.show()
+
+          reticule.setTranslate(
+            localPositionToParent.x,
+            localPositionToParent.y
+          )
+        }
+
         backgroundContainer.onpointerdown = (e: FederatedPointerEvent) => {
+          moveReticuleToEvent(e)
+
           const reticuleCircle = new Circle(
             reticule.x,
             reticule.y,
@@ -202,25 +219,21 @@ const PixiOverlayComponent = ({
           }
         }
 
-        backgroundContainer.onpointermove = (e: FederatedPointerEvent) => {
-
-          const localPositionToParent = e.getLocalPosition(
-            backgroundContainer.parent
-          )
-
-          //show the reticule
-          reticule.show()
-
-          reticule.setTranslate(
-            localPositionToParent.x,
-            localPositionToParent.y
-          )
+        backgroundContainer.onpointerleave = () => {
+          // console.log("leave")
         }
 
-        const ticker = Ticker.shared.add(() => {
+        backgroundContainer.onpointermove = (e: FederatedPointerEvent) => {
+          // console.log(e.target)
+
+          moveReticuleToEvent(e)
+        }
+        ticker = new Ticker()
+        ticker.add(() => {
           renderer.render(container)
         })
         ticker.maxFPS = 60
+        ticker.start()
       }
 
       //redraw the background container for capturing clicks
@@ -240,6 +253,11 @@ const PixiOverlayComponent = ({
       backgroundContainer.eventMode = "static"
 
       if (firstDraw || prevZoom !== zoom) {
+        // @ts-ignore
+        globalThis.__PIXI_STAGE__ = container
+        // @ts-ignore
+        globalThis.__PIXI_RENDERER__ = renderer
+
         //Update drawn lines
         lineGraphics.forEach((line, id) => {
           line.clear()
@@ -254,7 +272,6 @@ const PixiOverlayComponent = ({
 
           line.setVertices(vertices)
         })
-
         if (backgroundLineGraphics) {
           backgroundLineGraphics.forEach((line, id) => {
             line.clear()
@@ -286,21 +303,30 @@ const PixiOverlayComponent = ({
   })
 
   useEffect(() => {
+    console.log("create application")
     let pixiContainer = new Container()
+    firstDraw = true
+    setIsMounted(true)
 
     let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
-    firstDraw = true
-    if (leafletMap) {
-      myOverlay.addTo(leafletMap)
-    }
+    myOverlay.addTo(leafletMap)
 
     return () => {
-      pixiContainer.removeAllListeners()
-      leafletMap.off()
+      setIsMounted(false)
+      console.log("destroy")
+      ticker.destroy()
+
       myOverlay.removeFrom(leafletMap)
       myOverlay.remove()
+      pixiContainer.removeAllListeners()
+
+      pixiContainer.destroy({
+        children: true,
+        texture: true,
+        baseTexture: true,
+      })
     }
-  }, [leafletMap])
+  }, [])
 
   return <></>
 }
