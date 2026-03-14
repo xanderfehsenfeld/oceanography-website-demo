@@ -1,24 +1,11 @@
 "use client"
 
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
-import dynamic from "next/dynamic"
+import { ReactNode, useEffect, useMemo, useState } from "react"
 import { useTheme } from "next-themes"
 import { Ticker } from "pixi.js"
 
 import ClientMapView from "@/components/map/client-map-view"
-import {
-  getPoints,
-  getTrack,
-  IFeature,
-  IPoints,
-} from "@/components/map/getPoints"
+import { getPoints } from "@/components/map/getPoints"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./PS_times.json"
@@ -53,6 +40,14 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [sliderValue])
 
   const maxSliderValue = points.length - 1
+
+  useEffect(() => {
+    console.log("mount")
+
+    return () => {
+      console.log("unmount")
+    }
+  }, [])
 
   useEffect(() => {
     const ticker = new Ticker()
