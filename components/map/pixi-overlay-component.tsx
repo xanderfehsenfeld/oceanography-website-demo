@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useEffectEvent, useState } from "react"
+import { useEffect, useEffectEvent, useRef, useState } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -24,15 +24,6 @@ import { Reticule } from "./sprites/reticule"
 let prevZoom = 8
 let firstDraw = true
 
-let circleSprites: Drifter[]
-let lineGraphics: LineGraphic[]
-let backgroundLineGraphics: LineGraphic[]
-
-let isIn: { [key: string]: boolean } = {}
-
-let reticule: Reticule
-
-let backgroundContainer: Container
 let ticker: Ticker
 
 const PixiOverlayComponent = ({
@@ -44,6 +35,19 @@ const PixiOverlayComponent = ({
   allPoints: IPoints[]
   showAllLines?: boolean
 }) => {
+  // const ticker = useRef<Ticker>(new Ticker())
+
+  const isIn = useRef<{ [key: string]: boolean }>({})
+
+  const backgroundContainer = useRef<Container>(null)
+
+  const lineGraphics = useRef<LineGraphic[]>([])
+  const reticule = useRef<Reticule>(null)
+
+  const circleSprites = useRef<Drifter[]>([])
+
+  const backgroundLineGraphics = useRef<LineGraphic[]>([])
+
   const leafletMap = useMap()
 
   const [isMounted, setIsMounted] = useState(false)
@@ -60,7 +64,7 @@ const PixiOverlayComponent = ({
     circles.forEach((feature, id) => {
       const { longitude, latitude } = feature.properties
       const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
-      const circle = circleSprites[id]
+      const circle = circleSprites.current[id]
 
       circle?.setLocation(x, y)
       if (scale && circle) circle.scale.set(1 / scale / 2)
@@ -75,8 +79,8 @@ const PixiOverlayComponent = ({
 
   useEffect(() => {
     const isDark = theme === "dark"
-    reticule?.setIsDark(isDark)
-    circleSprites?.forEach((c) => c.setIsDark(isDark))
+    reticule.current?.setIsDark(isDark)
+    circleSprites.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
@@ -100,7 +104,7 @@ const PixiOverlayComponent = ({
 
     const initializeCircles = (features: IFeature[]): Drifter[] => {
       return features.map((feature, id) => {
-        const line = lineGraphics[id]
+        const line = lineGraphics.current[id]
 
         const vertices = points.map((v) => {
           const { longitude, latitude } = v.features[id].properties
@@ -112,7 +116,7 @@ const PixiOverlayComponent = ({
         const sprite = new Drifter(renderer, line, theme === "dark", vertices)
 
         sprite.onpointerenter = function (this: Drifter) {
-          if (!isIn[id]) {
+          if (!isIn.current[id]) {
             this.setActive()
           } else {
             this.line.visible = true
@@ -120,7 +124,7 @@ const PixiOverlayComponent = ({
         }
 
         sprite.onpointerleave = function (this: Drifter) {
-          if (!isIn[id]) {
+          if (!isIn.current[id]) {
             this.setInactive()
           } else if (Object.keys(isIn).length > 1) {
             this.line.visible = false
@@ -132,8 +136,8 @@ const PixiOverlayComponent = ({
           event: FederatedPointerEvent
         ) {
           //   //show as selected
-          circleSprites.forEach((circle) => circle.resetState())
-          isIn = {
+          circleSprites.current.forEach((circle) => circle.resetState())
+          isIn.current = {
             [id]: true,
           }
           this.setSelected()
@@ -152,83 +156,91 @@ const PixiOverlayComponent = ({
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
-        backgroundContainer = new Container()
-        backgroundContainer.eventMode = "dynamic"
-        container.addChild(backgroundContainer)
+        backgroundContainer.current = new Container()
+        container.addChild(backgroundContainer.current)
         container.eventMode = "dynamic"
 
-        reticule = new Reticule(renderer)
-        container.addChild(reticule)
+        reticule.current = new Reticule(renderer)
+        container.addChild(reticule.current)
 
         if (showAllLines) {
-          backgroundLineGraphics = initializeLines(points, true)
-          container.addChild(...backgroundLineGraphics)
+          backgroundLineGraphics.current = initializeLines(points, true)
+          container.addChild(...backgroundLineGraphics.current)
         }
 
-        lineGraphics = initializeLines(points)
+        lineGraphics.current = initializeLines(points)
 
-        container.addChild(...lineGraphics)
+        container.addChild(...lineGraphics.current)
 
-        circleSprites = initializeCircles(circles)
-        container.addChild(...circleSprites)
+        circleSprites.current = initializeCircles(circles)
+        container.addChild(...circleSprites.current)
 
-        backgroundContainer.onpointerleave = () => {
-          reticule.hide()
+        backgroundContainer.current.onpointerleave = () => {
+          reticule.current?.hide()
         }
 
         const moveReticuleToEvent = (e: FederatedPointerEvent) => {
-          const localPositionToParent = e.getLocalPosition(
-            backgroundContainer.parent
-          )
+          if (backgroundContainer.current) {
+            const localPositionToParent = e.getLocalPosition(
+              backgroundContainer.current.parent
+            )
 
-          //show the reticule
-          reticule.show()
+            //show the reticule
+            reticule.current?.show()
 
-          reticule.setTranslate(
-            localPositionToParent.x,
-            localPositionToParent.y
-          )
-        }
-
-        backgroundContainer.onpointerdown = (e: FederatedPointerEvent) => {
-          moveReticuleToEvent(e)
-
-          const reticuleCircle = new Circle(
-            reticule.x,
-            reticule.y,
-            reticule.scale.x * 500
-          )
-          const anyCirclesAreSelected = circleSprites.find((circle, id) => {
-            const isSelected = reticuleCircle.contains(circle.x, circle.y)
-
-            return isSelected
-          })
-
-          if (anyCirclesAreSelected) {
-            circleSprites.forEach((circle, id) => {
-              const isSelected = reticuleCircle.contains(circle.x, circle.y)
-              isIn[id] = isSelected
-
-              if (isSelected) {
-                circle.setSelected()
-                circle.line.visible = false
-              } else {
-                circle.resetState()
-              }
-            })
+            reticule.current?.setTranslate(
+              localPositionToParent.x,
+              localPositionToParent.y
+            )
           }
         }
 
-        backgroundContainer.onpointerleave = () => {
+        backgroundContainer.current.onpointerdown = (
+          e: FederatedPointerEvent
+        ) => {
+          if (reticule.current) {
+            const { x, y, scale } = reticule.current
+
+            moveReticuleToEvent(e)
+
+            const reticuleCircle = new Circle(x, y, scale.x * 500)
+            const anyCirclesAreSelected = circleSprites.current.find(
+              (circle, id) => {
+                const isSelected = reticuleCircle.contains(circle.x, circle.y)
+
+                return isSelected
+              }
+            )
+
+            if (anyCirclesAreSelected) {
+              circleSprites.current.forEach((circle, id) => {
+                const isSelected = reticuleCircle.contains(circle.x, circle.y)
+                isIn.current[id] = isSelected
+
+                if (isSelected) {
+                  circle.setSelected()
+                  circle.line.visible = false
+                } else {
+                  circle.resetState()
+                }
+              })
+            }
+          }
+        }
+
+        backgroundContainer.current.onpointerleave = () => {
           // console.log("leave")
         }
 
-        backgroundContainer.onpointermove = (e: FederatedPointerEvent) => {
+        backgroundContainer.current.onpointermove = (
+          e: FederatedPointerEvent
+        ) => {
           // console.log(e.target)
 
           moveReticuleToEvent(e)
         }
         ticker = new Ticker()
+
         ticker.add(() => {
           renderer.render(container)
         })
@@ -236,21 +248,24 @@ const PixiOverlayComponent = ({
         ticker.start()
       }
 
-      //redraw the background container for capturing clicks
-      const bounds = map.getBounds()
+      if (backgroundContainer.current) {
+        //redraw the background container for capturing clicks
+        const bounds = map.getBounds()
 
-      const northWest = project(bounds.getNorthWest())
+        const northWest = project(bounds.getNorthWest())
 
-      const southEast = project(bounds.getSouthEast())
+        const southEast = project(bounds.getSouthEast())
 
-      const clickableArea = new Rectangle(
-        northWest.x,
-        northWest.y,
-        Math.abs(northWest.x - southEast.x),
-        Math.abs(northWest.y - southEast.y)
-      )
-      backgroundContainer.hitArea = clickableArea
-      backgroundContainer.eventMode = "static"
+        const clickableArea = new Rectangle(
+          northWest.x,
+          northWest.y,
+          Math.abs(northWest.x - southEast.x),
+          Math.abs(northWest.y - southEast.y)
+        )
+
+        backgroundContainer.current.hitArea = clickableArea
+        backgroundContainer.current.eventMode = "static"
+      }
 
       if (firstDraw || prevZoom !== zoom) {
         // @ts-ignore
@@ -259,7 +274,7 @@ const PixiOverlayComponent = ({
         globalThis.__PIXI_RENDERER__ = renderer
 
         //Update drawn lines
-        lineGraphics.forEach((line, id) => {
+        lineGraphics.current.forEach((line, id) => {
           line.clear()
           line.lineStyle({ width: 3 / scale, color: "green" })
 
@@ -272,28 +287,26 @@ const PixiOverlayComponent = ({
 
           line.setVertices(vertices)
         })
-        if (backgroundLineGraphics) {
-          backgroundLineGraphics.forEach((line, id) => {
-            line.clear()
+        backgroundLineGraphics.current.forEach((line, id) => {
+          line.clear()
 
-            line.lineStyle({ width: 3 / scale, color: "purple", alpha: 0.3 })
+          line.lineStyle({ width: 3 / scale, color: "purple", alpha: 0.3 })
 
-            const vertices = points.map((v): [number, number] => {
-              const { longitude, latitude } = v.features[id].properties
-              const { x, y } = project([latitude, longitude] as any)
+          const vertices = points.map((v): [number, number] => {
+            const { longitude, latitude } = v.features[id].properties
+            const { x, y } = project([latitude, longitude] as any)
 
-              return [x, y]
-            })
-
-            line.setVertices(vertices)
+            return [x, y]
           })
-        }
+
+          line.setVertices(vertices)
+        })
 
         //update the drifters
         updateCircleLocations(Math.max(scale, 1))
 
         const reticuleScale = 1 / scale / 5
-        reticule.scale.set(reticuleScale)
+        reticule.current?.scale.set(reticuleScale)
       }
       firstDraw = false
       prevZoom = zoom
