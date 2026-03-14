@@ -35,8 +35,6 @@ const PixiOverlayComponent = ({
   allPoints: IPoints[]
   showAllLines?: boolean
 }) => {
-  // const ticker = useRef<Ticker>(new Ticker())
-
   const isIn = useRef<{ [key: string]: boolean }>({})
 
   const backgroundContainer = useRef<Container>(null)
