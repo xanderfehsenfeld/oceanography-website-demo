@@ -24,6 +24,8 @@ import PixiOverlayComponent from "./pixi-overlay-component"
 
 import "./map-view.css"
 
+import { MapLibreTileLayer } from "./map-libre-tile-layer"
+
 const mapSources = {
   voyagerNoLabels: {
     url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
@@ -34,6 +36,17 @@ const mapSources = {
     url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  },
+  stadiaAlidadeSmoothDark: {
+    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  },
+
+  stadiaAlidadeSmooth: {
+    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
+    attribution:
+      '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
   },
 }
 
@@ -120,16 +133,18 @@ function MapView({
           />
         )}
 
-        <TileLayer
-          attribution={
-            theme === "dark"
-              ? mapSources.darkMatterNoLabels.attribution
-              : mapSources.voyagerNoLabels.attribution
-          }
+        <MapLibreTileLayer
+          maxBounds={[
+            [51.67131229155612, -117.89978027343751],
+            [44.320112128003764, -127.10083007812501],
+          ]}
+          maxZoom={15}
+          minZoom={7}
+          attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
           url={
             theme === "dark"
-              ? mapSources.darkMatterNoLabels.url
-              : mapSources.voyagerNoLabels.url
+              ? "/data/alidade_smooth.json"
+              : "/data/alidade_smooth_light.json"
           }
         />
 

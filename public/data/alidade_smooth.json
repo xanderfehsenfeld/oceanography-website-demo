@@ -1,0 +1,480 @@
+{
+  "version": 8,
+  "name": "Alidade Smooth Dark",
+  "metadata": {
+    "mapbox:autocomposite": false,
+    "openmaptiles:version": "3.x",
+    "maputnik:renderer": "mlgljs"
+  },
+  "center": [
+    10.184401828277087,
+    -1.1368683772161605e-13
+  ],
+  "zoom": 0.89026415,
+  "bearing": 0,
+  "pitch": 0,
+  "sources": {
+    "openmaptiles": {
+      "type": "vector",
+      "scheme": "xyz",
+      "url": "https://xanderfehsenfeld.github.io/openmap-tiles-demo/metadata.json"
+    }
+  },
+  "sprite": "https://tiles.stadiamaps.com/styles/alidade-smooth-dark/sprite",
+  "glyphs": "https://tiles.stadiamaps.com/fonts/{fontstack}/{range}.pbf",
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "hsl(0, 0%, 20%)"
+      }
+    },
+    {
+      "id": "park_fill",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "park",
+      "filter": [
+        "==",
+        "$type",
+        "Polygon"
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(109, 41%, 55%, 8%)"
+      }
+    },
+    {
+      "id": "landcover_ice_shelf",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "maxzoom": 8,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Polygon"
+        ],
+        [
+          "==",
+          "subclass",
+          "ice_shelf"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(0, 0%, 75%, 60%)",
+        "fill-opacity": 0.7
+      }
+    },
+    {
+      "id": "landcover_glacier",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "maxzoom": 8,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Polygon"
+        ],
+        [
+          "==",
+          "subclass",
+          "glacier"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(0, 0%, 75%, 50%)",
+        "fill-opacity": {
+          "base": 1,
+          "stops": [
+            [
+              0,
+              1
+            ],
+            [
+              8,
+              0.5
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "landuse_residential",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landuse",
+      "maxzoom": 16,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Polygon"
+        ],
+        [
+          "==",
+          "class",
+          "residential"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(60, 8%, 22%, 20%)",
+        "fill-opacity": {
+          "base": 0.6,
+          "stops": [
+            [
+              8,
+              0.8
+            ],
+            [
+              9,
+              0.6
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "landcover_wood",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "minzoom": 10,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Polygon"
+        ],
+        [
+          "==",
+          "class",
+          "wood"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(120, 23%, 59%, 10%)",
+        "fill-opacity": {
+          "base": 1,
+          "stops": [
+            [
+              8,
+              0
+            ],
+            [
+              12,
+              1
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "landcover_park",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "landcover",
+      "minzoom": 10,
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Polygon"
+        ],
+        [
+          "==",
+          "subclass",
+          "park"
+        ]
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "hsla(120, 23%, 55%, 8%)",
+        "fill-opacity": {
+          "base": 1,
+          "stops": [
+            [
+              8,
+              0
+            ],
+            [
+              12,
+              0.8
+            ]
+          ]
+        }
+      }
+    },
+    {
+      "id": "water",
+      "type": "fill",
+      "source": "openmaptiles",
+      "source-layer": "water",
+      "filter": [
+        "==",
+        "$type",
+        "Polygon"
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "fill-color": "#222",
+        "fill-antialias": true
+      }
+    },
+    {
+      "id": "waterway",
+      "type": "line",
+      "source": "openmaptiles",
+      "source-layer": "waterway",
+      "filter": [
+        "==",
+        "$type",
+        "LineString"
+      ],
+      "layout": {
+        "visibility": "visible"
+      },
+      "paint": {
+        "line-color": "#222"
+      }
+    },
+    {
+      "id": "water_name_line",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "water_name",
+      "filter": [
+        "==",
+        "$type",
+        "LineString"
+      ],
+      "layout": {
+        "text-field": [
+          "concat",
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "case",
+            [
+              "all",
+              [
+                "has",
+                "name:nonlatin"
+              ],
+              [
+                "is-supported-script",
+                [
+                  "get",
+                  "name:nonlatin"
+                ]
+              ]
+            ],
+            [
+              "concat",
+              "\n",
+              [
+                "get",
+                "name:nonlatin"
+              ]
+            ],
+            ""
+          ]
+        ],
+        "text-line-height": 1.55,
+        "symbol-placement": "line",
+        "symbol-avoid-edges": true,
+        "text-rotation-alignment": "map",
+        "text-pitch-alignment": "viewport",
+        "symbol-spacing": 500,
+        "text-font": [
+          "Stadia Italic"
+        ],
+        "text-size": 14,
+        "text-letter-spacing": 0.25
+      },
+      "paint": {
+        "text-color": "#999",
+        "text-halo-color": "hsl(0, 0%, 20%)",
+        "text-halo-width": 1,
+        "text-halo-blur": 1
+      }
+    },
+    {
+      "id": "water_name_nonocean",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "water_name",
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Point"
+        ],
+        [
+          "!in",
+          "class",
+          "ocean"
+        ]
+      ],
+      "layout": {
+        "text-field": [
+          "concat",
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "case",
+            [
+              "all",
+              [
+                "has",
+                "name:nonlatin"
+              ],
+              [
+                "is-supported-script",
+                [
+                  "get",
+                  "name:nonlatin"
+                ]
+              ]
+            ],
+            [
+              "concat",
+              "\n",
+              [
+                "get",
+                "name:nonlatin"
+              ]
+            ],
+            ""
+          ]
+        ],
+        "text-line-height": 1.55,
+        "symbol-placement": "point",
+        "symbol-avoid-edges": true,
+        "text-font": [
+          "Stadia Italic"
+        ],
+        "text-letter-spacing": 0.1,
+        "text-size": {
+          "stops": [
+            [
+              0,
+              14
+            ],
+            [
+              6,
+              16
+            ]
+          ]
+        }
+      },
+      "paint": {
+        "text-color": "#999",
+        "text-halo-color": "hsl(0, 0%, 20%)",
+        "text-halo-width": 2,
+        "text-halo-blur": 1
+      }
+    },
+    {
+      "id": "water_name_ocean",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "water_name",
+      "filter": [
+        "all",
+        [
+          "==",
+          "$type",
+          "Point"
+        ],
+        [
+          "==",
+          "class",
+          "ocean"
+        ]
+      ],
+      "layout": {
+        "text-field": [
+          "concat",
+          [
+            "get",
+            "name:latin"
+          ],
+          [
+            "case",
+            [
+              "all",
+              [
+                "has",
+                "name:nonlatin"
+              ],
+              [
+                "is-supported-script",
+                [
+                  "get",
+                  "name:nonlatin"
+                ]
+              ]
+            ],
+            [
+              "concat",
+              "\n",
+              [
+                "get",
+                "name:nonlatin"
+              ]
+            ],
+            ""
+          ]
+        ],
+        "text-line-height": 1.55,
+        "symbol-placement": "point",
+        "symbol-avoid-edges": true,
+        "text-font": [
+          "Stadia Italic"
+        ],
+        "text-size": 18,
+        "text-letter-spacing": 0.2
+      },
+      "paint": {
+        "text-color": "#999",
+        "text-halo-color": "hsl(0, 0%, 20%)",
+        "text-halo-width": 2,
+        "text-halo-blur": 1
+      }
+    }
+  ],
+  "id": "gdqf5fz"
+}

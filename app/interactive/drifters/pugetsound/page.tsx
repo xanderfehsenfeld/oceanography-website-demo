@@ -22,7 +22,7 @@ export default function Pages() {
       </div>
 
       <Typography>
-        <section>
+        <section className="pb-4">
           <DriftersPugetSound>
             <h3>Puget Sound Drifter Tracks</h3>
 
