@@ -20,7 +20,7 @@ const timeOptions: string[] = times[0].t
 
 const initialZoomLevel = 8
 const initialLat = 48
-const initialLong = -122.5
+const initialLong = -123
 
 const points = getPoints(tracks as any)
 const lines: { [key: string]: IPoints } = points[0].features.reduce(

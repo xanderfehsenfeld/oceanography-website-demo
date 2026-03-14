@@ -22,11 +22,13 @@ export const MapLibreTileLayer = createTileLayerComponent<
   function createTileLayer({ url, attribution, ...options }, context) {
     const layer = L.maplibreGL(
       { style: url, attribution: attribution, noWrap: true },
+      // @ts-ignore
       withPane(options, context)
     )
     return createElementObject(layer, context)
   },
   function updateTileLayer(layer, props, prevProps) {
+    // @ts-ignore
     updateGridLayer(layer, props, prevProps)
 
     const { url, attribution } = props
