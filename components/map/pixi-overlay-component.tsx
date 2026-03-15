@@ -294,11 +294,17 @@ const PixiOverlayComponent = ({
           }
         }
 
-        backgroundContainer.current.onpointerleave = () => {
-          // console.log("leave")
+        backgroundContainer.current.ontouchend = () => {
+          reticule.current?.hide()
         }
 
-        backgroundContainer.current.onpointermove = (
+        backgroundContainer.current.onpointerleave = () => {
+          // console.log("leave")
+
+          reticule.current?.hide()
+        }
+
+        backgroundContainer.current.onmousemove = (
           e: FederatedPointerEvent
         ) => {
           // console.log(e.target)
@@ -313,14 +319,30 @@ const PixiOverlayComponent = ({
 
         const northWest = project(bounds.getNorthWest())
 
-        const southEast = project(bounds.getSouthEast())
+        const southEastBound = bounds.getSouthEast()
+
+        const southEast = project(southEastBound)
+
+        const overlaidControlPane = document.getElementsByClassName(
+          "leaflet-bottom leaflet-left"
+        )[0]
+        const boundingDiv = overlaidControlPane.getBoundingClientRect()
+        const controlPaneHeight = boundingDiv.height
+
+        const mapHeight = map.getSize().y
+        const heightMultiplier = (mapHeight - controlPaneHeight) / mapHeight
 
         const clickableArea = new Rectangle(
           northWest.x,
           northWest.y,
           Math.abs(northWest.x - southEast.x),
-          Math.abs(northWest.y - southEast.y)
+          Math.abs(northWest.y - southEast.y) * heightMultiplier
         )
+
+        // select .leaflet-bottom.leaflet-left
+        // get height
+        // translate to "map"
+        // subtract from original
 
         backgroundContainer.current.hitArea = clickableArea
         backgroundContainer.current.eventMode = "static"
