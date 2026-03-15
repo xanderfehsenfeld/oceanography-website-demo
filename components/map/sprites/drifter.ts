@@ -30,8 +30,10 @@ export class Drifter extends Sprite {
   isDark: boolean
   linePoints: IPointData[]
   arrowAngles: number[]
+  id: number
   constructor(
     renderer: IRenderer,
+    _id: number,
     _line: Graphics,
     _isDark: boolean,
     _linePoints: IPointData[]
@@ -39,6 +41,8 @@ export class Drifter extends Sprite {
     const defaultCircleTexture = renderer.generateTexture(defaultCircle)
 
     super(defaultCircleTexture)
+
+    this.id = _id
     this.isDark = _isDark
 
     this.scale.set(defaultScale)
