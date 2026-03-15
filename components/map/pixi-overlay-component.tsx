@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  useCallback,
   useEffect,
   useEffectEvent,
   useLayoutEffect,
@@ -10,6 +11,7 @@ import {
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
+import { line } from "d3"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -27,8 +29,12 @@ import { Drifter } from "./sprites/drifter"
 import { LineGraphic } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
 
+// @refresh reset
+
 let prevZoom = 8
 let firstDraw = true
+
+//test
 
 let ticker: Ticker
 
@@ -78,10 +84,10 @@ const PixiOverlayComponent = ({
   })
 
   const updateCircleLocations = useEffectEvent((scale?: number) => {
-    circles.forEach((feature, id) => {
+    circleSprites.current.forEach((circle) => {
+      const feature = circles[circle.id]
       const { longitude, latitude } = feature.properties
       const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
-      const circle = circleSprites.current[id]
 
       circle?.setLocation(x, y)
       if (scale && circle) circle.scale.set(1 / scale / 2)
@@ -100,15 +106,8 @@ const PixiOverlayComponent = ({
     circleSprites.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
-  const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
-    let map = utils.getMap()
-    let zoom = map.getZoom()
-    var renderer = utils.getRenderer()
-
-    const initializeLines = (
-      points: IPoints[],
-      isBackground?: boolean
-    ): LineGraphic[] => {
+  const initializeLines = useCallback(
+    (points: IPoints[], isBackground?: boolean): LineGraphic[] => {
       return points[0].features.map((feature, id) => {
         const line = new LineGraphic(isBackground)
         line.eventMode = "none"
@@ -120,13 +119,21 @@ const PixiOverlayComponent = ({
 
         return line
       })
-    }
+    },
+    []
+  )
+
+  const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
+    let map = utils.getMap()
+    let zoom = map.getZoom()
+    var renderer = utils.getRenderer()
 
     const initializeCircles = (
       features: IFeature[],
       visible?: boolean
     ): Drifter[] => {
-      return features.map((feature, id) => {
+      return features.map((feature) => {
+        const id = parseInt(feature.properties.id)
         const line = lineGraphics.current[id]
 
         const vertices = points.map((v) => {
@@ -136,7 +143,13 @@ const PixiOverlayComponent = ({
           return { x, y }
         })
 
-        const sprite = new Drifter(renderer, line, theme === "dark", vertices)
+        const sprite = new Drifter(
+          renderer,
+          id,
+          line,
+          theme === "dark",
+          vertices
+        )
 
         sprite.visible = visible || false
 
@@ -207,25 +220,26 @@ const PixiOverlayComponent = ({
 
         container.addChild(...lineGraphics.current)
 
-        setTimeout(() => {
-          circleSprites.current = initializeCircles(circles, false)
-          container.addChild(...circleSprites.current)
+        const chunkSize = 20
+        function popInData() {
+          const alreadyAddedCircles = circleSprites.current.length
+          const circlesToPopIn = circles.slice(
+            alreadyAddedCircles,
+            alreadyAddedCircles + chunkSize
+          )
 
-          const circlePopInTicker = new Ticker()
+          if (circlesToPopIn.length) {
+            const newCircles = initializeCircles(circlesToPopIn, true)
+            circleSprites.current = circleSprites.current.concat(newCircles)
+            container.addChild(...newCircles)
+          } else {
+            console.log("dataPopInTicker destroyed")
 
-          circlePopInTicker.add(() => {
-            const invisibleCircles = circleSprites.current
-              .filter((v) => v.visible === false)
-              .slice(0, 20)
-            if (invisibleCircles.length) {
-              invisibleCircles.forEach((v) => (v.visible = true))
-            } else {
-              circlePopInTicker.destroy()
-            }
-          })
+            ticker.remove(popInData)
+          }
+        }
 
-          circlePopInTicker.start()
-        }, 700)
+        ticker.add(popInData)
 
         backgroundContainer.current.onpointerleave = () => {
           reticule.current?.hide()
@@ -366,7 +380,11 @@ const PixiOverlayComponent = ({
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+    let myOverlay = L.pixiOverlay(
+      addProfiling(drawCallback, "drawCallback"),
+      pixiContainer,
+      {}
+    )
     myOverlay.addTo(leafletMap)
 
     return () => {

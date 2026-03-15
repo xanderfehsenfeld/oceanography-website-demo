@@ -4,10 +4,8 @@ const defaultLineColor = "green"
 const backgroundLineColor = "purple"
 export class LineGraphic extends Graphics {
   isBackground: boolean
-
   constructor(_isBackground?: boolean) {
     super()
-
     this.isBackground = _isBackground || false
     this.eventMode = "none"
     this.lineStyle({
