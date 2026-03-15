@@ -42,14 +42,6 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   const maxSliderValue = points.length - 1
 
   useEffect(() => {
-    console.log("mount")
-
-    return () => {
-      console.log("unmount")
-    }
-  }, [])
-
-  useEffect(() => {
     const ticker = new Ticker()
     const start = Date.now()
 

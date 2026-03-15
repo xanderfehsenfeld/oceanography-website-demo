@@ -1,6 +1,12 @@
 "use client"
 
-import { useEffect, useEffectEvent, useRef, useState } from "react"
+import {
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -26,6 +32,18 @@ let firstDraw = true
 
 let ticker: Ticker
 
+function addProfiling<FunctionType extends (...args: any[]) => any>(
+  f: FunctionType,
+  name?: string
+): FunctionType {
+  return function (...args) {
+    console.time(f.name || name)
+    const returnValue = f(...args)
+    console.timeEnd(f.name || name)
+    return returnValue
+  } as FunctionType
+}
+
 const PixiOverlayComponent = ({
   allPoints: points,
   circles,
@@ -40,6 +58,7 @@ const PixiOverlayComponent = ({
   const backgroundContainer = useRef<Container>(null)
 
   const lineGraphics = useRef<LineGraphic[]>([])
+
   const reticule = useRef<Reticule>(null)
 
   const circleSprites = useRef<Drifter[]>([])
@@ -86,67 +105,75 @@ const PixiOverlayComponent = ({
     let zoom = map.getZoom()
     var renderer = utils.getRenderer()
 
-    const initializeLines = (
-      points: IPoints[],
-      isBackground?: boolean
-    ): LineGraphic[] => {
-      return points[0].features.map((feature, id) => {
-        const line = new LineGraphic(isBackground)
-        line.eventMode = "none"
-        line.lineStyle({ width: 3, color: isBackground ? "magenta" : "green" })
-        line.visible = isBackground || false
+    const initializeLines = addProfiling(
+      (points: IPoints[], isBackground?: boolean): LineGraphic[] => {
+        return points[0].features.map((feature, id) => {
+          const line = new LineGraphic(isBackground)
+          line.eventMode = "none"
+          line.lineStyle({
+            width: 3,
+            color: isBackground ? "magenta" : "green",
+          })
+          line.visible = isBackground || false
 
-        return line
-      })
-    }
-
-    const initializeCircles = (features: IFeature[]): Drifter[] => {
-      return features.map((feature, id) => {
-        const line = lineGraphics.current[id]
-
-        const vertices = points.map((v) => {
-          const { longitude, latitude } = v.features[id].properties
-          const { x, y } = project([latitude, longitude] as any)
-
-          return { x, y }
+          return line
         })
+      },
+      "initializeLines"
+    )
 
-        const sprite = new Drifter(renderer, line, theme === "dark", vertices)
+    const initializeCircles = addProfiling(
+      (features: IFeature[]): Drifter[] => {
+        return features.map((feature, id) => {
+          const line = lineGraphics.current[id]
 
-        sprite.onpointerenter = function (this: Drifter) {
-          if (!isIn.current[id]) {
-            this.setActive()
-          } else {
-            this.line.visible = true
+          const vertices = points.map((v) => {
+            const { longitude, latitude } = v.features[id].properties
+            const { x, y } = project([latitude, longitude] as any)
+
+            return { x, y }
+          })
+
+          const sprite = new Drifter(renderer, line, theme === "dark", vertices)
+
+          sprite.onpointerenter = function (this: Drifter) {
+            if (!isIn.current[id]) {
+              this.setActive()
+            } else {
+              this.line.visible = true
+            }
           }
-        }
 
-        sprite.onpointerleave = function (this: Drifter) {
-          if (!isIn.current[id]) {
-            this.setInactive()
-          } else if (Object.keys(isIn).length > 1) {
-            this.line.visible = false
+          sprite.onpointerleave = function (this: Drifter) {
+            if (!isIn.current[id]) {
+              this.setInactive()
+            }
+
+            // else if (Object.keys(isIn.current).length > 1) {
+            //   this.line.visible = false
+            // }
           }
-        }
 
-        sprite.onpointerdown = function (
-          this: Drifter,
-          event: FederatedPointerEvent
-        ) {
-          //   //show as selected
-          circleSprites.current.forEach((circle) => circle.resetState())
-          isIn.current = {
-            [id]: true,
+          sprite.onpointerdown = function (
+            this: Drifter,
+            event: FederatedPointerEvent
+          ) {
+            //   //show as selected
+            circleSprites.current.forEach((circle) => circle.resetState())
+            isIn.current = {
+              [id]: true,
+            }
+            this.setSelected()
+            event.stopImmediatePropagation()
+            event.stopPropagation()
+            event.preventDefault()
           }
-          this.setSelected()
-          event.stopImmediatePropagation()
-          event.stopPropagation()
-          event.preventDefault()
-        }
 
-        return sprite
-      })
-    }
+          return sprite
+        })
+      },
+      "initializeCircles"
+    )
 
     if (map) {
       var container = utils.getContainer()
@@ -170,8 +197,10 @@ const PixiOverlayComponent = ({
 
         container.addChild(...lineGraphics.current)
 
-        circleSprites.current = initializeCircles(circles)
-        container.addChild(...circleSprites.current)
+        setTimeout(() => {
+          circleSprites.current = initializeCircles(circles)
+          container.addChild(...circleSprites.current)
+        }, 700)
 
         backgroundContainer.current.onpointerleave = () => {
           reticule.current?.hide()
@@ -319,7 +348,11 @@ const PixiOverlayComponent = ({
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+    let myOverlay = L.pixiOverlay(
+      addProfiling(drawCallback, "drawCallback"),
+      pixiContainer,
+      {}
+    )
     myOverlay.addTo(leafletMap)
 
     return () => {

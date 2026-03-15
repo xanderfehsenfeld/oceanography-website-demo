@@ -15,23 +15,19 @@ defaultCircle.beginFill(0xffffff)
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
 defaultCircle.endFill()
 
-const arrowGraphic = new Graphics()
-arrowGraphic.beginFill("purple")
+defaultCircle.beginFill("purple")
 const arrow = [
-  { x: -43, y: -30 },
+  { x: -38, y: -30 },
   { x: 43, y: 0 },
-  { x: -43, y: 30 },
-  { x: -30, y: 0 },
+  { x: -38, y: 30 },
+  { x: -25, y: 0 },
 ]
 
-arrowGraphic.drawPolygon(arrow)
-
-arrowGraphic.endFill()
+defaultCircle.drawPolygon(arrow)
 
 export class Drifter extends Sprite {
   line: Graphics
   isDark: boolean
-  arrow: Sprite
   linePoints: IPointData[]
   arrowAngles: number[]
   constructor(
@@ -57,15 +53,6 @@ export class Drifter extends Sprite {
     this.anchor.set(0.5)
 
     this.line = _line
-
-    const arrowTexture = renderer.generateTexture(arrowGraphic)
-    const arrowSprite = new Sprite(arrowTexture)
-    arrowSprite.anchor.set(0.5)
-    arrowSprite.scale.set(0.5)
-    arrowSprite.eventMode = "none"
-    this.interactiveChildren = false
-    this.addChild(arrowSprite)
-    this.arrow = arrowSprite
 
     this.linePoints = _linePoints
 

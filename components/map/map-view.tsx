@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentProps, ReactNode, useEffect, useState } from "react"
+import { ComponentProps, Profiler, ReactNode, useEffect, useState } from "react"
 import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -92,6 +92,14 @@ function MapView({
       })
     }
   }, [map])
+
+  useEffect(() => {
+    console.log("mount")
+
+    return () => {
+      console.log("unmount")
+    }
+  }, [])
 
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
