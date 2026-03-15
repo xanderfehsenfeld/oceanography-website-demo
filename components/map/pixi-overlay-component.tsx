@@ -105,75 +105,77 @@ const PixiOverlayComponent = ({
     let zoom = map.getZoom()
     var renderer = utils.getRenderer()
 
-    const initializeLines = addProfiling(
-      (points: IPoints[], isBackground?: boolean): LineGraphic[] => {
-        return points[0].features.map((feature, id) => {
-          const line = new LineGraphic(isBackground)
-          line.eventMode = "none"
-          line.lineStyle({
-            width: 3,
-            color: isBackground ? "magenta" : "green",
-          })
-          line.visible = isBackground || false
-
-          return line
+    const initializeLines = (
+      points: IPoints[],
+      isBackground?: boolean
+    ): LineGraphic[] => {
+      return points[0].features.map((feature, id) => {
+        const line = new LineGraphic(isBackground)
+        line.eventMode = "none"
+        line.lineStyle({
+          width: 3,
+          color: isBackground ? "magenta" : "green",
         })
-      },
-      "initializeLines"
-    )
+        line.visible = isBackground || false
 
-    const initializeCircles = addProfiling(
-      (features: IFeature[]): Drifter[] => {
-        return features.map((feature, id) => {
-          const line = lineGraphics.current[id]
+        return line
+      })
+    }
 
-          const vertices = points.map((v) => {
-            const { longitude, latitude } = v.features[id].properties
-            const { x, y } = project([latitude, longitude] as any)
+    const initializeCircles = (
+      features: IFeature[],
+      visible?: boolean
+    ): Drifter[] => {
+      return features.map((feature, id) => {
+        const line = lineGraphics.current[id]
 
-            return { x, y }
-          })
+        const vertices = points.map((v) => {
+          const { longitude, latitude } = v.features[id].properties
+          const { x, y } = project([latitude, longitude] as any)
 
-          const sprite = new Drifter(renderer, line, theme === "dark", vertices)
-
-          sprite.onpointerenter = function (this: Drifter) {
-            if (!isIn.current[id]) {
-              this.setActive()
-            } else {
-              this.line.visible = true
-            }
-          }
-
-          sprite.onpointerleave = function (this: Drifter) {
-            if (!isIn.current[id]) {
-              this.setInactive()
-            }
-
-            // else if (Object.keys(isIn.current).length > 1) {
-            //   this.line.visible = false
-            // }
-          }
-
-          sprite.onpointerdown = function (
-            this: Drifter,
-            event: FederatedPointerEvent
-          ) {
-            //   //show as selected
-            circleSprites.current.forEach((circle) => circle.resetState())
-            isIn.current = {
-              [id]: true,
-            }
-            this.setSelected()
-            event.stopImmediatePropagation()
-            event.stopPropagation()
-            event.preventDefault()
-          }
-
-          return sprite
+          return { x, y }
         })
-      },
-      "initializeCircles"
-    )
+
+        const sprite = new Drifter(renderer, line, theme === "dark", vertices)
+
+        sprite.visible = visible || false
+
+        sprite.onpointerenter = function (this: Drifter) {
+          if (!isIn.current[id]) {
+            this.setActive()
+          } else {
+            this.line.visible = true
+          }
+        }
+
+        sprite.onpointerleave = function (this: Drifter) {
+          if (!isIn.current[id]) {
+            this.setInactive()
+          }
+
+          // else if (Object.keys(isIn.current).length > 1) {
+          //   this.line.visible = false
+          // }
+        }
+
+        sprite.onpointerdown = function (
+          this: Drifter,
+          event: FederatedPointerEvent
+        ) {
+          //   //show as selected
+          circleSprites.current.forEach((circle) => circle.resetState())
+          isIn.current = {
+            [id]: true,
+          }
+          this.setSelected()
+          event.stopImmediatePropagation()
+          event.stopPropagation()
+          event.preventDefault()
+        }
+
+        return sprite
+      })
+    }
 
     if (map) {
       var container = utils.getContainer()
@@ -181,6 +183,14 @@ const PixiOverlayComponent = ({
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
+        ticker = new Ticker()
+
+        ticker.add(() => {
+          renderer.render(container)
+        })
+        ticker.maxFPS = 60
+        ticker.start()
+
         backgroundContainer.current = new Container()
         container.addChild(backgroundContainer.current)
         container.eventMode = "dynamic"
@@ -198,8 +208,23 @@ const PixiOverlayComponent = ({
         container.addChild(...lineGraphics.current)
 
         setTimeout(() => {
-          circleSprites.current = initializeCircles(circles)
+          circleSprites.current = initializeCircles(circles, false)
           container.addChild(...circleSprites.current)
+
+          const circlePopInTicker = new Ticker()
+
+          circlePopInTicker.add(() => {
+            const invisibleCircles = circleSprites.current
+              .filter((v) => v.visible === false)
+              .slice(0, 20)
+            if (invisibleCircles.length) {
+              invisibleCircles.forEach((v) => (v.visible = true))
+            } else {
+              circlePopInTicker.destroy()
+            }
+          })
+
+          circlePopInTicker.start()
         }, 700)
 
         backgroundContainer.current.onpointerleave = () => {
@@ -266,13 +291,6 @@ const PixiOverlayComponent = ({
 
           moveReticuleToEvent(e)
         }
-        ticker = new Ticker()
-
-        ticker.add(() => {
-          renderer.render(container)
-        })
-        ticker.maxFPS = 60
-        ticker.start()
       }
 
       if (backgroundContainer.current) {
@@ -348,11 +366,7 @@ const PixiOverlayComponent = ({
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(
-      addProfiling(drawCallback, "drawCallback"),
-      pixiContainer,
-      {}
-    )
+    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
     myOverlay.addTo(leafletMap)
 
     return () => {
