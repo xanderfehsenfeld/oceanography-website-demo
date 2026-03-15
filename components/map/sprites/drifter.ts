@@ -17,10 +17,10 @@ defaultCircle.endFill()
 
 defaultCircle.beginFill("purple")
 const arrow = [
-  { x: -38, y: -30 },
-  { x: 43, y: 0 },
-  { x: -38, y: 30 },
-  { x: -25, y: 0 },
+  { x: -21, y: -21 },
+  { x: 30, y: 0 },
+  { x: -21, y: 21 },
+  { x: -13, y: 0 },
 ]
 
 defaultCircle.drawPolygon(arrow)
