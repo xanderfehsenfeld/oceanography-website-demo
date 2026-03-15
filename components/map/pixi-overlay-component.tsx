@@ -109,7 +109,12 @@ const PixiOverlayComponent = ({
   const initializeLines = useCallback(
     (points: IPoints[], isBackground?: boolean): LineGraphic[] => {
       return points[0].features.map((feature, id) => {
-        const line = new LineGraphic(isBackground)
+        const vertices = points.map((v): [number, number] => {
+          const { longitude, latitude } = v.features[id].properties
+
+          return [latitude, longitude]
+        })
+        const line = new LineGraphic(vertices, isBackground)
         line.eventMode = "none"
         line.lineStyle({
           width: 3,
@@ -274,7 +279,7 @@ const PixiOverlayComponent = ({
             const { x, y, scale } = reticule.current
 
             const reticuleCircle = new Circle(x, y, scale.x * 500)
-            const anyCirclesAreSelected = circleSprites.current.find(
+            const anyCirclesAreSelected = circleSprites.current.some(
               (circle, id) => {
                 const isSelected = reticuleCircle.contains(circle.x, circle.y)
 
@@ -289,7 +294,7 @@ const PixiOverlayComponent = ({
 
                 if (isSelected) {
                   circle.setSelected()
-                  circle.line.visible = false
+                  // circle.line.visible = false
                 } else {
                   circle.resetState()
                 }
@@ -358,34 +363,38 @@ const PixiOverlayComponent = ({
         // @ts-ignore
         globalThis.__PIXI_RENDERER__ = renderer
 
+        const lineWidth = zoom > 10 ? 3 / scale : 3
+
         //Update drawn lines
-        lineGraphics.current.forEach((line, id) => {
-          line.clear()
-          line.lineStyle({ width: 3 / scale, color: "green" })
+        if (zoom > 10 || firstDraw) {
+          lineGraphics.current.forEach((line, id) => {
+            line.clear()
+            line.lineStyle({ width: lineWidth, color: "green" })
 
-          const vertices = points.map((v): [number, number] => {
-            const { longitude, latitude } = v.features[id].properties
-            const { x, y } = project([latitude, longitude] as any)
+            const vertices = points.map((v): [number, number] => {
+              const { longitude, latitude } = v.features[id].properties
+              const { x, y } = project([latitude, longitude] as any)
 
-            return [x, y]
+              return [x, y]
+            })
+
+            line.setVertices(vertices)
           })
+          backgroundLineGraphics.current.forEach((line, id) => {
+            line.clear()
 
-          line.setVertices(vertices)
-        })
-        backgroundLineGraphics.current.forEach((line, id) => {
-          line.clear()
+            line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
 
-          line.lineStyle({ width: 3 / scale, color: "purple", alpha: 0.3 })
+            const vertices = points.map((v): [number, number] => {
+              const { longitude, latitude } = v.features[id].properties
+              const { x, y } = project([latitude, longitude] as any)
 
-          const vertices = points.map((v): [number, number] => {
-            const { longitude, latitude } = v.features[id].properties
-            const { x, y } = project([latitude, longitude] as any)
+              return [x, y]
+            })
 
-            return [x, y]
+            line.setVertices(vertices)
           })
-
-          line.setVertices(vertices)
-        })
+        }
 
         //update the drifters
         updateCircleLocations(Math.max(scale, 1))
