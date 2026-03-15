@@ -36,8 +36,6 @@ let firstDraw = true
 
 //test
 
-let ticker: Ticker
-
 function addProfiling<FunctionType extends (...args: any[]) => any>(
   f: FunctionType,
   name?: string
@@ -59,6 +57,8 @@ const PixiOverlayComponent = ({
   allPoints: IPoints[]
   showAllLines?: boolean
 }) => {
+  const ticker = useRef<Ticker>(null)
+
   const isIn = useRef<{ [key: string]: boolean }>({})
 
   const backgroundContainer = useRef<Container>(null)
@@ -196,13 +196,12 @@ const PixiOverlayComponent = ({
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
-        ticker = new Ticker()
-
-        ticker.add(() => {
+        ticker.current = new Ticker()
+        ticker.current.add(() => {
           renderer.render(container)
         })
-        ticker.maxFPS = 60
-        ticker.start()
+        ticker.current.maxFPS = 60
+        ticker.current.start()
 
         backgroundContainer.current = new Container()
         container.addChild(backgroundContainer.current)
@@ -235,11 +234,11 @@ const PixiOverlayComponent = ({
           } else {
             console.log("dataPopInTicker destroyed")
 
-            ticker.remove(popInData)
+            ticker.current?.remove(popInData)
           }
         }
 
-        ticker.add(popInData)
+        ticker.current.add(popInData)
 
         backgroundContainer.current.onpointerleave = () => {
           reticule.current?.hide()
@@ -264,10 +263,15 @@ const PixiOverlayComponent = ({
         backgroundContainer.current.onpointerdown = (
           e: FederatedPointerEvent
         ) => {
-          if (reticule.current) {
-            const { x, y, scale } = reticule.current
+          moveReticuleToEvent(e)
+        }
 
+        backgroundContainer.current.onpointerup = (
+          e: FederatedPointerEvent
+        ) => {
+          if (reticule.current) {
             moveReticuleToEvent(e)
+            const { x, y, scale } = reticule.current
 
             const reticuleCircle = new Circle(x, y, scale.x * 500)
             const anyCirclesAreSelected = circleSprites.current.find(
@@ -395,6 +399,19 @@ const PixiOverlayComponent = ({
       renderer.render(container)
     }
   })
+  const disablePixiInteraction = useEffectEvent(() => {
+    if (backgroundContainer.current) {
+      backgroundContainer.current.eventMode = "none"
+      reticule.current?.hide()
+    }
+  })
+
+  const enablePixiInteraction = useEffectEvent(() => {
+    if (backgroundContainer.current) {
+      backgroundContainer.current.eventMode = "static"
+      reticule.current?.show()
+    }
+  })
 
   useEffect(() => {
     console.log("create application")
@@ -409,10 +426,15 @@ const PixiOverlayComponent = ({
     )
     myOverlay.addTo(leafletMap)
 
+    leafletMap.on("zoomstart", disablePixiInteraction)
+    leafletMap.on("zoomend", enablePixiInteraction)
+    leafletMap.on("movestart", disablePixiInteraction)
+    leafletMap.on("moveend", enablePixiInteraction)
+
     return () => {
       setIsMounted(false)
       console.log("destroy")
-      ticker.destroy()
+      ticker.current?.destroy()
 
       myOverlay.removeFrom(leafletMap)
       myOverlay.remove()
