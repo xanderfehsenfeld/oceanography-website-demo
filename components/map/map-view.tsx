@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentProps, ReactNode, useEffect, useState } from "react"
+import { ComponentProps, Profiler, ReactNode, useEffect, useState } from "react"
 import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -93,6 +93,14 @@ function MapView({
     }
   }, [map])
 
+  useEffect(() => {
+    console.log("mount")
+
+    return () => {
+      console.log("unmount")
+    }
+  }, [])
+
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
       {map && <MapScale isHorizontal map={map} />}
@@ -117,7 +125,7 @@ function MapView({
               variant="default"
               size="icon"
               onClick={toggleTheme}
-              className="h-9 w-9 cursor-pointer"
+              className="h-11 w-11 cursor-pointer"
             >
               <RxSun className="h-[1.1rem] w-[1.1rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
               <RxMoon className="absolute h-[1.1rem] w-[1.1rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
@@ -153,7 +161,7 @@ function MapView({
             variant="default"
             size="icon"
             title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-            className="h-9 w-9 cursor-pointer"
+            className="h-11 w-11 cursor-pointer"
             onClick={() => {
               map?.toggleFullscreen()
             }}

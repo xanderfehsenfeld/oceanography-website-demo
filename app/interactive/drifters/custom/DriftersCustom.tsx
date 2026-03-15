@@ -1,14 +1,10 @@
 "use client"
 
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
+import { ReactNode, useEffect, useMemo, useState } from "react"
+import { Ticker } from "pixi.js"
 
 import ClientMapView from "@/components/map/client-map-view"
-import {
-  getPoints,
-  getTrack,
-  IFeature,
-  IPoints,
-} from "@/components/map/getPoints"
+import { getPoints } from "@/components/map/getPoints"
 import TimeControls from "@/components/map/time-controls"
 
 import times from "./willapa25_times.json"
@@ -21,15 +17,6 @@ const initialLat = 46.725
 const initialLong = -124.05
 
 const points = getPoints(tracks as any)
-const lines: { [key: string]: IPoints } = points[0].features.reduce(
-  (previous, v: IFeature) => {
-    return {
-      ...previous,
-      [v.properties.id]: getTrack(v.properties.id, tracks as any, times[0].t),
-    }
-  },
-  {}
-)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
@@ -52,17 +39,33 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [sliderValue])
 
   const maxSliderValue = points.length - 1
-  const increment = useCallback(() => {
-    setSliderValue((sliderValue + 1) % maxSliderValue)
-  }, [sliderValue])
-
   useEffect(() => {
-    if (playbackSpeed) {
-      const timeOut = setTimeout(increment, 50 / playbackSpeed)
+    const ticker = new Ticker()
+    const start = Date.now()
 
-      return () => clearTimeout(timeOut)
+    const frameLength = 50 / playbackSpeed
+    const initialFrame = sliderValue
+    const setNextFrame = () => {
+      const elapsed = Date.now() - start
+      const frameNumber = Math.floor(elapsed / frameLength) + initialFrame
+
+      const nextSliderValue = frameNumber % maxSliderValue
+
+      if (nextSliderValue !== sliderValue) setSliderValue(nextSliderValue)
     }
-  }, [playbackSpeed, sliderValue])
+
+    if (playbackSpeed === 0) {
+    } else {
+      ticker.add(setNextFrame)
+      ticker.maxFPS = 1000 / frameLength
+      ticker.start()
+    }
+
+    return () => {
+      ticker.stop()
+      ticker.destroy()
+    }
+  }, [playbackSpeed])
 
   return (
     <div className="gap-4 lg:flex">
@@ -74,7 +77,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         allPoints={points}
         showAllLines
         controls={
-          <div className={`flex flex-col gap-2 border bg-background p-2 pb-6`}>
+          <div className={`flex flex-col gap-2 border bg-background p-4 pb-6`}>
             <div className="typography">
               <h3>Time Slider: {displayValue}</h3>
             </div>
