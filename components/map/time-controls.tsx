@@ -1,6 +1,8 @@
 import { SegmentedControl, Slider } from "@radix-ui/themes/dist/cjs/components"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
+import "./time-controls.css"
+
 const TimeControls = ({
   onPlaybackChange,
   playbackSpeed,
@@ -16,7 +18,12 @@ const TimeControls = ({
   maxSliderValue: number
 }) => {
   return (
-    <div className="flex w-full flex-col-reverse gap-4 lg:flex-row lg:items-center">
+    <div
+      className="flex w-full flex-col-reverse gap-4 lg:flex-row lg:items-center"
+      onPointerMove={(e) => {
+        e.stopPropagation()
+      }}
+    >
       <SegmentedControl.Root
         className="cursor-pointer"
         defaultValue="1"

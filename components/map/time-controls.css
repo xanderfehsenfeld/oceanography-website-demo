@@ -1,0 +1,33 @@
+.rt-SliderRoot {
+  height: 30px;
+}
+
+.rt-SliderTrack {
+  height: 10px;
+  cursor: pointer;
+}
+
+.rt-SliderRange {
+  position: absolute;
+  border-radius: 9999px;
+  height: 100%;
+}
+
+.rt-SliderThumb {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: grab;
+}
+
+.rt-SliderThumb::after {
+  cursor: grab;
+}
+.rt-SliderThumb:hover {
+  cursor: grab;
+}
+.rt-SliderThumb:focus {
+  outline: none;
+  cursor: grabbing;
+}

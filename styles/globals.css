@@ -335,7 +335,7 @@ article.typography section a {
   cursor: pointer;
 }
 
-.rt-SliderRoot .rt-SliderThumb {
+.rt-SliderThumb {
   cursor: grab;
 }
 
