@@ -13,12 +13,13 @@ import {
   FederatedPointerEvent,
   Rectangle,
   Ticker,
+  UPDATE_PRIORITY,
 } from "pixi.js"
 import { useMap } from "react-leaflet"
 
 import { IFeature, IPoints } from "./getPoints"
 import { Drifter } from "./sprites/drifter"
-import { LineGraphic } from "./sprites/line"
+import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
 
 // @refresh reset
@@ -52,14 +53,15 @@ const PixiOverlayComponent = ({
   const isIn = useRef<{ [key: string]: boolean }>({})
 
   const backgroundContainer = useRef<Container>(null)
+  const circlesContainer = useRef<Container>(null)
 
-  const lineGraphics = useRef<LineGraphic[]>([])
+  const lineGraphics = useRef<DrifterPath[]>([])
 
   const reticule = useRef<Reticule>(null)
 
   const circleSprites = useRef<Drifter[]>([])
 
-  const backgroundLineGraphics = useRef<LineGraphic[]>([])
+  const backgroundLineGraphics = useRef<DrifterPath[]>([])
 
   const leafletMap = useMap()
 
@@ -84,6 +86,25 @@ const PixiOverlayComponent = ({
     })
   })
 
+  const updateLineLocations = useEffectEvent((scale: number, zoom: number) => {
+    const lineWidth = zoom > 10 ? 3 / scale : 3
+
+    //Update drawn lines
+    if (zoom > 10 || firstDraw) {
+      lineGraphics.current.forEach((line) => {
+        line.clear()
+        line.lineStyle({ width: lineWidth, color: "green" })
+        line.drawVertices()
+      })
+      backgroundLineGraphics.current.forEach((line) => {
+        line.clear()
+
+        line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
+        line.drawVertices()
+      })
+    }
+  })
+
   useEffect(() => {
     if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
@@ -97,14 +118,15 @@ const PixiOverlayComponent = ({
   }, [theme])
 
   const initializeLines = useCallback(
-    (points: IPoints[], isBackground?: boolean): LineGraphic[] => {
+    (points: IPoints[], isBackground?: boolean): DrifterPath[] => {
       return points[0].features.map((feature, id) => {
-        const vertices = points.map((v): [number, number] => {
+        const vertices = points.map((v) => {
           const { longitude, latitude } = v.features[id].properties
+          const { x, y } = latLngToLayerPoint([latitude, longitude] as any)
 
-          return [latitude, longitude]
+          return { x, y }
         })
-        const line = new LineGraphic(vertices, isBackground)
+        const line = new DrifterPath(vertices, isBackground)
         line.eventMode = "none"
         line.lineStyle({
           width: 3,
@@ -198,12 +220,7 @@ const PixiOverlayComponent = ({
         ticker.current.maxFPS = 60
         ticker.current.start()
 
-        backgroundContainer.current = new Container()
-        container.addChild(backgroundContainer.current)
         container.eventMode = "dynamic"
-
-        reticule.current = new Reticule(renderer)
-        container.addChild(reticule.current)
 
         if (showAllLines) {
           backgroundLineGraphics.current = initializeLines(points, true)
@@ -214,6 +231,13 @@ const PixiOverlayComponent = ({
 
         container.addChild(...lineGraphics.current)
 
+        updateLineLocations(scale, zoom)
+
+        backgroundContainer.current = new Container()
+        container.addChild(backgroundContainer.current)
+
+        circlesContainer.current = new Container()
+        container.addChild(circlesContainer.current)
         const chunkSize = 20
         function popInData() {
           const alreadyAddedCircles = circleSprites.current.length
@@ -225,15 +249,16 @@ const PixiOverlayComponent = ({
           if (circlesToPopIn.length) {
             const newCircles = initializeCircles(circlesToPopIn, true)
             circleSprites.current = circleSprites.current.concat(newCircles)
-            container.addChild(...newCircles)
+            circlesContainer.current?.addChild(...newCircles)
           } else {
-            console.log("dataPopInTicker destroyed")
-
             ticker.current?.remove(popInData)
           }
         }
 
         ticker.current.add(popInData)
+
+        reticule.current = new Reticule(renderer)
+        backgroundContainer.current.addChild(reticule.current)
 
         backgroundContainer.current.onpointerleave = () => {
           reticule.current?.hide()
@@ -284,7 +309,6 @@ const PixiOverlayComponent = ({
 
                 if (isSelected) {
                   circle.setSelected()
-                  // circle.line.visible = false
                 } else {
                   circle.resetState()
                 }
@@ -353,49 +377,24 @@ const PixiOverlayComponent = ({
         // @ts-ignore
         globalThis.__PIXI_RENDERER__ = renderer
 
-        const lineWidth = zoom > 10 ? 3 / scale : 3
-
-        //Update drawn lines
-        if (zoom > 10 || firstDraw) {
-          lineGraphics.current.forEach((line, id) => {
-            line.clear()
-            line.lineStyle({ width: lineWidth, color: "green" })
-
-            const vertices = points.map((v): [number, number] => {
-              const { longitude, latitude } = v.features[id].properties
-              const { x, y } = project([latitude, longitude] as any)
-
-              return [x, y]
-            })
-
-            line.setVertices(vertices)
-          })
-          backgroundLineGraphics.current.forEach((line, id) => {
-            line.clear()
-
-            line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
-
-            const vertices = points.map((v): [number, number] => {
-              const { longitude, latitude } = v.features[id].properties
-              const { x, y } = project([latitude, longitude] as any)
-
-              return [x, y]
-            })
-
-            line.setVertices(vertices)
-          })
-        }
-
         //update the drifters
+
+        //Change the scale of the circles for improve zoom
         updateCircleLocations(Math.max(scale, 1))
+
+        // ticker.current?.addOnce(
+        //   () => updateLineLocations(scale, zoom),
+        //   null,
+        //   UPDATE_PRIORITY.LOW
+        // )
+
+        updateLineLocations(scale, zoom)
 
         const reticuleScale = 1 / scale / 5
         reticule.current?.scale.set(reticuleScale)
       }
       firstDraw = false
       prevZoom = zoom
-
-      renderer.render(container)
     }
   })
   const disablePixiInteraction = useEffectEvent(() => {
