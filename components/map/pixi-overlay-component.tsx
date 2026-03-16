@@ -1,13 +1,6 @@
 "use client"
 
-import {
-  useCallback,
-  useEffect,
-  useEffectEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react"
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -15,7 +8,6 @@ import { line } from "d3"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
-  Application,
   Circle,
   Container,
   FederatedPointerEvent,
@@ -33,8 +25,6 @@ import { Reticule } from "./sprites/reticule"
 
 let prevZoom = 8
 let firstDraw = true
-
-//test
 
 function addProfiling<FunctionType extends (...args: any[]) => any>(
   f: FunctionType,
