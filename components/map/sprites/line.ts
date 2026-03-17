@@ -1,6 +1,7 @@
 import {
   Container,
   Graphics,
+  graphicsUtils,
   ILineStyleOptions,
   IPointData,
   Matrix,
@@ -17,18 +18,6 @@ const arrow = [
   { x: -6, y: 0 },
 ]
 
-const getArrowHead = (
-  translateX: number,
-  translateY: number,
-  angle: number
-) => {
-  const transform = new Matrix()
-  transform.scale(0.1, 0.1)
-  transform.rotate(angle)
-  transform.translate(translateX, translateY)
-  return arrow.map((v) => transform.apply(v))
-}
-
 export class DrifterPath extends Container {
   isBackground: boolean
 
@@ -40,6 +29,7 @@ export class DrifterPath extends Container {
     super()
     this.isBackground = _isBackground || false
     this.eventMode = "none"
+    this.interactiveChildren = false
 
     this.linePoints = _linePoints
     this.lineGraphic = new Graphics()
@@ -64,6 +54,8 @@ export class DrifterPath extends Container {
 
       return Math.atan2(dy, dx)
     })
+
+    this.addArrowHeads()
   }
 
   clear() {
@@ -74,16 +66,43 @@ export class DrifterPath extends Container {
     this.lineGraphic.lineStyle(style)
   }
 
+  private getArrowHead = (
+    translateX: number,
+    translateY: number,
+    angle: number,
+    style: ILineStyleOptions
+  ) => {
+    const arrowGraphic = new Graphics()
+    arrowGraphic.beginFill(style.color)
+    arrowGraphic.drawPolygon(arrow)
+    arrowGraphic.endFill()
+
+    arrowGraphic.setTransform(translateX, translateY, 0.2, 0.2, angle)
+
+    return arrowGraphic
+  }
+
+  private addArrowHeads() {
+    this.linePoints.forEach(({ x, y }, frame) => {
+      if (frame === 0) {
+      } else {
+        const arrow = this.getArrowHead(
+          x,
+          y,
+          this.arrowAngles[frame - 1],
+          this.lineGraphic.line
+        )
+        this.addChildAt(arrow, frame)
+      }
+    })
+  }
+
   drawVertices() {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
       } else {
         this.lineGraphic.lineTo(x, y)
-
-        const arrow = getArrowHead(x, y, this.arrowAngles[frame - 1])
-
-        this.lineGraphic.drawPolygon(arrow)
       }
     })
   }
