@@ -4,7 +4,9 @@ import {
   graphicsUtils,
   ILineStyleOptions,
   IPointData,
+  IRenderer,
   Matrix,
+  RenderTexture,
   Sprite,
 } from "pixi.js"
 
@@ -24,8 +26,13 @@ export class DrifterPath extends Container {
   linePoints: IPointData[]
   arrowAngles: number[]
   lineGraphic: Graphics
+  arrowTexture: RenderTexture
 
-  constructor(_linePoints: IPointData[], _isBackground?: boolean) {
+  constructor(
+    _linePoints: IPointData[],
+    renderer: IRenderer,
+    _isBackground?: boolean
+  ) {
     super()
     this.isBackground = _isBackground || false
     this.eventMode = "none"
@@ -55,6 +62,12 @@ export class DrifterPath extends Container {
       return Math.atan2(dy, dx)
     })
 
+    const arrowHead = new Graphics()
+    arrowHead.beginFill(this.lineGraphic.line.color)
+    arrowHead.drawPolygon(arrow)
+    arrowHead.endFill()
+    this.arrowTexture = renderer.generateTexture(arrowHead)
+
     this.addArrowHeads()
   }
 
@@ -66,32 +79,16 @@ export class DrifterPath extends Container {
     this.lineGraphic.lineStyle(style)
   }
 
-  private getArrowHead = (
-    translateX: number,
-    translateY: number,
-    angle: number,
-    style: ILineStyleOptions
-  ) => {
-    const arrowGraphic = new Graphics()
-    arrowGraphic.beginFill(style.color)
-    arrowGraphic.drawPolygon(arrow)
-    arrowGraphic.endFill()
-
-    arrowGraphic.setTransform(translateX, translateY, 0.2, 0.2, angle)
-
-    return arrowGraphic
-  }
-
   private addArrowHeads() {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
       } else {
-        const arrow = this.getArrowHead(
-          x,
-          y,
-          this.arrowAngles[frame - 1],
-          this.lineGraphic.line
-        )
+        const arrow = new Sprite(this.arrowTexture)
+
+        const angle = this.arrowAngles[frame - 1]
+        arrow.setTransform(x, y, 0.2, 0.2, angle)
+        arrow.anchor.set(0.5)
+
         this.addChildAt(arrow, frame)
       }
     })

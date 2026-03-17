@@ -117,8 +117,15 @@ const PixiOverlayComponent = ({
     circleSprites.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
-  const initializeLines = useCallback(
-    (points: IPoints[], isBackground?: boolean): DrifterPath[] => {
+  const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
+    let map = utils.getMap()
+    let zoom = map.getZoom()
+    var renderer = utils.getRenderer()
+
+    const initializeLines = (
+      points: IPoints[],
+      isBackground?: boolean
+    ): DrifterPath[] => {
       return points[0].features.map((feature, id) => {
         const vertices = points.map((v) => {
           const { longitude, latitude } = v.features[id].properties
@@ -126,7 +133,7 @@ const PixiOverlayComponent = ({
 
           return { x, y }
         })
-        const line = new DrifterPath(vertices, isBackground)
+        const line = new DrifterPath(vertices, renderer, isBackground)
         line.eventMode = "none"
         line.lineStyle({
           width: 3,
@@ -136,14 +143,7 @@ const PixiOverlayComponent = ({
 
         return line
       })
-    },
-    []
-  )
-
-  const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
-    let map = utils.getMap()
-    let zoom = map.getZoom()
-    var renderer = utils.getRenderer()
+    }
 
     const initializeCircles = (
       features: IFeature[],
