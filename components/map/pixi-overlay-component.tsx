@@ -54,6 +54,7 @@ const PixiOverlayComponent = ({
 
   const backgroundContainer = useRef<Container>(null)
   const circlesContainer = useRef<Container>(null)
+  const linesContainer = useRef<Container>(null)
 
   const lineGraphics = useRef<DrifterPath[]>([])
 
@@ -182,10 +183,6 @@ const PixiOverlayComponent = ({
           if (!isIn.current[id]) {
             this.setInactive()
           }
-
-          // else if (Object.keys(isIn.current).length > 1) {
-          //   this.line.visible = false
-          // }
         }
 
         sprite.onpointerdown = function (
@@ -214,6 +211,7 @@ const PixiOverlayComponent = ({
 
       if (firstDraw) {
         ticker.current = new Ticker()
+
         ticker.current.add(() => {
           renderer.render(container)
         })
@@ -222,22 +220,31 @@ const PixiOverlayComponent = ({
 
         container.eventMode = "dynamic"
 
+        linesContainer.current = new Container()
+        linesContainer.current.eventMode = "none"
         if (showAllLines) {
           backgroundLineGraphics.current = initializeLines(points, true)
-          container.addChild(...backgroundLineGraphics.current)
+          linesContainer.current.addChild(...backgroundLineGraphics.current)
         }
 
+        //Initialize the drifter paths
         lineGraphics.current = initializeLines(points)
 
-        container.addChild(...lineGraphics.current)
-
+        linesContainer.current.addChild(...lineGraphics.current)
         updateLineLocations(scale, zoom)
 
+        container.addChild(linesContainer.current)
+
+        //Initialize overlaid selection tool
         backgroundContainer.current = new Container()
+
         container.addChild(backgroundContainer.current)
 
+        //Initialize the drifters
         circlesContainer.current = new Container()
+
         container.addChild(circlesContainer.current)
+
         const chunkSize = 20
         function popInData() {
           const alreadyAddedCircles = circleSprites.current.length
@@ -395,6 +402,8 @@ const PixiOverlayComponent = ({
       }
       firstDraw = false
       prevZoom = zoom
+
+      renderer.render(container)
     }
   })
   const disablePixiInteraction = useEffectEvent(() => {
