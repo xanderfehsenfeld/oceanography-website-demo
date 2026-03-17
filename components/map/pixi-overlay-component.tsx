@@ -13,7 +13,6 @@ import {
   FederatedPointerEvent,
   Rectangle,
   Ticker,
-  UPDATE_PRIORITY,
 } from "pixi.js"
 import { useMap } from "react-leaflet"
 
@@ -93,16 +92,22 @@ const PixiOverlayComponent = ({
     //Update drawn lines
     if (zoom > 10 || firstDraw) {
       lineGraphics.current.forEach((line) => {
+        line.setArrowHeadVisibility(true)
         line.clear()
         line.lineStyle({ width: lineWidth, color: "green" })
         line.drawVertices()
       })
       backgroundLineGraphics.current.forEach((line) => {
+        line.setArrowHeadVisibility(true)
         line.clear()
 
         line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
         line.drawVertices()
       })
+    } else {
+      lineGraphics.current
+        .concat(backgroundLineGraphics.current)
+        .forEach((v) => v.setArrowHeadVisibility(false))
     }
   })
 

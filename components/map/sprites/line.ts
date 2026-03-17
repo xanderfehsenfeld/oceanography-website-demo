@@ -81,6 +81,10 @@ export class DrifterPath extends Container {
     this.lineGraphic.lineStyle(style)
   }
 
+  setArrowHeadVisibility(visible: boolean) {
+    this.children.slice(1).forEach((v) => (v.renderable = visible))
+  }
+
   private addArrowHeads() {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
