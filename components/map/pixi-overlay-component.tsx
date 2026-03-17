@@ -86,29 +86,28 @@ const PixiOverlayComponent = ({
     })
   })
 
-  const updateLineLocations = useEffectEvent((scale: number, zoom: number) => {
+  const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 3 / scale : 3
 
     //Update drawn lines
     if (zoom > 10 || firstDraw) {
       lineGraphics.current.forEach((line) => {
-        line.setArrowHeadVisibility(true)
         line.clear()
         line.lineStyle({ width: lineWidth, color: "green" })
         line.drawVertices()
       })
       backgroundLineGraphics.current.forEach((line) => {
-        line.setArrowHeadVisibility(true)
         line.clear()
 
         line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
         line.drawVertices()
       })
-    } else {
-      lineGraphics.current
-        .concat(backgroundLineGraphics.current)
-        .forEach((v) => v.setArrowHeadVisibility(false))
     }
+
+    const showArrowHeads = zoom > 12
+    lineGraphics.current
+      .concat(backgroundLineGraphics.current)
+      .forEach((v) => v.setArrowHeadVisibility(showArrowHeads))
   })
 
   useEffect(() => {
@@ -227,6 +226,7 @@ const PixiOverlayComponent = ({
 
         linesContainer.current = new Container()
         linesContainer.current.eventMode = "none"
+
         if (showAllLines) {
           backgroundLineGraphics.current = initializeLines(points, true)
           linesContainer.current.addChild(...backgroundLineGraphics.current)
@@ -236,7 +236,7 @@ const PixiOverlayComponent = ({
         lineGraphics.current = initializeLines(points)
 
         linesContainer.current.addChild(...lineGraphics.current)
-        updateLineLocations(scale, zoom)
+        updateLineBoldness(scale, zoom)
 
         container.addChild(linesContainer.current)
 
@@ -394,13 +394,7 @@ const PixiOverlayComponent = ({
         //Change the scale of the circles for improve zoom
         updateCircleLocations(Math.max(scale, 1))
 
-        // ticker.current?.addOnce(
-        //   () => updateLineLocations(scale, zoom),
-        //   null,
-        //   UPDATE_PRIORITY.LOW
-        // )
-
-        updateLineLocations(scale, zoom)
+        updateLineBoldness(scale, zoom)
 
         const reticuleScale = 1 / scale / 5
         reticule.current?.scale.set(reticuleScale)

@@ -67,8 +67,8 @@ export class DrifterPath extends Container {
     arrowHead.beginFill(this.lineGraphic.line.color)
     arrowHead.drawPolygon(arrow)
     arrowHead.endFill()
-    // arrowHead.setTransform(0, 0, 0.2, 0.2)
     this.arrowTexture = renderer.generateTexture(arrowHead)
+
     arrowHead.destroy()
     this.addArrowHeads()
   }
@@ -79,6 +79,9 @@ export class DrifterPath extends Container {
 
   lineStyle(style: ILineStyleOptions) {
     this.lineGraphic.lineStyle(style)
+
+    const scale = (style.width || 3) / 3
+    this.children.slice(1).forEach((v) => v.scale.set(scale))
   }
 
   setArrowHeadVisibility(visible: boolean) {
@@ -87,15 +90,13 @@ export class DrifterPath extends Container {
 
   private addArrowHeads() {
     this.linePoints.forEach(({ x, y }, frame) => {
-      if (frame === 0) {
-      } else {
+      if (frame % 2 !== 0) {
         const arrow = new Sprite(this.arrowTexture)
-        arrow.interactive = false
         arrow.eventMode = "none"
         const angle = this.arrowAngles[frame - 1]
         arrow.setTransform(x, y, 0.2, 0.2, angle)
         arrow.anchor.set(0.5)
-        this.addChildAt(arrow, frame)
+        this.addChild(arrow)
       }
     })
   }
