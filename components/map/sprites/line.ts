@@ -105,6 +105,7 @@ export class DrifterPath extends Container {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
+        this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
       } else {
         this.lineGraphic.lineTo(x, y)
       }

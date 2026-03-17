@@ -13,6 +13,7 @@ import {
   FederatedPointerEvent,
   Rectangle,
   Ticker,
+  UPDATE_PRIORITY,
 } from "pixi.js"
 import { useMap } from "react-leaflet"
 
@@ -86,28 +87,54 @@ const PixiOverlayComponent = ({
     })
   })
 
+  const lazybatchApply = useEffectEvent(
+    (
+      items: DrifterPath[],
+      callback: (item: DrifterPath) => void,
+      index = 0,
+      batchSize = 20
+    ) => {
+      let currentIndex = index
+
+      const executeBatch = () => {
+        const batch = items.slice(currentIndex, currentIndex + batchSize)
+        if (batch.length > 0) {
+          batch.map(callback)
+        } else {
+          ticker.current?.remove(executeBatch)
+        }
+
+        currentIndex += batchSize
+      }
+
+      ticker.current?.add(executeBatch, null, UPDATE_PRIORITY.LOW)
+    }
+  )
+
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 3 / scale : 3
 
+    const showArrowHeads = zoom > 12
+
+    lazybatchApply(
+      lineGraphics.current.concat(backgroundLineGraphics.current),
+      (v) => v.setArrowHeadVisibility(showArrowHeads)
+    )
     //Update drawn lines
     if (zoom > 10 || firstDraw) {
-      lineGraphics.current.forEach((line) => {
+      lazybatchApply(lineGraphics.current, (line) => {
         line.clear()
         line.lineStyle({ width: lineWidth, color: "green" })
         line.drawVertices()
       })
-      backgroundLineGraphics.current.forEach((line) => {
+
+      lazybatchApply(backgroundLineGraphics.current, (line) => {
         line.clear()
 
         line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
         line.drawVertices()
       })
     }
-
-    const showArrowHeads = zoom > 12
-    lineGraphics.current
-      .concat(backgroundLineGraphics.current)
-      .forEach((v) => v.setArrowHeadVisibility(showArrowHeads))
   })
 
   useEffect(() => {
