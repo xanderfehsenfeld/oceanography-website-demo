@@ -1,11 +1,9 @@
 import {
   Container,
   Graphics,
-  graphicsUtils,
   ILineStyleOptions,
   IPointData,
   IRenderer,
-  Matrix,
   RenderTexture,
   Sprite,
 } from "pixi.js"
@@ -70,7 +68,8 @@ export class DrifterPath extends Container {
     this.arrowTexture = renderer.generateTexture(arrowHead)
 
     arrowHead.destroy()
-    this.addArrowHeads()
+
+    if (!this.isBackground) this.addArrowHeads()
   }
 
   clear() {
@@ -96,6 +95,7 @@ export class DrifterPath extends Container {
         const angle = this.arrowAngles[frame - 1]
         arrow.setTransform(x, y, 0.2, 0.2, angle)
         arrow.anchor.set(0.5)
+
         this.addChild(arrow)
       }
     })
