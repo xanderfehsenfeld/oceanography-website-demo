@@ -2,6 +2,8 @@
 
 import { Circle, Graphics, IPointData, IRenderer, Sprite } from "pixi.js"
 
+import { DrifterPath } from "./line"
+
 const defaultCircle = new Graphics()
 
 const defaultRadius = 30
@@ -26,7 +28,7 @@ const arrow = [
 defaultCircle.drawPolygon(arrow)
 
 export class Drifter extends Sprite {
-  line: Graphics
+  line: DrifterPath
   isDark: boolean
   linePoints: IPointData[]
   arrowAngles: number[]
@@ -34,7 +36,7 @@ export class Drifter extends Sprite {
   constructor(
     renderer: IRenderer,
     _id: number,
-    _line: Graphics,
+    _line: DrifterPath,
     _isDark: boolean,
     _linePoints: IPointData[]
   ) {
