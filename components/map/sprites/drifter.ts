@@ -25,7 +25,8 @@ const arrow = [
   { x: -13, y: 0 },
 ]
 
-defaultCircle.drawPolygon(arrow)
+// Show an arrow over the circle
+// defaultCircle.drawPolygon(arrow)
 
 export class Drifter extends Sprite {
   line: DrifterPath
