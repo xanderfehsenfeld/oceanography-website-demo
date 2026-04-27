@@ -2,10 +2,35 @@ import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
+import { getPoints } from "@/components/map/getPoints"
 
 import DriftersPugetSound from "./DriftersPugetSound"
 
-export default function Pages() {
+const fetchPoints = async () => {
+  const tracksResponse = await fetch(
+    "https://s3.kopah.uw.edu/liveocean-web/PS_tracks.json"
+  )
+
+  const points = getPoints(await tracksResponse.json())
+
+  return points
+}
+
+const fetchTimes = async () => {
+  const timesResponse = await fetch(
+    "https://s3.kopah.uw.edu/liveocean-web/PS_times.json"
+  )
+
+  const times = await timesResponse.json()
+  return times
+}
+
+export default async function Pages() {
+  const pointsData = fetchPoints()
+  const timesData = fetchTimes()
+
+  const [points, times] = await Promise.all([pointsData, timesData])
+
   return (
     <section className="flex-3">
       <ArticleBreadcrumb
@@ -23,7 +48,7 @@ export default function Pages() {
 
       <Typography>
         <section className="pb-4">
-          <DriftersPugetSound>
+          <DriftersPugetSound times={times} points={points}>
             <h3>Puget Sound Drifter Tracks</h3>
 
             <p>

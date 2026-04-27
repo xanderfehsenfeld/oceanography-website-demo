@@ -2,10 +2,35 @@ import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
+import { getPoints } from "@/components/map/getPoints"
 
 import DriftersCustom from "./DriftersCustom"
 
-export default function Pages() {
+const fetchPoints = async () => {
+  const tracksResponse = await fetch(
+    "https://s3.kopah.uw.edu/liveocean-web/willapa25_tracks.json"
+  )
+
+  const points = getPoints(await tracksResponse.json())
+
+  return points
+}
+
+const fetchTimes = async () => {
+  const timesResponse = await fetch(
+    "https://s3.kopah.uw.edu/liveocean-web/willapa25_times.json"
+  )
+
+  const times = await timesResponse.json()
+  return times
+}
+
+export default async function Pages() {
+  const pointsData = fetchPoints()
+  const timesData = fetchTimes()
+
+  const [points, times] = await Promise.all([pointsData, timesData])
+
   return (
     <section className="flex-3">
       <ArticleBreadcrumb
@@ -28,7 +53,7 @@ export default function Pages() {
       </div>
       <Typography>
         <section className="pb-4">
-          <DriftersCustom>
+          <DriftersCustom points={points} times={times}>
             <h3> Willapa Bay Customized Drifter Tracks</h3>
 
             <p>
