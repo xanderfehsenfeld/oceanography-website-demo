@@ -3,10 +3,8 @@
 import { ReactNode, useEffect, useMemo, useState } from "react"
 import { useTheme } from "next-themes"
 import { Ticker } from "pixi.js"
-import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
-import { getPoints, IPoints } from "@/components/map/getPoints"
 import TimeControls from "@/components/map/time-controls"
 
 import { IMapDataProps } from "./types"
