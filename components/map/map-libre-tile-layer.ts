@@ -37,6 +37,7 @@ export const MapLibreTileLayer = createTileLayerComponent<
     }
 
     if (attribution != null && attribution !== prevProps.attribution) {
+      // @ts-ignore
       layer.options.attribution = attribution
     }
   }

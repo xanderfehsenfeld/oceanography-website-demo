@@ -3,9 +3,15 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
+import { fetchPoints, fetchTimes } from "../../fetchData"
 import DriftersPugetSound from "./DriftersPugetSound"
 
-export default function Pages() {
+export default async function Pages() {
+  const pointsData = fetchPoints("PS_tracks.json")
+  const timesData = fetchTimes("PS_times.json")
+
+  const [points, times] = await Promise.all([pointsData, timesData])
+
   return (
     <section className="flex-3">
       <ArticleBreadcrumb
@@ -23,7 +29,7 @@ export default function Pages() {
 
       <Typography>
         <section className="pb-4">
-          <DriftersPugetSound>
+          <DriftersPugetSound times={times} points={points}>
             <h3>Puget Sound Drifter Tracks</h3>
 
             <p>

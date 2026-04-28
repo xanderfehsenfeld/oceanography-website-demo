@@ -4,21 +4,21 @@ import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Ticker } from "pixi.js"
 
 import ClientMapView from "@/components/map/client-map-view"
-import { getPoints } from "@/components/map/getPoints"
 import TimeControls from "@/components/map/time-controls"
 
-import times from "./willapa25_times.json"
-import tracks from "./willapa25_tracks.json"
-
-const timeOptions: string[] = times[0].t
+import { IMapDataProps } from "../pugetsound/types"
 
 const initialZoomLevel = 9
 const initialLat = 46.725
 const initialLong = -124.05
 
-const points = getPoints(tracks as any)
+function DriftersPugetSound({
+  children,
+  times,
+  points,
+}: { children: ReactNode } & IMapDataProps) {
+  const timeOptions: string[] = times[0].t
 
-function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
 

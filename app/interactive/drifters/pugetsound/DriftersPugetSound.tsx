@@ -5,21 +5,23 @@ import { useTheme } from "next-themes"
 import { Ticker } from "pixi.js"
 
 import ClientMapView from "@/components/map/client-map-view"
-import { getPoints } from "@/components/map/getPoints"
 import TimeControls from "@/components/map/time-controls"
 
-import times from "./PS_times.json"
-import tracks from "./PS_tracks.json"
-
-const timeOptions: string[] = times[0].t
+import { IMapDataProps } from "./types"
 
 const initialZoomLevel = 8
 const initialLat = 48
 const initialLong = -123
 
-const points = getPoints(tracks as any)
+function DriftersPugetSound({
+  children,
+  times,
+  points,
+}: {
+  children: ReactNode
+} & IMapDataProps) {
+  const timeOptions: string[] = times[0].t
 
-function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
 
