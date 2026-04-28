@@ -2,32 +2,13 @@ import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
-import { getPoints } from "@/components/map/getPoints"
 
+import { fetchPoints, fetchTimes } from "../../fetchData"
 import DriftersCustom from "./DriftersCustom"
 
-const fetchPoints = async () => {
-  const tracksResponse = await fetch(
-    "https://s3.kopah.uw.edu/liveocean-web/willapa25_tracks.json"
-  )
-
-  const points = getPoints(await tracksResponse.json())
-
-  return points
-}
-
-const fetchTimes = async () => {
-  const timesResponse = await fetch(
-    "https://s3.kopah.uw.edu/liveocean-web/willapa25_times.json"
-  )
-
-  const times = await timesResponse.json()
-  return times
-}
-
 export default async function Pages() {
-  const pointsData = fetchPoints()
-  const timesData = fetchTimes()
+  const pointsData = fetchPoints("willapa25_tracks.json")
+  const timesData = fetchTimes("willapa25_times.json")
 
   const [points, times] = await Promise.all([pointsData, timesData])
 
