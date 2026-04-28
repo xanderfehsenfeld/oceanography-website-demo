@@ -17,7 +17,8 @@ import {
 } from "pixi.js"
 import { useMap } from "react-leaflet"
 
-import { IFeature, IPoints } from "./getPoints"
+import { IFeature, IPoints } from "@/app/interactive/fetchData"
+
 import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
