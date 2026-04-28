@@ -1,4 +1,4 @@
-import { IPoints } from "@/components/map/getPoints"
+import { IPoints } from "../../fetchData"
 
 export type TimesResponse = TimesData[]
 
