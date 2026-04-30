@@ -59,7 +59,6 @@ const getPoints = (tracksTyped: Track[]): IPoints[] => {
 const baseUrl = "https://s3.kopah.uw.edu/liveocean-web/"
 
 export const fetchPoints = async (filename: string) => {
-  console.log("fetch points hit")
 
   const tracksResponse = await fetch(`${baseUrl}${filename}`, {
     cache: "force-cache",
