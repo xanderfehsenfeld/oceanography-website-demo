@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation"
+import { SetMetadata } from "@/providers/metadata"
 
 import { Settings } from "@/types/settings"
 import { getDocument } from "@/lib/markdown"
@@ -34,6 +35,7 @@ export default async function Pages({ params }: PageProps) {
           <h1 className="text-3xl font-semibold">{frontmatter.title}</h1>
           <p className="text-sm">{frontmatter.description}</p>
           <Separator />
+          <SetMetadata lastEdited={lastUpdated} />
           {lastUpdated && <LastEdited lastEdited={lastUpdated} />}
         </div>
         <Typography>

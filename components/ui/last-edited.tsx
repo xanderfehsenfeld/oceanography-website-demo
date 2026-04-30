@@ -17,13 +17,6 @@ export const LastEdited = ({
   className?: string
   lastEdited: string
 }) => {
-  const metadataContext = useContext(MetadataContext)
-  useEffect(() => {
-    if (!metadataContext.lastEdited) {
-      metadataContext.setLastEdited(lastEdited)
-    }
-  }, [lastEdited])
-
   return (
     <div
       className={cn(
