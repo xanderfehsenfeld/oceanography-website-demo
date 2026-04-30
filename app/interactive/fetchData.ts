@@ -59,16 +59,39 @@ const getPoints = (tracksTyped: Track[]): IPoints[] => {
 const baseUrl = "https://s3.kopah.uw.edu/liveocean-web/"
 
 export const fetchPoints = async (filename: string) => {
-  const tracksResponse = await fetch(`${baseUrl}${filename}`)
+  console.log("fetch points hit")
+
+  const tracksResponse = await fetch(`${baseUrl}${filename}`, {
+    cache: "force-cache",
+    next: { revalidate: 3600 },
+  })
 
   const points = getPoints(await tracksResponse.json())
 
   return points
 }
 
-export const fetchTimes = async (filename: string) => {
-  const timesResponse = await fetch(`${baseUrl}${filename}`)
+export const fetchTimes = async (filename: string): Promise<string[]> => {
+  const timesResponse = await fetch(`${baseUrl}${filename}`, {
+    cache: "force-cache",
+    next: { revalidate: 3600 },
+  })
 
   const times: TimesResponse = await timesResponse.json()
-  return times
+
+  return times[0].t.map((timeString) => {
+    //01/11/2026 - 04PM PST
+    const dateString = timeString
+      .replace("-", "")
+      .replace("PM", ":00 PM")
+      .replace("AM", ":00 AM")
+      .replace("PST", "")
+
+    return new Intl.DateTimeFormat("en-US", {
+      timeStyle: "short",
+      dateStyle: "medium",
+
+      timeZone: "America/Los_Angeles",
+    }).format(new Date(dateString))
+  })
 }
