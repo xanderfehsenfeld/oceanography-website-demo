@@ -14,7 +14,7 @@ export const LastEdited = ({
 }) => (
   <div
     className={clsx(
-      "hidden items-center text-xs text-nowrap text-ellipsis italic md:block",
+      "items-center text-xs text-nowrap text-ellipsis italic",
       className
     )}
   >
