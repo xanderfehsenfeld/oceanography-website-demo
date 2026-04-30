@@ -7,6 +7,6 @@ export interface TimesData {
 }
 
 export interface IMapDataProps {
-  times: TimesResponse
+  times: string[]
   points: IPoints[]
 }
