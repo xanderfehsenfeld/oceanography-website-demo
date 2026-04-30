@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { Settings } from "@/types/settings"
 import { getDocument } from "@/lib/markdown"
 import { PageRoutes } from "@/lib/pageroutes"
+import { LastEdited } from "@/components/ui/last-edited"
 import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
@@ -23,7 +24,7 @@ export default async function Pages({ params }: PageProps) {
 
   if (!res) notFound()
 
-  const { frontmatter, content, tocs } = res
+  const { frontmatter, content, tocs, lastUpdated } = res
 
   return (
     <div className="flex items-start gap-10">
@@ -33,9 +34,12 @@ export default async function Pages({ params }: PageProps) {
           <h1 className="text-3xl font-semibold">{frontmatter.title}</h1>
           <p className="text-sm">{frontmatter.description}</p>
           <Separator />
+          {lastUpdated && <LastEdited lastEdited={lastUpdated} />}
         </div>
         <Typography>
           <section>{content}</section>
+          {lastUpdated && <LastEdited lastEdited={lastUpdated} />}
+
           <Pagination pathname={pathName} />
         </Typography>
       </section>
@@ -43,6 +47,7 @@ export default async function Pages({ params }: PageProps) {
         tocs={{ tocs }}
         pathName={pathName}
         frontmatter={frontmatter}
+        lastUpdated={lastUpdated ? new Date(lastUpdated) : undefined}
       />
     </div>
   )
