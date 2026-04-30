@@ -18,25 +18,10 @@ function DriftersPugetSound({
   times,
   points,
 }: { children: ReactNode } & IMapDataProps) {
-  const timeOptions: string[] = times[0].t
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(1)
 
-  const displayValue = useMemo(() => {
-    //01/11/2026 - 04PM PST
-    const dateString = timeOptions[sliderValue]
-      .replace("-", "")
-      .replace("PM", ":00 PM")
-      .replace("AM", ":00 AM")
-      .replace("PST", "")
-
-    return new Intl.DateTimeFormat("en-US", {
-      timeStyle: "short",
-      dateStyle: "medium",
-
-      timeZone: "PST",
-    }).format(new Date(dateString))
-  }, [sliderValue])
+  const displayValue = times[sliderValue]
 
   const maxSliderValue = points.length - 1
   useEffect(() => {
