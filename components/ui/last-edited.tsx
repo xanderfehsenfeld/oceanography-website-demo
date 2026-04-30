@@ -1,4 +1,9 @@
-import clsx from "clsx"
+"use client"
+
+import { useContext, useEffect, useState } from "react"
+import { MetadataContext } from "@/providers/metadata"
+
+import { cn } from "@/lib/utils"
 
 const lastEditedFormat = new Intl.DateTimeFormat("en-US", {
   timeStyle: "short",
@@ -11,13 +16,22 @@ export const LastEdited = ({
 }: {
   className?: string
   lastEdited: string
-}) => (
-  <div
-    className={clsx(
-      "items-center text-xs text-nowrap text-ellipsis italic",
-      className
-    )}
-  >
-    Last edited {lastEditedFormat.format(new Date(lastEdited))}
-  </div>
-)
+}) => {
+  const metadataContext = useContext(MetadataContext)
+  useEffect(() => {
+    if (!metadataContext.lastEdited) {
+      metadataContext.setLastEdited(lastEdited)
+    }
+  }, [lastEdited])
+
+  return (
+    <div
+      className={cn(
+        "items-center text-xs text-nowrap text-ellipsis italic",
+        className
+      )}
+    >
+      Last edited {lastEditedFormat.format(new Date(lastEdited))}
+    </div>
+  )
+}
