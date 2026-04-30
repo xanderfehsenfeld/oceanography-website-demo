@@ -7,6 +7,7 @@ interface TableProps {
   tocs: TableAnchorProps
   pathName: string
   frontmatter: { title: string }
+  lastUpdated?: Date
 }
 
 export function TableOfContents({ tocs, pathName, frontmatter }: TableProps) {
@@ -14,7 +15,7 @@ export function TableOfContents({ tocs, pathName, frontmatter }: TableProps) {
     <>
       {Settings.rightbar && (
         <aside
-          className="toc sticky top-16 hidden h-screen min-w-[230px] gap-3 flex-1 xl:flex xl:flex-col"
+          className="toc sticky top-16 hidden h-screen min-w-[230px] flex-1 gap-3 xl:flex xl:flex-col"
           aria-label="Table of contents"
         >
           {Settings.toc && <TableAnchor tocs={tocs.tocs} />}
