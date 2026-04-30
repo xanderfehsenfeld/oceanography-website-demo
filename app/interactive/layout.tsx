@@ -1,3 +1,5 @@
+import { SetMetadata } from "@/providers/metadata"
+
 import { Settings } from "@/types/settings"
 import { Sidebar } from "@/components/sidebar"
 import { BackToTop } from "@/components/toc/backtotop"
@@ -11,6 +13,7 @@ export default async function InteractiveLayout({
   return (
     <div className="flex items-start gap-10 pt-5">
       <Sidebar />
+      <SetMetadata lastEdited={undefined} />
       <div className="flex-1 md:flex-6">
         <div className="flex items-start gap-10">{children} </div>
       </div>

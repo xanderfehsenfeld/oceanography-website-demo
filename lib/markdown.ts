@@ -71,7 +71,7 @@ export async function getDocument(slug: string) {
   try {
     const contentPath = getDocumentPath(slug)
     let rawMdx = ""
-    let lastUpdated: string | null = null
+    let lastUpdated: string | undefined = undefined
 
     if (Settings.gitload) {
       const response = await fetch(contentPath)
@@ -81,7 +81,7 @@ export async function getDocument(slug: string) {
         )
       }
       rawMdx = await response.text()
-      lastUpdated = response.headers.get("Last-Modified") ?? null
+      lastUpdated = response.headers.get("Last-Modified") ?? undefined
     } else {
       rawMdx = await fs.readFile(contentPath, "utf-8")
       const stats = await fs.stat(contentPath)
