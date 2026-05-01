@@ -133,13 +133,14 @@ function MapView({
             </Button>
           )}
         </Control>
-        {children || (
-          <PixiOverlayComponent
-            showAllLines={showAllLines}
-            circles={circles}
-            allPoints={allPoints}
-          />
-        )}
+        {children ||
+          (circles.length > 0 && (
+            <PixiOverlayComponent
+              showAllLines={showAllLines}
+              circles={circles}
+              allPoints={allPoints}
+            />
+          ))}
 
         <MapLibreTileLayer
           maxBounds={[
