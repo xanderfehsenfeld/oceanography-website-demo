@@ -2,23 +2,47 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Ticker } from "pixi.js"
+import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
-import { IMapDataProps } from "../pugetsound/types"
+import { fetchPoints, fetchTimes } from "../../fetchData"
+import { IDataFileNames, IMapDataProps } from "../pugetsound/types"
 
 const initialZoomLevel = 9
 const initialLat = 46.725
 const initialLong = -124.05
 
-function DriftersPugetSound({
-  children,
-  times,
-  points,
-}: { children: ReactNode } & IMapDataProps) {
+export const dataFilenames: IDataFileNames = {
+  tracks: "willapa25_tracks.json",
+  times: "willapa25_times.json",
+}
+
+function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
-  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [playbackSpeed, setPlaybackSpeed] = useState(0)
+
+  const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
+    dataFilenames.tracks,
+    fetchPoints
+  )
+
+  const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
+    dataFilenames.times,
+    fetchTimes
+  )
+
+  const isLoading = isLoadingTimes || isLoadingTracks
+
+  useEffect(() => {
+    if (isLoading) {
+      setPlaybackSpeed(0)
+      setSliderValue(0)
+    } else {
+      setPlaybackSpeed(1)
+    }
+  }, [isLoading])
 
   const displayValue = times[sliderValue]
 
@@ -57,7 +81,7 @@ function DriftersPugetSound({
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
-        circles={points[sliderValue].features}
+        circles={points[sliderValue]?.features || []}
         allPoints={points}
         showAllLines
         controls={

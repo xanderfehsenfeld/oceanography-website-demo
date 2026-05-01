@@ -1,25 +1,49 @@
 "use client"
 
-import { ReactNode, useEffect, useMemo, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
+import { Skeleton } from "@radix-ui/themes"
 import { Ticker } from "pixi.js"
+import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
-// import times from "./wgh0_times.json"
-import { IMapDataProps } from "../pugetsound/types"
+import { fetchPoints, fetchTimes } from "../../fetchData"
+import { IDataFileNames } from "../pugetsound/types"
 
 const initialZoomLevel = 9
 const initialLat = 46.725
 const initialLong = -124.05
 
-function DriftersPugetSound({
-  children,
-  times,
-  points,
-}: { children: ReactNode } & IMapDataProps) {
+export const dataFilenames: IDataFileNames = {
+  tracks: "wgh0_tracks.json",
+  times: "wgh0_times.json",
+}
+
+function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
-  const [playbackSpeed, setPlaybackSpeed] = useState(1)
+  const [playbackSpeed, setPlaybackSpeed] = useState(0)
+
+  const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
+    dataFilenames.tracks,
+    fetchPoints
+  )
+
+  const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
+    dataFilenames.times,
+    fetchTimes
+  )
+
+  const isLoading = isLoadingTimes || isLoadingTracks
+
+  useEffect(() => {
+    if (isLoading) {
+      setPlaybackSpeed(0)
+      setSliderValue(0)
+    } else {
+      setPlaybackSpeed(1)
+    }
+  }, [isLoading])
 
   const displayValue = times[sliderValue]
 
@@ -58,7 +82,7 @@ function DriftersPugetSound({
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
-        circles={points[sliderValue].features}
+        circles={points[sliderValue]?.features || []}
         allPoints={points}
         showAllLines
         controls={
@@ -66,16 +90,18 @@ function DriftersPugetSound({
             <div className="typography">
               <h3>Time Slider: {displayValue}</h3>
             </div>
-            <TimeControls
-              value={sliderValue}
-              onPlaybackChange={setPlaybackSpeed}
-              maxSliderValue={maxSliderValue}
-              onSliderChange={(v) => {
-                setPlaybackSpeed(0)
-                setSliderValue(v)
-              }}
-              playbackSpeed={playbackSpeed}
-            />
+            <Skeleton loading={isLoading}>
+              <TimeControls
+                value={sliderValue}
+                onPlaybackChange={setPlaybackSpeed}
+                maxSliderValue={maxSliderValue}
+                onSliderChange={(v) => {
+                  setPlaybackSpeed(0)
+                  setSliderValue(v)
+                }}
+                playbackSpeed={playbackSpeed}
+              />
+            </Skeleton>
           </div>
         }
       />
