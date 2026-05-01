@@ -1,11 +1,16 @@
+import { SWRConfig } from "swr"
+
 import { Separator } from "@/components/ui/separator"
 import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import DriftersCustom from "./DriftersCustom"
+import { fetchPoints, fetchTimes } from "../../fetchData"
+import DriftersCustom, { dataFilenames } from "./DriftersCustom"
 
 export default async function Pages() {
+  const tracksPromise = fetchPoints(dataFilenames.tracks)
+  const timesPromise = fetchTimes(dataFilenames.times)
   return (
     <section className="flex-3">
       <ArticleBreadcrumb
@@ -28,36 +33,47 @@ export default async function Pages() {
       </div>
       <Typography>
         <section className="pb-4">
-          <DriftersCustom>
-            <h3> Willapa Bay Customized Drifter Tracks</h3>
+          <SWRConfig
+            value={{
+              fallback: {
+                // Pass the promises to client components.
+                [dataFilenames.tracks]: tracksPromise,
+                [dataFilenames.times]: timesPromise,
+              },
+            }}
+          >
+            <DriftersCustom>
+              <h3> Willapa Bay Customized Drifter Tracks</h3>
 
-            <p>
-              The map plot shows tracks from simulated drifter tracks over three
-              days from the most recent LiveOcean daily forecast. At the start
-              time you can see the initial drifter release locations as six
-              clusters of blue dots at locations in and near Willapa Bay. The
-              magenta lines show the tracks that the drifters take over the full
-              three days, about six tidal cycles.
-            </p>
-            <p>
-              Using the "Time Slider" you can see where each particle goes in
-              time. If you click on the map with some drifters nearby they will
-              turn red. They will stay red when you use the Time Slider. By
-              selecting different groups of particles at different times you can
-              explore questions such as: Where do all the particles from a given
-              release site go? or Where did all the particles that ended up in
-              some place come from?
-            </p>
-            <p>
-              The model used here is a high-resolution model of these two
-              estuaries, nested inside the larger LiveOcean model. It has 200 m
-              horizontal resolution, 30 vertical layers, and wetting-and-drying
-              of the intertidal. The particles stay at the ocean surface, and so
-              can accumulate along convergence fronts. The tides in this model
-              tend to lag real tides by about an hour. This is something that
-              will be improved in the next version of the model.
-            </p>
-          </DriftersCustom>
+              <p>
+                The map plot shows tracks from simulated drifter tracks over
+                three days from the most recent LiveOcean daily forecast. At the
+                start time you can see the initial drifter release locations as
+                six clusters of blue dots at locations in and near Willapa Bay.
+                The magenta lines show the tracks that the drifters take over
+                the full three days, about six tidal cycles.
+              </p>
+              <p>
+                Using the "Time Slider" you can see where each particle goes in
+                time. If you click on the map with some drifters nearby they
+                will turn red. They will stay red when you use the Time Slider.
+                By selecting different groups of particles at different times
+                you can explore questions such as: Where do all the particles
+                from a given release site go? or Where did all the particles
+                that ended up in some place come from?
+              </p>
+              <p>
+                The model used here is a high-resolution model of these two
+                estuaries, nested inside the larger LiveOcean model. It has 200
+                m horizontal resolution, 30 vertical layers, and
+                wetting-and-drying of the intertidal. The particles stay at the
+                ocean surface, and so can accumulate along convergence fronts.
+                The tides in this model tend to lag real tides by about an hour.
+                This is something that will be improved in the next version of
+                the model.
+              </p>
+            </DriftersCustom>
+          </SWRConfig>
         </section>
         <Pagination pathname={"drifters/custom"} prefix="interactive" />
       </Typography>
