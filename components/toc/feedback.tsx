@@ -15,9 +15,7 @@ export default function RightSideBar({ slug, title }: SideBarEdit) {
 
   return (
     <div className="flex flex-col gap-3 pl-2">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold">Content</h3>
-      </div>
+      <h3 className="text-sm font-semibold">Content</h3>
       <div className="flex flex-col gap-2">
         <Link
           href={feedbackUrl}
