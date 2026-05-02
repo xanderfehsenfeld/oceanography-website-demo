@@ -9,24 +9,29 @@ import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
-import { IMapDataProps } from "./types"
+import { IDataFileNames, IMapDataProps } from "./types"
 
 const initialZoomLevel = 8
 const initialLat = 48
 const initialLong = -123
+
+export const dataFilenames: IDataFileNames = {
+  tracks: "PS_tracks.json",
+  times: "PS_times.json",
+}
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
 
   const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
-    "PS_tracks.json",
-    () => fetchPoints("PS_tracks.json")
+    dataFilenames.tracks,
+    fetchPoints
   )
 
   const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
-    "PS_times.json",
-    () => fetchTimes("PS_times.json")
+    dataFilenames.times,
+    fetchTimes
   )
 
   const isLoading = isLoadingTimes || isLoadingTracks

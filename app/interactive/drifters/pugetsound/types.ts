@@ -10,3 +10,8 @@ export interface IMapDataProps {
   times: string[]
   points: IPoints[]
 }
+
+export interface IDataFileNames {
+  tracks: string
+  times: string
+}
