@@ -7,11 +7,6 @@ import { fetchPoints, fetchTimes } from "../../fetchData"
 import DriftersPugetSound from "./DriftersPugetSound"
 
 export default async function Pages() {
-  const pointsData = fetchPoints("PS_tracks.json")
-  const timesData = fetchTimes("PS_times.json")
-
-  const [points, times] = await Promise.all([pointsData, timesData])
-
   return (
     <section className="flex-3">
       <ArticleBreadcrumb
@@ -29,7 +24,7 @@ export default async function Pages() {
 
       <Typography>
         <section className="pb-4">
-          <DriftersPugetSound times={times} points={points}>
+          <DriftersPugetSound>
             <h3>Puget Sound Drifter Tracks</h3>
 
             <p>

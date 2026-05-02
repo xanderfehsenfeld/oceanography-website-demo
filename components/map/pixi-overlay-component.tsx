@@ -453,11 +453,7 @@ const PixiOverlayComponent = ({
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(
-      addProfiling(drawCallback, "drawCallback"),
-      pixiContainer,
-      {}
-    )
+    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
     myOverlay.addTo(leafletMap)
 
     leafletMap.on("zoomstart", disablePixiInteraction)

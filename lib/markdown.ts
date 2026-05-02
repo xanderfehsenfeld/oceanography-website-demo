@@ -73,6 +73,7 @@ export async function getDocument(slug: string) {
     let rawMdx = ""
     let lastUpdated: string | null = null
 
+    //https://api.github.com/repos/bertrandmartel/speed-test-lib/commits?path=jspeedtest%2Fbuild.gradle&page=1&per_page=1
     if (Settings.gitload) {
       const response = await fetch(contentPath)
       if (!response.ok) {
@@ -86,6 +87,28 @@ export async function getDocument(slug: string) {
       rawMdx = await fs.readFile(contentPath, "utf-8")
       const stats = await fs.stat(contentPath)
       lastUpdated = stats.mtime.toISOString()
+    }
+
+    //Get a more accurate last modified date from github
+    const ownerRepository: string = GitHubLink.href.replace(
+      "https://github.com/",
+      ""
+    )
+
+    const filepathInRepo = encodeURIComponent("/contents" + slug + `/index.mdx`)
+    const fileInfoHref = `https://api.github.com/repos/${ownerRepository}/commits?path=${filepathInRepo}&page=1&per_page=1`
+
+    const infoResponse = await fetch(fileInfoHref)
+
+    if (!infoResponse.ok) {
+      throw new Error(
+        `Failed to fetch content info from GitHub: ${infoResponse.statusText}`
+      )
+    } else {
+      const info = await infoResponse.json()
+      const lastUpdatedFromGithub = info[0]?.commit?.committer?.date
+
+      if (lastUpdatedFromGithub) lastUpdated = lastUpdatedFromGithub
     }
 
     const parsedMdx = await parseMdx<BaseMdxFrontmatter>(rawMdx)

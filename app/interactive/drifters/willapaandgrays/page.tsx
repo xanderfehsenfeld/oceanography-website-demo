@@ -3,14 +3,9 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import { fetchPoints, fetchTimes } from "../../fetchData"
 import DriftersWillapaAndGrays from "./DriftersWillapaAndGrays"
 
 export default async function Pages() {
-  const pointsData = fetchPoints("wgh0_tracks.json")
-  const timesData = fetchTimes("wgh0_times.json")
-
-  const [points, times] = await Promise.all([pointsData, timesData])
   return (
     <section className="flex-3 pb-4">
       <ArticleBreadcrumb
@@ -29,7 +24,7 @@ export default async function Pages() {
       </div>
       <Typography>
         <section className="pb-4">
-          <DriftersWillapaAndGrays points={points} times={times}>
+          <DriftersWillapaAndGrays>
             <h3> Willapa Bay & Grays Harbor Drifter Tracks</h3>
 
             <p>
