@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
 import { LuChevronDown, LuChevronRight } from "react-icons/lu"
 
@@ -19,11 +19,27 @@ function isRoute(
   return "title" in item && "href" in item
 }
 
+function getScrollParent(node: HTMLElement | null) {
+  if (node == null) {
+    return null
+  }
+
+  if (node.scrollHeight > node.clientHeight) {
+    return node
+  } else {
+    return getScrollParent(node.parentNode as HTMLElement)
+  }
+}
+
+let didScroll = false
+
 export default function SubLink(
   props: Paths & { level: number; isSheet: boolean }
 ) {
   const path = usePathname()
   const [isOpen, setIsOpen] = useState(true)
+
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (
@@ -32,7 +48,21 @@ export default function SubLink(
       path !== props.href &&
       path.includes(props.href)
     ) {
-      Promise.resolve().then(() => setIsOpen(true))
+      Promise.resolve().then(() => {
+        setIsOpen(true)
+
+        const parent = getScrollParent(ref.current)
+
+        const boundingDiv = ref.current?.getBoundingClientRect()
+
+        if (boundingDiv && !didScroll) {
+          parent?.scroll(
+            0,
+            boundingDiv.top - parent?.getBoundingClientRect().top
+          )
+          didScroll = true
+        }
+      })
     }
   }, [path, props])
 
@@ -64,7 +94,7 @@ export default function SubLink(
 
   return (
     <div className="flex w-full flex-col gap-1">
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Collapsible open={isOpen} onOpenChange={setIsOpen} ref={ref}>
         <div className="mr-3 flex items-center gap-2 text-sm">
           {titleOrLink}
           <CollapsibleTrigger asChild>
