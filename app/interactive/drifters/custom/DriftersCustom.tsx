@@ -1,6 +1,7 @@
 "use client"
 
 import { ReactNode, useEffect, useMemo, useState } from "react"
+import { Skeleton } from "@radix-ui/themes"
 import { Ticker } from "pixi.js"
 import useSWR from "swr"
 
@@ -87,9 +88,12 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         controls={
           <div className={`flex flex-col gap-2 border bg-background p-4 pb-6`}>
             <div className="typography">
-              <h3>Time Slider: {displayValue}</h3>
+              <Skeleton loading={isLoading}>
+                <h3>Time Slider: {displayValue}</h3>
+              </Skeleton>
             </div>
             <TimeControls
+              isLoading={isLoading}
               value={sliderValue}
               onPlaybackChange={setPlaybackSpeed}
               maxSliderValue={maxSliderValue}
