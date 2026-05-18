@@ -2,14 +2,13 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
-import { Ticker } from "pixi.js"
 import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
-import { IDataFileNames, IMapDataProps } from "../pugetsound/types"
+import { IDataFileNames } from "../pugetsound/types"
 import { usePlayback } from "../usePlayback"
 
 const initialZoomLevel = 9
