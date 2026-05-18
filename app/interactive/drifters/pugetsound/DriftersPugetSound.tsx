@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useMemo, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
 import { useTheme } from "next-themes"
 import useSWR from "swr"
@@ -10,7 +10,7 @@ import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
 import { usePlayback } from "../usePlayback"
-import { IDataFileNames, IMapDataProps } from "./types"
+import { IDataFileNames } from "./types"
 
 const initialZoomLevel = 8
 const initialLat = 48

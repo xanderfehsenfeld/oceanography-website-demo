@@ -3,7 +3,6 @@ import { Typography } from "@/components/ui/typography"
 import { ArticleBreadcrumb } from "@/components/article/breadcrumb"
 import { Pagination } from "@/components/article/pagination"
 
-import { fetchPoints, fetchTimes } from "../../fetchData"
 import DriftersPugetSound from "./DriftersPugetSound"
 
 export default async function Pages() {
