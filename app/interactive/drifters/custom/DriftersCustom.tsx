@@ -2,14 +2,14 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
-import { Ticker } from "pixi.js"
 import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
-import { IDataFileNames, IMapDataProps } from "../pugetsound/types"
+import { IDataFileNames } from "../pugetsound/types"
+import { usePlayback } from "../usePlayback"
 
 const initialZoomLevel = 9
 const initialLat = 46.725
@@ -21,7 +21,6 @@ export const dataFilenames: IDataFileNames = {
 }
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
-  const [sliderValue, setSliderValue] = useState(0)
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
 
   const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
@@ -32,6 +31,11 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
     dataFilenames.times,
     fetchTimes
+  )
+  const maxSliderValue = points.length - 1
+  const [sliderValue, setSliderValue] = usePlayback(
+    playbackSpeed,
+    maxSliderValue
   )
 
   const isLoading = isLoadingTimes || isLoadingTracks
@@ -46,35 +50,6 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [isLoading])
 
   const displayValue = times[sliderValue]
-
-  const maxSliderValue = points.length - 1
-  useEffect(() => {
-    const ticker = new Ticker()
-    const start = Date.now()
-
-    const frameLength = 50 / playbackSpeed
-    const initialFrame = sliderValue
-    const setNextFrame = () => {
-      const elapsed = Date.now() - start
-      const frameNumber = Math.floor(elapsed / frameLength) + initialFrame
-
-      const nextSliderValue = frameNumber % maxSliderValue
-
-      if (nextSliderValue !== sliderValue) setSliderValue(nextSliderValue)
-    }
-
-    if (playbackSpeed === 0) {
-    } else {
-      ticker.add(setNextFrame)
-      ticker.maxFPS = 1000 / frameLength
-      ticker.start()
-    }
-
-    return () => {
-      ticker.stop()
-      ticker.destroy()
-    }
-  }, [playbackSpeed])
 
   return (
     <div className="gap-4 lg:flex">
