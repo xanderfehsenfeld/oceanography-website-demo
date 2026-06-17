@@ -108,6 +108,8 @@ const PixiOverlayComponent = ({
         currentIndex += batchSize
       }
 
+      //remove the last one if it exists
+      ticker.current?.remove(executeBatch)
       ticker.current?.add(executeBatch, null, UPDATE_PRIORITY.LOW)
     }
   )
