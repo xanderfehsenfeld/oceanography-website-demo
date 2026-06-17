@@ -13,20 +13,15 @@ const darkColor = "lightskyblue"
 const defaultAlpha = 0.3
 const defaultScale = 0.5
 
-defaultCircle.beginFill(0xffffff)
+defaultCircle.beginFill("black")
+
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
 defaultCircle.endFill()
 
-defaultCircle.beginFill("purple")
-const arrow = [
-  { x: -21, y: -21 },
-  { x: 30, y: 0 },
-  { x: -21, y: 21 },
-  { x: -13, y: 0 },
-]
+defaultCircle.beginFill(0xffffff)
 
-// Show an arrow over the circle
-// defaultCircle.drawPolygon(arrow)
+defaultCircle.drawShape(new Circle(0, 0, defaultRadius - 5))
+defaultCircle.endFill()
 
 export class Drifter extends Sprite {
   line: DrifterPath
@@ -76,7 +71,7 @@ export class Drifter extends Sprite {
   }
 
   setActive() {
-    this.tint = "red"
+    this.tint = "maroon"
     this.line.alpha = 0.3
     this.line.visible = true
   }
@@ -92,7 +87,7 @@ export class Drifter extends Sprite {
   }
 
   setSelected() {
-    this.tint = "red"
+    this.tint = "maroon"
     this.alpha = 1
     this.line.alpha = 1
 
@@ -117,7 +112,7 @@ export class Drifter extends Sprite {
 
   setIsDark(_isDark: boolean): void {
     this.isDark = _isDark
-    if (this.tint !== "red") {
+    if (this.tint !== "maroon") {
       this.tint = _isDark ? darkColor : lightColor
     }
   }
