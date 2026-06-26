@@ -14,7 +14,9 @@
     "update": "pnpm update --latest --recursive && pnpm install && pnpm prune && pnpm dedupe && pnpm run clean",
     "generate-content-json": "ts-node scripts/content.ts",
     "generate-content-json:ide": "node -r esbuild-register scripts/content.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@maplibre/maplibre-gl-leaflet": "^0.1.3",
@@ -93,7 +95,19 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "storybook": "^10.4.6",
+    "@storybook/nextjs-vite": "^10.4.6",
+    "@chromatic-com/storybook": "^5.2.1",
+    "@storybook/addon-vitest": "^10.4.6",
+    "@storybook/addon-a11y": "^10.4.6",
+    "@storybook/addon-docs": "^10.4.6",
+    "@storybook/addon-onboarding": "^10.4.6",
+    "vite": "^8.1.0",
+    "eslint-plugin-storybook": "^10.4.6",
+    "playwright": "^1.61.1",
+    "@vitest/browser-playwright": "4.1.6",
+    "@vitest/coverage-v8": "4.1.6"
   },
   "engines": {
     "node": "^22.x"
