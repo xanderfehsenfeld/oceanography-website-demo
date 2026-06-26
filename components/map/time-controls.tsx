@@ -1,18 +1,15 @@
-import {
-  SegmentedControl,
-  Skeleton,
-  Slider,
-} from "@radix-ui/themes/dist/cjs/components"
 import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
 import "./time-controls.css"
+
+import { SegmentedControl, Skeleton, Slider } from "@radix-ui/themes"
 
 const TimeControls = ({
   onPlaybackChange,
   playbackSpeed,
   onSliderChange,
   value,
-
+  speeds = 3,
   maxSliderValue,
   isLoading,
 }: {
@@ -22,6 +19,7 @@ const TimeControls = ({
   value: number
   maxSliderValue: number
   isLoading: boolean
+  speeds?: 2 | 3
 }) => {
   return (
     <div
@@ -53,15 +51,17 @@ const TimeControls = ({
           >
             <FaPlay />
           </SegmentedControl.Item>
-          <SegmentedControl.Item
-            className="h-9 w-9 cursor-pointer"
-            value="2"
-            onClick={() => {
-              onPlaybackChange(2)
-            }}
-          >
-            <FaFastForward />
-          </SegmentedControl.Item>
+          {speeds === 3 && (
+            <SegmentedControl.Item
+              className="h-9 w-9 cursor-pointer"
+              value="2"
+              onClick={() => {
+                onPlaybackChange(2)
+              }}
+            >
+              <FaFastForward />
+            </SegmentedControl.Item>
+          )}
         </SegmentedControl.Root>
       </Skeleton>
       <Skeleton loading={isLoading}>
