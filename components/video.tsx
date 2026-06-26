@@ -5,7 +5,7 @@ function Video({
   ...props
 }: React.ComponentProps<"video"> & { width: number; height: number }) {
   return (
-    <video controls loop autoPlay className="not-prose" {...props}>
+    <video controls loop autoPlay className="not-prose max-h-[80vh]" {...props}>
       <source src={src as string} type="video/mp4" />
     </video>
   )
