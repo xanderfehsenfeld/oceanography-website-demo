@@ -94,7 +94,7 @@ function Video({
             setPlaybackSpeed(playbackSpeed ? 0 : 1)
           }}
           loop
-          onLoadedMetadata={(e) => {
+          onLoadedMetadata={(e: any) => {
             setDuration(e.target.duration)
             setPlaybackSpeed(1)
           }}
