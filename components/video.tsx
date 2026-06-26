@@ -79,9 +79,10 @@ function Video({
 
   return (
     <div className="flex-col">
-      <div className={`block max-h-[70vh]`}>
+      <div>
         <video
-          className="not-prose h-full w-full cursor-pointer"
+          autoPlay
+          className="not-prose max-h-[70vh] w-full cursor-pointer"
           ref={videoRef}
           onClick={() => {
             setPlaybackSpeed(playbackSpeed ? 0 : 1)
@@ -94,7 +95,6 @@ function Video({
             console.log("duration", e.target.duration)
             setDuration(e.target.duration)
           }}
-          {...props}
         >
           <source src={src as string} type="video/mp4" />
         </video>
