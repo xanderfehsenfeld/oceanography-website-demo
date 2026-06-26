@@ -16,7 +16,8 @@ function Video({
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
 
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [duration, setDuration] = useState(0)
+  const [duration, setDuration] = useState(videoRef.current?.duration || 0)
+
   const isLoading = duration === 0
 
   const [sliderValue, setSliderValue] = usePlayback(
@@ -24,22 +25,34 @@ function Video({
     duration * durationMultiplier
   )
 
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     setPlaybackSpeed(0)
+  //   } else {
+  //     setPlaybackSpeed(1)
+  //   }
+  // }, [isLoading])
+
   useEffect(() => {
-    if (isLoading) {
-      setPlaybackSpeed(0)
-    } else {
-      setPlaybackSpeed(1)
-    }
-  }, [isLoading])
+    const video = videoRef.current
+
+    if (video && !duration) setDuration(video.duration)
+  }, [videoRef.current])
 
   // Sync state with video events
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    const updateDuration = () => setDuration(video.duration)
+    const updateDuration = () => {
+      console.log("loaded metadata")
 
-    // video.addEventListener("play", handlePlay)
+      setDuration(video.duration)
+    }
+
+    video.addEventListener("load", () => {
+      console.log("loaded", video.duration)
+    })
     // video.addEventListener("pause", handlePause)
     // video.addEventListener("timeupdate", updateTime)
     video.addEventListener("loadedmetadata", updateDuration)
@@ -66,18 +79,22 @@ function Video({
 
   return (
     <div className="flex-col">
-      <div className={`relative block h-[70vh]`}>
+      <div className={`block max-h-[70vh]`}>
         <video
-          className="not-prose absolute top-0 h-full w-full"
+          className="not-prose h-full w-full cursor-pointer"
           ref={videoRef}
+          onClick={() => {
+            setPlaybackSpeed(playbackSpeed ? 0 : 1)
+          }}
+          onLoad={() => {
+            console.log("loaded video")
+          }}
           loop
           onLoadedMetadata={(e) => {
-            console.log(e.target.attributes)
+            console.log("duration", e.target.duration)
             setDuration(e.target.duration)
           }}
           {...props}
-          width={undefined}
-          height={undefined}
         >
           <source src={src as string} type="video/mp4" />
         </video>
