@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 
 import { usePlayback } from "@/app/interactive/drifters/usePlayback"
 
@@ -16,6 +16,9 @@ function Video({
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
 
   const videoRef = useRef<HTMLVideoElement>(null)
+
+  const didAutoPlay = useRef(false)
+
   const [duration, setDuration] = useState(videoRef.current?.duration || 0)
 
   const isLoading = duration === 0
@@ -24,14 +27,6 @@ function Video({
     (playbackSpeed / 20) * durationMultiplier,
     duration * durationMultiplier
   )
-
-  // useEffect(() => {
-  //   if (isLoading) {
-  //     setPlaybackSpeed(0)
-  //   } else {
-  //     setPlaybackSpeed(1)
-  //   }
-  // }, [isLoading])
 
   useEffect(() => {
     const video = videoRef.current
@@ -68,7 +63,7 @@ function Video({
     const video = videoRef.current
     if (playbackSpeed) {
       video?.play()
-    } else {
+    } else if (!isLoading) {
       video?.pause()
     }
   }, [playbackSpeed])
@@ -78,25 +73,34 @@ function Video({
   }
 
   return (
-    <div className="flex-col">
+    <div className="flex flex-col gap-4">
       <div>
         <video
+          onPointerOver={() => {
+            const video = videoRef.current
+
+            if (!didAutoPlay.current && !playbackSpeed) {
+              didAutoPlay.current = true
+
+              video?.play()
+
+              setPlaybackSpeed(1)
+            }
+          }}
           autoPlay
           className="not-prose max-h-[70vh] w-full cursor-pointer"
           ref={videoRef}
           onClick={() => {
             setPlaybackSpeed(playbackSpeed ? 0 : 1)
           }}
-          onLoad={() => {
-            console.log("loaded video")
-          }}
           loop
           onLoadedMetadata={(e) => {
-            console.log("duration", e.target.duration)
             setDuration(e.target.duration)
+            setPlaybackSpeed(1)
           }}
+          src={src as string}
         >
-          <source src={src as string} type="video/mp4" />
+          {/* <source src={src as string} type="video/mp4" /> */}
         </video>
       </div>
       <TimeControls
