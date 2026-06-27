@@ -27,7 +27,6 @@ const meta = {
   args: {
     zoom: initialZoomLevel,
     circles: typedPoints[7].features,
-    allPoints: typedPoints,
     initialLat,
     initialLong,
 

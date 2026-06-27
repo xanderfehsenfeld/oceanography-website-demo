@@ -49,7 +49,7 @@ defaultCircle.beginFill("black")
 defaultCircle.drawPolygon(transformedArrow)
 
 export class Drifter extends Sprite {
-  line: DrifterPath
+  line?: DrifterPath
   isDark: boolean
   linePoints: IPointData[]
   arrowAngles: number[]
@@ -97,8 +97,10 @@ export class Drifter extends Sprite {
 
   setActive() {
     this.tint = "maroon"
-    this.line.alpha = 0.3
-    this.line.visible = true
+    if (this.line) {
+      this.line.alpha = 0.3
+      this.line.visible = true
+    }
   }
 
   setInactive() {
@@ -108,15 +110,18 @@ export class Drifter extends Sprite {
   resetState() {
     this.tint = this.isDark ? darkColor : lightColor
     this.alpha = defaultAlpha
-    this.line.visible = false
+    if (this.line) this.line.visible = false
   }
 
   setSelected() {
     this.tint = "maroon"
     this.alpha = 1
-    this.line.alpha = 1
 
-    this.line.visible = true
+    if (this.line) {
+      this.line.alpha = 1
+
+      this.line.visible = true
+    }
   }
 
   setLocation(x: number, y: number) {

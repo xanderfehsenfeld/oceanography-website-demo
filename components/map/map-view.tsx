@@ -92,11 +92,6 @@ function MapView({
       map.on("exitFullscreen", function () {
         setIsFullScreen(false)
       })
-
-      // map.on("load", () => {
-      //   console.log("loaded")
-      //   setIsLoaded(true)
-      // })
     }
   }, [map])
 

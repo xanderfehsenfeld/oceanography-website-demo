@@ -11,6 +11,7 @@ import {
   Circle,
   Container,
   FederatedPointerEvent,
+  IPointData,
   Rectangle,
   Ticker,
   UPDATE_PRIORITY,
@@ -23,22 +24,10 @@ import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
 
-// @refresh reset
+// @refrSesh reset
 
 let prevZoom = 8
 let firstDraw = true
-
-function addProfiling<FunctionType extends (...args: any[]) => any>(
-  f: FunctionType,
-  name?: string
-): FunctionType {
-  return function (...args) {
-    console.time(f.name || name)
-    const returnValue = f(...args)
-    console.timeEnd(f.name || name)
-    return returnValue
-  } as FunctionType
-}
 
 const PixiOverlayComponent = ({
   allPoints: points,
@@ -189,12 +178,15 @@ const PixiOverlayComponent = ({
         const id = parseInt(feature.properties.id)
         const line = lineGraphics.current[id]
 
-        const vertices = points.map((v) => {
-          const { longitude, latitude } = v.features[id].properties
-          const { x, y } = project([latitude, longitude] as any)
+        let vertices: IPointData[] = []
+        if (points) {
+          vertices = points.map((v) => {
+            const { longitude, latitude } = v.features[id].properties
+            const { x, y } = project([latitude, longitude] as any)
 
-          return { x, y }
-        })
+            return { x, y }
+          })
+        }
 
         const sprite = new Drifter(
           renderer,
@@ -210,7 +202,7 @@ const PixiOverlayComponent = ({
           if (!isIn.current[id]) {
             this.setActive()
           } else {
-            this.line.visible = true
+            if (this.line) this.line.visible = true
           }
         }
 
@@ -267,9 +259,11 @@ const PixiOverlayComponent = ({
 
         //Initialize the drifter paths
 
-        if (points) lineGraphics.current = initializeLines(points)
+        if (points) {
+          lineGraphics.current = initializeLines(points)
 
-        linesContainer.current.addChild(...lineGraphics.current)
+          linesContainer.current.addChild(...lineGraphics.current)
+        }
         updateLineBoldness(scale, zoom)
 
         container.addChild(linesContainer.current)
