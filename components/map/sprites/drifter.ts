@@ -23,6 +23,8 @@ const defaultScale = 0.5
 defaultCircle.beginFill("black")
 
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
+
+defaultCircle.endFill()
 defaultCircle.beginFill(0xffffff)
 
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius - 5))

@@ -1,10 +1,9 @@
 "use client"
 
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
+import { useEffect, useEffectEvent, useRef, useState } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
-import { line } from "d3"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -24,7 +23,7 @@ import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
 
-// @refrSesh reset
+// @refresh reset
 
 let prevZoom = 8
 let firstDraw = true
