@@ -1,6 +1,13 @@
 "use client"
 
-import { Circle, Graphics, IPointData, IRenderer, Sprite } from "pixi.js"
+import {
+  Circle,
+  Graphics,
+  IPointData,
+  IRenderer,
+  Matrix,
+  Sprite,
+} from "pixi.js"
 
 import { DrifterPath } from "./line"
 
@@ -16,15 +23,35 @@ const defaultScale = 0.5
 defaultCircle.beginFill("black")
 
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius))
-defaultCircle.endFill()
 
+defaultCircle.endFill()
 defaultCircle.beginFill(0xffffff)
 
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius - 5))
 defaultCircle.endFill()
 
+const arrow = [
+  { x: -21, y: -21 },
+  { x: 30, y: 0 }, //tip of arrow
+  { x: -21, y: 21 },
+  { x: -13, y: 0 },
+]
+
+const arrowTransform = new Matrix()
+  .translate(defaultRadius - 5, 0)
+  .scale(0.5, 0.5)
+
+const transformedArrow = arrow.map((point: IPointData) =>
+  arrowTransform.apply(point)
+)
+
+// Show an arrow over the circle
+defaultCircle.beginFill("black")
+
+defaultCircle.drawPolygon(transformedArrow)
+
 export class Drifter extends Sprite {
-  line: DrifterPath
+  line?: DrifterPath
   isDark: boolean
   linePoints: IPointData[]
   arrowAngles: number[]
@@ -72,8 +99,10 @@ export class Drifter extends Sprite {
 
   setActive() {
     this.tint = "maroon"
-    this.line.alpha = 0.3
-    this.line.visible = true
+    if (this.line) {
+      this.line.alpha = 0.3
+      this.line.visible = true
+    }
   }
 
   setInactive() {
@@ -83,15 +112,18 @@ export class Drifter extends Sprite {
   resetState() {
     this.tint = this.isDark ? darkColor : lightColor
     this.alpha = defaultAlpha
-    this.line.visible = false
+    if (this.line) this.line.visible = false
   }
 
   setSelected() {
     this.tint = "maroon"
     this.alpha = 1
-    this.line.alpha = 1
 
-    this.line.visible = true
+    if (this.line) {
+      this.line.alpha = 1
+
+      this.line.visible = true
+    }
   }
 
   setLocation(x: number, y: number) {

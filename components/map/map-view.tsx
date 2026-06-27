@@ -75,9 +75,11 @@ function MapView({
   const [map, setMap] = useState<Map | null>(null)
 
   const [isFullscreen, setIsFullScreen] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     if (map) {
+      setTimeout(() => setIsLoaded(true), 2000)
       map.addControl(new FullScreen())
 
       const fullscreen = map.fullscreenControl as any
@@ -114,6 +116,7 @@ function MapView({
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
+        attributionControl
         maxBounds={[
           [51.67131229155612, -117.89978027343751],
           [44.320112128003764, -127.10083007812501],
@@ -134,7 +137,7 @@ function MapView({
           )}
         </Control>
         {children ||
-          (circles.length > 0 && (
+          (circles.length > 0 && isLoaded && (
             <PixiOverlayComponent
               showAllLines={showAllLines}
               circles={circles}

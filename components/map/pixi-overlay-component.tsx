@@ -1,16 +1,16 @@
 "use client"
 
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react"
+import { useEffect, useEffectEvent, useRef, useState } from "react"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
-import { line } from "d3"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
   Circle,
   Container,
   FederatedPointerEvent,
+  IPointData,
   Rectangle,
   Ticker,
   UPDATE_PRIORITY,
@@ -28,25 +28,13 @@ import { Reticule } from "./sprites/reticule"
 let prevZoom = 8
 let firstDraw = true
 
-function addProfiling<FunctionType extends (...args: any[]) => any>(
-  f: FunctionType,
-  name?: string
-): FunctionType {
-  return function (...args) {
-    console.time(f.name || name)
-    const returnValue = f(...args)
-    console.timeEnd(f.name || name)
-    return returnValue
-  } as FunctionType
-}
-
 const PixiOverlayComponent = ({
   allPoints: points,
   circles,
   showAllLines,
 }: {
   circles: IFeature[]
-  allPoints: IPoints[]
+  allPoints?: IPoints[]
   showAllLines?: boolean
 }) => {
   const ticker = useRef<Ticker>(null)
@@ -115,7 +103,7 @@ const PixiOverlayComponent = ({
   )
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
-    const lineWidth = zoom > 10 ? 3 / scale : 3
+    const lineWidth = zoom > 8 ? 3 / scale : 3
 
     const showArrowHeads = zoom > 12
 
@@ -141,6 +129,7 @@ const PixiOverlayComponent = ({
   })
 
   useEffect(() => {
+    console.log("is mounted")
     if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
 
@@ -182,18 +171,21 @@ const PixiOverlayComponent = ({
 
     const initializeCircles = (
       features: IFeature[],
-      visible?: boolean
+      visible: boolean
     ): Drifter[] => {
       return features.map((feature) => {
         const id = parseInt(feature.properties.id)
         const line = lineGraphics.current[id]
 
-        const vertices = points.map((v) => {
-          const { longitude, latitude } = v.features[id].properties
-          const { x, y } = project([latitude, longitude] as any)
+        let vertices: IPointData[] = []
+        if (points) {
+          vertices = points.map((v) => {
+            const { longitude, latitude } = v.features[id].properties
+            const { x, y } = project([latitude, longitude] as any)
 
-          return { x, y }
-        })
+            return { x, y }
+          })
+        }
 
         const sprite = new Drifter(
           renderer,
@@ -209,7 +201,7 @@ const PixiOverlayComponent = ({
           if (!isIn.current[id]) {
             this.setActive()
           } else {
-            this.line.visible = true
+            if (this.line) this.line.visible = true
           }
         }
 
@@ -243,7 +235,9 @@ const PixiOverlayComponent = ({
       var project = utils.latLngToLayerPoint
       var scale = utils.getScale() || 1
 
+      if (!firstDraw) console.log("re draw")
       if (firstDraw) {
+        console.log("first draw")
         ticker.current = new Ticker()
 
         ticker.current.add(() => {
@@ -257,15 +251,18 @@ const PixiOverlayComponent = ({
         linesContainer.current = new Container()
         linesContainer.current.eventMode = "none"
 
-        if (showAllLines) {
+        if (showAllLines && points) {
           backgroundLineGraphics.current = initializeLines(points, true)
           linesContainer.current.addChild(...backgroundLineGraphics.current)
         }
 
         //Initialize the drifter paths
-        lineGraphics.current = initializeLines(points)
 
-        linesContainer.current.addChild(...lineGraphics.current)
+        if (points) {
+          lineGraphics.current = initializeLines(points)
+
+          linesContainer.current.addChild(...lineGraphics.current)
+        }
         updateLineBoldness(scale, zoom)
 
         container.addChild(linesContainer.current)
@@ -379,6 +376,7 @@ const PixiOverlayComponent = ({
       }
 
       if (backgroundContainer.current) {
+        console.log("draw background")
         //redraw the background container for capturing clicks
         const bounds = map.getBounds()
 
@@ -457,6 +455,7 @@ const PixiOverlayComponent = ({
 
     let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
     myOverlay.addTo(leafletMap)
+    setTimeout(updateCircleLocations, 50)
 
     leafletMap.on("zoomstart", disablePixiInteraction)
     leafletMap.on("zoomend", enablePixiInteraction)

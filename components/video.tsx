@@ -74,45 +74,47 @@ function Video({
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <video
-          onPointerOver={() => {
-            const video = videoRef.current
+      <video
+        onPointerOver={() => {
+          const video = videoRef.current
 
-            if (!didAutoPlay.current && !playbackSpeed) {
-              didAutoPlay.current = true
+          if (!didAutoPlay.current && !playbackSpeed) {
+            didAutoPlay.current = true
 
-              video?.play()
+            video?.play()
 
-              setPlaybackSpeed(1)
-            }
-          }}
-          autoPlay
-          className="not-prose max-h-[70vh] w-full cursor-pointer"
-          ref={videoRef}
-          onClick={() => {
-            setPlaybackSpeed(playbackSpeed ? 0 : 1)
-          }}
-          loop
-          onLoadedMetadata={(e: any) => {
-            setDuration(e.target.duration)
             setPlaybackSpeed(1)
-          }}
-          src={src as string}
-        >
-          {/* <source src={src as string} type="video/mp4" /> */}
-        </video>
-      </div>
+          }
+        }}
+        // autoPlay
+        muted
+        preload="metadata"
+        className="not-prose max-h-[70vh] w-full cursor-pointer"
+        ref={videoRef}
+        onClick={() => {
+          setPlaybackSpeed(playbackSpeed ? 0 : 1)
+        }}
+        loop
+        onLoadedMetadata={(e: any) => {
+          setDuration(e.target.duration)
+          setPlaybackSpeed(1)
+        }}
+        src={src as string}
+      >
+        {/* <source src={src as string} type="video/mp4" /> */}
+      </video>
       <TimeControls
         speeds={2}
         playbackSpeed={playbackSpeed}
         isLoading={isLoading}
         value={sliderValue}
         onPlaybackChange={(playbackSpeed) => {
+          didAutoPlay.current = true
           setPlaybackSpeed(playbackSpeed)
         }}
         maxSliderValue={duration * durationMultiplier}
         onSliderChange={(v) => {
+          didAutoPlay.current = true
           setPlaybackSpeed(0)
           setSliderValue(v)
           seek(v / durationMultiplier)
