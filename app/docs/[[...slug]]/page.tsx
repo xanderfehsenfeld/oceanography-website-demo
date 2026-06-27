@@ -39,7 +39,7 @@ export default async function Pages({ params }: PageProps) {
           {lastUpdated && <LastEdited lastEdited={lastUpdated} />}
         </div>
         <Typography>
-          <section>{content}</section>
+          <section className="mb-4">{content}</section>
           {lastUpdated && <LastEdited lastEdited={lastUpdated} />}
 
           <Pagination pathname={pathName} />
