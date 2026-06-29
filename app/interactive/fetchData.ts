@@ -1,6 +1,10 @@
 "use server"
 
+import { IPointData } from "pixi.js"
+
 import { TimesResponse } from "./drifters/pugetsound/types"
+import { interpolatePoints } from "./interpolate"
+import { interpolateDateSegments } from "./interpolateDates"
 
 interface Track {
   x: number[]
@@ -32,12 +36,23 @@ interface Geometry {
 const getPoints = (tracksTyped: Track[]): IPoints[] => {
   const points = tracksTyped
 
-  return points[0].x.map((_, timeIndex) => {
+  const pointsInterpolated = points.map(({ x, y }) => {
+    const pointsTyped: IPointData[] = x.map((xValue, i) => ({
+      x: xValue,
+      y: y[i],
+    }))
+
+    const interpolated = interpolatePoints(pointsTyped)
+
+    return interpolated
+  })
+
+  return pointsInterpolated[0].map((_, timeIndex) => {
     return {
       type: "FeatureCollection",
-      features: points.map(({ x, y }, id) => {
-        const latitude = y[timeIndex]
-        const longitude = x[timeIndex]
+      features: pointsInterpolated.map((line, id) => {
+        const latitude = line[timeIndex].y
+        const longitude = line[timeIndex].x
 
         return {
           type: "Feature",
@@ -77,7 +92,7 @@ export const fetchTimes = async (filename: string): Promise<string[]> => {
 
   const times: TimesResponse = await timesResponse.json()
 
-  return times[0].t.map((timeString) => {
+  const dateTimes = times[0].t.map((timeString) => {
     //01/11/2026 - 04PM PST
     const dateString = timeString
       .replace("-", "")
@@ -85,11 +100,15 @@ export const fetchTimes = async (filename: string): Promise<string[]> => {
       .replace("AM", ":00 AM")
       .replace("PST", "")
 
-    return new Intl.DateTimeFormat("en-US", {
+    return new Date(dateString)
+  })
+
+  return interpolateDateSegments(dateTimes).map((date) =>
+    new Intl.DateTimeFormat("en-US", {
       timeStyle: "short",
       dateStyle: "medium",
 
       timeZone: "America/Los_Angeles",
-    }).format(new Date(dateString))
-  })
+    }).format(date)
+  )
 }

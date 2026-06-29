@@ -37,7 +37,8 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
 
   const [sliderValue, setSliderValue] = usePlayback(
     playbackSpeed,
-    maxSliderValue
+    maxSliderValue,
+    4
   )
 
   const isLoading = isLoadingTimes || isLoadingTracks

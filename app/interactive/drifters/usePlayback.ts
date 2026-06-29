@@ -3,14 +3,18 @@ import { Ticker } from "pixi.js"
 
 const BASE_FRAME_MS = 50
 
-export const usePlayback = (playbackSpeed: number, maxSliderValue: number) => {
+export const usePlayback = (
+  playbackSpeed: number,
+  maxSliderValue: number,
+  speedMultiplier: number = 1
+) => {
   const [sliderValue, setSliderValue] = useState(0)
 
   useEffect(() => {
     const ticker = new Ticker()
     const start = Date.now()
 
-    const frameLength = BASE_FRAME_MS / playbackSpeed
+    const frameLength = BASE_FRAME_MS / (playbackSpeed * speedMultiplier)
     const initialFrame = sliderValue
     const setNextFrame = () => {
       const elapsed = Date.now() - start

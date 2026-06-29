@@ -30,25 +30,25 @@ defaultCircle.beginFill(0xffffff)
 defaultCircle.drawShape(new Circle(0, 0, defaultRadius - 5))
 defaultCircle.endFill()
 
-const arrow = [
-  { x: -21, y: -21 },
-  { x: 30, y: 0 }, //tip of arrow
-  { x: -21, y: 21 },
-  { x: -13, y: 0 },
-]
+// const arrow = [
+//   { x: -21, y: -21 },
+//   { x: 30, y: 0 }, //tip of arrow
+//   { x: -21, y: 21 },
+//   { x: -13, y: 0 },
+// ]
 
-const arrowTransform = new Matrix()
-  .translate(defaultRadius - 5, 0)
-  .scale(0.5, 0.5)
+// const arrowTransform = new Matrix()
+//   .translate(defaultRadius - 5, 0)
+//   .scale(0.5, 0.5)
 
-const transformedArrow = arrow.map((point: IPointData) =>
-  arrowTransform.apply(point)
-)
+// const transformedArrow = arrow.map((point: IPointData) =>
+//   arrowTransform.apply(point)
+// )
 
-// Show an arrow over the circle
-defaultCircle.beginFill("black")
+// // Show an arrow over the circle
+// defaultCircle.beginFill("black")
 
-defaultCircle.drawPolygon(transformedArrow)
+// defaultCircle.drawPolygon(transformedArrow)
 
 export class Drifter extends Sprite {
   line?: DrifterPath
