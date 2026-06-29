@@ -2,9 +2,8 @@
 
 import { IPointData } from "pixi.js"
 
-import { interpolatePoints } from "@/components/map/sprites/interpolate"
-
 import { TimesResponse } from "./drifters/pugetsound/types"
+import { interpolatePoints } from "./interpolate"
 import { interpolateDateSegments } from "./interpolateDates"
 
 interface Track {
