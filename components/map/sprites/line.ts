@@ -5,11 +5,10 @@ import {
   ILineStyleOptions,
   IPointData,
   IRenderer,
+  Matrix,
   RenderTexture,
   Sprite,
 } from "pixi.js"
-
-import { interpolatePoints } from "./interpolate"
 
 const defaultLineColor = "green"
 const backgroundLineColor = "purple"
@@ -20,6 +19,14 @@ const arrow = [
   { x: -10, y: 10 },
   { x: -6, y: 0 },
 ]
+
+const arrowTransform = new Matrix()
+  // .translate(defaultRadius - 5, 0)
+  .scale(1, 1)
+
+const transformedArrow = arrow.map((point: IPointData) =>
+  arrowTransform.apply(point)
+)
 
 export class DrifterPath extends Container {
   isBackground: boolean
@@ -66,7 +73,7 @@ export class DrifterPath extends Container {
     const arrowHead = new Graphics()
     arrowHead.interactive = false
     arrowHead.beginFill(this.lineGraphic.line.color)
-    arrowHead.drawPolygon(arrow)
+    arrowHead.drawPolygon(transformedArrow)
     arrowHead.endFill()
     this.arrowTexture = renderer.generateTexture(arrowHead)
 
@@ -92,11 +99,11 @@ export class DrifterPath extends Container {
 
   private addArrowHeads() {
     this.linePoints.forEach(({ x, y }, frame) => {
-      if (frame % 2 !== 0) {
+      if (frame % 5 === 0) {
         const arrow = new Sprite(this.arrowTexture)
         arrow.eventMode = "none"
         const angle = this.arrowAngles[frame - 1]
-        arrow.setTransform(x, y, 0.2, 0.2, angle)
+        arrow.setTransform(x, y, 0.05, 0.05, angle)
         arrow.anchor.set(0.5)
 
         this.addChild(arrow)
@@ -105,9 +112,7 @@ export class DrifterPath extends Container {
   }
 
   drawVertices() {
-    const interpolatedPoints = interpolatePoints(this.linePoints, 10)
-
-    interpolatedPoints.forEach(({ x, y }, frame) => {
+    this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
         this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
