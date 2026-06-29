@@ -1,3 +1,4 @@
+import * as d3 from "d3"
 import {
   Container,
   Graphics,
@@ -7,6 +8,8 @@ import {
   RenderTexture,
   Sprite,
 } from "pixi.js"
+
+import { interpolatePoints } from "./interpolate"
 
 const defaultLineColor = "green"
 const backgroundLineColor = "purple"
@@ -102,7 +105,9 @@ export class DrifterPath extends Container {
   }
 
   drawVertices() {
-    this.linePoints.forEach(({ x, y }, frame) => {
+    const interpolatedPoints = interpolatePoints(this.linePoints, 10)
+
+    interpolatedPoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
         this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
