@@ -8,7 +8,7 @@ import { IPoints } from "@/app/interactive/fetchData"
 
 import points from "./sample-points.json"
 
-const typedPoints = points as IPoints[]
+const typedPoints = points as unknown as IPoints[]
 
 const initialZoomLevel = 12
 const initialLat = 46.48
