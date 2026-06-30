@@ -1,7 +1,9 @@
 "use client"
 
 import { CircleMarker, Popup, Tooltip } from "react-leaflet"
+import Control from "react-leaflet-custom-control"
 
+import { Attribution } from "@/components/map/attribution"
 import MapView from "@/components/map/map-view"
 
 import stations from "./stations"
@@ -48,6 +50,14 @@ function StationsMap() {
           </CircleMarker>
         )
       })}
+
+      <Control
+        container={{ className: "w-full m-0" }}
+        prepend
+        position="bottomleft"
+      >
+        <Attribution />
+      </Control>
     </MapView>
   )
 }
