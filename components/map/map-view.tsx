@@ -3,6 +3,7 @@
 import { ComponentProps, Profiler, ReactNode, useEffect, useState } from "react"
 import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
+import { createPortal } from "react-dom"
 import {
   RxEnterFullScreen,
   RxExitFullScreen,
