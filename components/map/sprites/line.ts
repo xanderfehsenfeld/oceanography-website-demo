@@ -32,9 +32,8 @@ export class DrifterPath extends Container {
   isBackground: boolean
 
   linePoints: IPointData[]
-  arrowAngles: number[]
   lineGraphic: Graphics
-  arrowTexture: RenderTexture
+  dottedLineGraphic: Graphics
 
   constructor(
     _linePoints: IPointData[],
@@ -54,78 +53,63 @@ export class DrifterPath extends Container {
       color: "white",
       alpha: this.isBackground ? 0.3 : 1,
     })
-
     this.lineGraphic.tint = this.isBackground
       ? backgroundLineColor
       : defaultLineColor
 
+    this.dottedLineGraphic = new Graphics()
+    this.dottedLineGraphic.lineStyle({
+      width: 3,
+      color: "#A6A09B",
+    })
+
+    this.dottedLineGraphic.lineTextureStyle
+
     this.visible = this.isBackground
 
     this.addChild(this.lineGraphic)
-
-    this.arrowAngles = this.linePoints.map((_, index): number => {
-      const currentIndex = Math.min(index, this.linePoints.length - 2)
-      const { x, y } = this.linePoints[currentIndex]
-      const nextLocation = this.linePoints[currentIndex + 1]
-
-      const dx = nextLocation.x - x
-      const dy = nextLocation.y - y
-
-      return Math.atan2(dy, dx)
-    })
-
-    const arrowHead = new Graphics()
-    arrowHead.interactive = false
-    arrowHead.beginFill(this.lineGraphic.line.color)
-    arrowHead.drawPolygon(transformedArrow)
-    arrowHead.endFill()
-    this.arrowTexture = renderer.generateTexture(arrowHead)
-
-    arrowHead.destroy()
-
-    if (!this.isBackground) this.addArrowHeads()
+    this.addChild(this.dottedLineGraphic)
   }
 
   clear() {
     this.lineGraphic.clear()
+    this.dottedLineGraphic.clear()
   }
 
   setIsDark(isDark: boolean): void {
     this.lineGraphic.tint = isDark ? "lime" : "darkgreen"
+    this.dottedLineGraphic.tint = isDark ? "lime" : "darkgreen"
   }
 
   lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
     this.lineGraphic.lineStyle({ ...style, color: "white" })
+    this.dottedLineGraphic.lineStyle({ ...style, color: "#A6A09B" })
 
-    const scale = (style.width || 3) / 3
-    this.children.slice(1).forEach((v) => v.scale.set(scale))
+    // const scale = (style.width || 3) / 3
+    // this.children.slice(1).forEach((v) => v.scale.set(scale))
   }
 
-  setArrowHeadVisibility(visible: boolean) {
-    this.children.slice(1).forEach((v) => (v.renderable = visible))
-  }
-
-  private addArrowHeads() {
-    this.linePoints.forEach(({ x, y }, frame) => {
-      if (frame % 5 === 0) {
-        const arrow = new Sprite(this.arrowTexture)
-        arrow.eventMode = "none"
-        const angle = this.arrowAngles[frame - 1]
-        arrow.setTransform(x, y, 0.05, 0.05, angle)
-        arrow.anchor.set(0.5)
-
-        this.addChild(arrow)
-      }
-    })
+  setDottedLineVisibility(visible: boolean) {
+    // this.children.slice(1).forEach((v) => (v.renderable = visible))
+    this.dottedLineGraphic.visible = visible
   }
 
   drawVertices() {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
+
         this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
+
+        this.dottedLineGraphic.moveTo(x, y)
       } else {
         this.lineGraphic.lineTo(x, y)
+
+        if (frame % 2 === 1) {
+          this.dottedLineGraphic.lineTo(x, y)
+        } else {
+          this.dottedLineGraphic.moveTo(x, y)
+        }
       }
     })
   }
