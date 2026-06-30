@@ -1,16 +1,20 @@
 "use client"
 
-import { useEffect, useEffectEvent, useRef, useState } from "react"
+import { ReactPortal, useEffect, useEffectEvent, useRef, useState } from "react"
+import { createPortal } from "react-dom"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
+import { Tooltip } from "@radix-ui/themes"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
   Circle,
   Container,
   FederatedPointerEvent,
+  IPoint,
   IPointData,
+  Point,
   Rectangle,
   Ticker,
   UPDATE_PRIORITY,
@@ -151,8 +155,10 @@ const PixiOverlayComponent = ({
     backgroundLineGraphics.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
+  const [tooltipLocation, setTooltipLocation] = useState({ x: 100, y: 100 })
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
     let map = utils.getMap()
+
     let zoom = map.getZoom()
     var renderer = utils.getRenderer()
 
@@ -218,6 +224,12 @@ const PixiOverlayComponent = ({
         sprite.visible = visible || false
 
         sprite.onpointerenter = function (this: Drifter) {
+          if (backgroundContainer.current)
+            setTooltipLocation(
+              // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
+              this.toGlobal({ x: 0, y: 0 })
+            )
+
           if (!isIn.current[id]) {
             this.setActive()
           } else {
@@ -229,6 +241,11 @@ const PixiOverlayComponent = ({
           if (!isIn.current[id]) {
             this.setInactive()
           }
+
+          setTooltipLocation(
+            // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
+            { x: -1000, y: -1000 }
+          )
         }
 
         sprite.onpointerdown = function (
@@ -253,6 +270,8 @@ const PixiOverlayComponent = ({
     if (map) {
       var container = utils.getContainer()
       var project = utils.latLngToLayerPoint
+      // utils.layerPointToLatLng
+
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
@@ -499,7 +518,66 @@ const PixiOverlayComponent = ({
     }
   }, [])
 
-  return <></>
+  const mapContainer = useRef(document.getElementById("map"))
+
+  return createPortal(
+    <div
+      style={{
+        top: tooltipLocation.y - 95,
+        left: tooltipLocation.x - 92,
+        position: "absolute",
+        zIndex: 600,
+      }}
+    >
+      <div
+        className="radix-themes rt-TooltipContent rt-r-max-w"
+        style={{
+          maxWidth: 360,
+        }}
+      >
+        <p className="rt-Text rt-r-size-1 rt-TooltipText">Add to library</p>
+        <span
+          style={{
+            position: "absolute",
+            bottom: "1px",
+            transform: "translateY(100%)",
+            left: "calc(50% - 8px)",
+          }}
+        >
+          <svg
+            className="rt-TooltipArrow"
+            width="16"
+            height="10"
+            viewBox="0 0 30 10"
+            preserveAspectRatio="none"
+            style={{ display: "block" }}
+          >
+            <polygon points="0,0 30,0 15,10"></polygon>
+          </svg>
+        </span>
+        <span
+          id="radix-_r_3_"
+          role="tooltip"
+          style={{
+            position: "absolute",
+            border: "0px",
+            width: "1px",
+            height: "1px",
+            padding: "0px",
+            margin: "-1px",
+            overflow: "hidden",
+            clip: "rect(0px, 0px, 0px, 0px)",
+            whiteSpace: "nowrap",
+            overflowWrap: "normal",
+          }}
+        >
+          <p className="rt-Text rt-r-size-1 rt-TooltipText">Add to library</p>
+        </span>
+      </div>
+    </div>,
+
+    mapContainer.current as HTMLDivElement
+  )
 }
 
 export default PixiOverlayComponent

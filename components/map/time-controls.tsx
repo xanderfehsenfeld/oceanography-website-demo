@@ -2,7 +2,14 @@ import { FaFastForward, FaPause, FaPlay } from "react-icons/fa"
 
 import "./time-controls.css"
 
-import { SegmentedControl, Skeleton, Slider } from "@radix-ui/themes"
+import {
+  Button,
+  Popover,
+  SegmentedControl,
+  Skeleton,
+  Slider,
+  Tooltip,
+} from "@radix-ui/themes"
 
 const TimeControls = ({
   onPlaybackChange,
