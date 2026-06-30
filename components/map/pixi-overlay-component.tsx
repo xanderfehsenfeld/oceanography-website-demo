@@ -32,12 +32,10 @@ const PixiOverlayComponent = ({
   allPoints: points,
   circles,
   showAllLines,
-  onLoadData,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
-  onLoadData: () => void
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -105,39 +103,33 @@ const PixiOverlayComponent = ({
   )
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
-    const lineWidth = zoom > 7 ? 2 / scale : 3
+    const lineWidth = zoom > 8 ? 3 / scale : 3
 
-    const showArrowHeads = false
+    const showArrowHeads = zoom > 12
 
     lazybatchApply(
       lineGraphics.current.concat(backgroundLineGraphics.current),
       (v) => v.setArrowHeadVisibility(showArrowHeads)
     )
     //Update drawn lines
-    if (zoom > 7 || firstDraw) {
+    if (zoom > 10 || firstDraw) {
       lazybatchApply(lineGraphics.current, (line) => {
         line.clear()
-
-        line.lineStyle({
-          width: lineWidth,
-          // color: theme === "dark" ? "lime" : "darkgreen",
-        })
-
+        line.lineStyle({ width: lineWidth, color: "green" })
         line.drawVertices()
       })
 
       lazybatchApply(backgroundLineGraphics.current, (line) => {
         line.clear()
 
-        line.lineStyle({ width: lineWidth, alpha: 0.3 })
-        line.lineGraphic.tint = "magenta"
+        line.lineStyle({ width: lineWidth, color: "purple", alpha: 0.3 })
         line.drawVertices()
       })
     }
   })
 
   useEffect(() => {
-    //draw new frame with renderer
+    console.log("is mounted")
     if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
 
@@ -147,9 +139,6 @@ const PixiOverlayComponent = ({
     const isDark = theme === "dark"
     reticule.current?.setIsDark(isDark)
     circleSprites.current?.forEach((c) => c.setIsDark(isDark))
-
-    lineGraphics.current?.forEach((c) => c.setIsDark(isDark))
-    backgroundLineGraphics.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
@@ -170,19 +159,10 @@ const PixiOverlayComponent = ({
         })
         const line = new DrifterPath(vertices, renderer, isBackground)
         line.eventMode = "none"
-
-        let color
-
-        if (isBackground) {
-          color = "magenta"
-        } else {
-          color = theme === "dark" ? "lime" : "darkgreen"
-        }
-
         line.lineStyle({
           width: 3,
+          color: isBackground ? "magenta" : "green",
         })
-        line.lineGraphic.tint = color
         line.visible = isBackground || false
 
         return line
@@ -255,7 +235,9 @@ const PixiOverlayComponent = ({
       var project = utils.latLngToLayerPoint
       var scale = utils.getScale() || 1
 
+      if (!firstDraw) console.log("re draw")
       if (firstDraw) {
+        console.log("first draw")
         ticker.current = new Ticker()
 
         ticker.current.add(() => {
@@ -308,7 +290,6 @@ const PixiOverlayComponent = ({
             circleSprites.current = circleSprites.current.concat(newCircles)
             circlesContainer.current?.addChild(...newCircles)
           } else {
-            onLoadData()
             ticker.current?.remove(popInData)
           }
         }

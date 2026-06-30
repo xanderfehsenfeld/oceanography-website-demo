@@ -98,7 +98,7 @@ export class Drifter extends Sprite {
   }
 
   setActive() {
-    this.tint = "orange"
+    this.tint = "maroon"
     if (this.line) {
       this.line.alpha = 0.3
       this.line.visible = true
@@ -116,7 +116,7 @@ export class Drifter extends Sprite {
   }
 
   setSelected() {
-    this.tint = "orange"
+    this.tint = "maroon"
     this.alpha = 1
 
     if (this.line) {
@@ -144,7 +144,7 @@ export class Drifter extends Sprite {
 
   setIsDark(_isDark: boolean): void {
     this.isDark = _isDark
-    if (this.tint !== "orange") {
+    if (this.tint !== "maroon") {
       this.tint = _isDark ? darkColor : lightColor
     }
   }

@@ -1,4 +1,4 @@
-"use client"
+"use server"
 
 import { IPointData } from "pixi.js"
 
@@ -71,7 +71,7 @@ const getPoints = (tracksTyped: Track[]): IPoints[] => {
   })
 }
 
-const baseUrl = "/api/liveocean-web/"
+const baseUrl = "https://s3.kopah.uw.edu/liveocean-web/"
 
 export const fetchPoints = async (filename: string) => {
   const tracksResponse = await fetch(`${baseUrl}${filename}`, {

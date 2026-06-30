@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
-import useSWR, { preload } from "swr"
+import useSWR from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
@@ -19,9 +19,6 @@ export const dataFilenames: IDataFileNames = {
   tracks: "willapa25_tracks.json",
   times: "willapa25_times.json",
 }
-
-preload(dataFilenames.times, fetchTimes)
-preload(dataFilenames.tracks, fetchPoints)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
@@ -40,9 +37,8 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
     playbackSpeed,
     maxSliderValue
   )
-  const [isLoadingRender, setIsLoadingRender] = useState(true)
 
-  const isLoading = isLoadingTimes || isLoadingTracks || isLoadingRender
+  const isLoading = isLoadingTimes || isLoadingTracks
 
   useEffect(() => {
     if (isLoading) {
@@ -58,7 +54,6 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
-        onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
