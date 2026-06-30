@@ -40,8 +40,9 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
     playbackSpeed,
     maxSliderValue
   )
+  const [isLoadingRender, setIsLoadingRender] = useState(true)
 
-  const isLoading = isLoadingTimes || isLoadingTracks
+  const isLoading = isLoadingTimes || isLoadingTracks || isLoadingRender
 
   useEffect(() => {
     if (isLoading) {
@@ -57,6 +58,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
+        onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
