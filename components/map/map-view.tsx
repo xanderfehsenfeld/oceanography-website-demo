@@ -16,7 +16,7 @@ import "leaflet/dist/leaflet.css"
 
 // @ts-ignore
 import FullScreen from "leaflet.fullscreen"
-import { MapContainer, TileLayer } from "react-leaflet"
+import { AttributionControl, MapContainer, TileLayer } from "react-leaflet"
 import Control from "react-leaflet-custom-control"
 
 import MapScale from "./map-scale"
@@ -50,6 +50,8 @@ const mapSources = {
   },
 }
 
+// @refresh reset
+
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
@@ -80,6 +82,8 @@ function MapView({
 
   useEffect(() => {
     if (map) {
+      map.attributionControl.remove()
+
       setTimeout(() => setIsLoaded(true), 2000)
       map.addControl(new FullScreen())
 
@@ -117,7 +121,6 @@ function MapView({
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
-        attributionControl
         maxBounds={[
           [51.67131229155612, -117.89978027343751],
           [44.320112128003764, -127.10083007812501],
@@ -154,7 +157,7 @@ function MapView({
           ]}
           maxZoom={15}
           minZoom={7}
-          attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+          attribution=""
           url={
             theme === "dark"
               ? "/data/alidade_smooth.json"
@@ -186,6 +189,44 @@ function MapView({
             prepend
             position="bottomleft"
           >
+            <div className="flex justify-end">
+              <div className="leaflet-control-attribution text-right">
+                <a
+                  href="https://leafletjs.com"
+                  title="A JavaScript library for interactive maps"
+                >
+                  <svg
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="12"
+                    height="8"
+                    viewBox="0 0 12 8"
+                    className="leaflet-attribution-flag"
+                  >
+                    <path fill="#4C7BE1" d="M0 0h12v4H0z"></path>
+                    <path fill="#FFD500" d="M0 4h12v3H0z"></path>
+                    <path fill="#E0BC00" d="M0 7h12v1H0z"></path>
+                  </svg>{" "}
+                  Leaflet
+                </a>
+                &copy;{" "}
+                <a href="https://stadiamaps.com/" target="_blank">
+                  Stadia Maps
+                </a>
+                &copy;{" "}
+                <a href="https://openmaptiles.org/" target="_blank">
+                  OpenMapTiles
+                </a>
+                &copy;{" "}
+                <a
+                  href="https://www.openstreetmap.org/copyright"
+                  target="_blank"
+                >
+                  OpenStreetMap
+                </a>
+                &copy;
+              </div>
+            </div>
             {controls}
           </Control>
         )}
