@@ -105,7 +105,7 @@ const PixiOverlayComponent = ({
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 8 ? 3 / scale : 3
 
-    const showArrowHeads = zoom > 12
+    const showArrowHeads = false
 
     lazybatchApply(
       lineGraphics.current.concat(backgroundLineGraphics.current),
@@ -129,7 +129,7 @@ const PixiOverlayComponent = ({
   })
 
   useEffect(() => {
-    console.log("is mounted")
+    //draw new frame with renderer
     if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
 
@@ -235,9 +235,7 @@ const PixiOverlayComponent = ({
       var project = utils.latLngToLayerPoint
       var scale = utils.getScale() || 1
 
-      if (!firstDraw) console.log("re draw")
       if (firstDraw) {
-        console.log("first draw")
         ticker.current = new Ticker()
 
         ticker.current.add(() => {

@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
-import useSWR from "swr"
+import useSWR, { preload } from "swr"
 
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
@@ -19,6 +19,9 @@ export const dataFilenames: IDataFileNames = {
   tracks: "wgh0_tracks.json",
   times: "wgh0_times.json",
 }
+
+preload(dataFilenames.times, fetchTimes)
+preload(dataFilenames.tracks, fetchPoints)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
