@@ -10,8 +10,8 @@ import {
   Sprite,
 } from "pixi.js"
 
-const defaultLineColor = "chartreuse"
-const backgroundLineColor = "magenta"
+const defaultLineColor = "green"
+const backgroundLineColor = "purple"
 
 const arrow = [
   { x: -10, y: -10 },
@@ -51,13 +51,9 @@ export class DrifterPath extends Container {
 
     this.lineGraphic.lineStyle({
       width: 3,
-      color: "white",
+      color: this.isBackground ? backgroundLineColor : defaultLineColor,
       alpha: this.isBackground ? 0.3 : 1,
     })
-
-    this.lineGraphic.tint = this.isBackground
-      ? backgroundLineColor
-      : defaultLineColor
 
     this.visible = this.isBackground
 
@@ -90,12 +86,8 @@ export class DrifterPath extends Container {
     this.lineGraphic.clear()
   }
 
-  setIsDark(isDark: boolean): void {
-    this.lineGraphic.tint = isDark ? "lime" : "darkgreen"
-  }
-
-  lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
-    this.lineGraphic.lineStyle({ ...style, color: "white" })
+  lineStyle(style: ILineStyleOptions) {
+    this.lineGraphic.lineStyle(style)
 
     const scale = (style.width || 3) / 3
     this.children.slice(1).forEach((v) => v.scale.set(scale))
