@@ -107,11 +107,11 @@ const PixiOverlayComponent = ({
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 2 / scale : 3
     console.log("zoom", zoom)
-    const showArrowHeads = false
+    const showDottedLine = zoom > 11
 
     lazybatchApply(
       lineGraphics.current.concat(backgroundLineGraphics.current),
-      (v) => v.setArrowHeadVisibility(showArrowHeads)
+      (v) => v.setDottedLineVisibility(showDottedLine)
     )
     //Update drawn lines
     if (zoom > 10 || firstDraw) {
@@ -129,7 +129,7 @@ const PixiOverlayComponent = ({
         line.clear()
 
         line.lineStyle({ width: lineWidth, alpha: 0.3 })
-        line.lineGraphic.tint = "magenta"
+        line.lineGraphic.tint = theme === "dark" ? "magenta" : "purple"
         line.drawVertices()
       })
     }
@@ -182,6 +182,7 @@ const PixiOverlayComponent = ({
           width: 3,
         })
         line.lineGraphic.tint = color
+        line.dottedLineGraphic.tint = color
         line.visible = isBackground || false
 
         return line
@@ -438,7 +439,8 @@ const PixiOverlayComponent = ({
         //update the drifters
 
         //Change the scale of the circles for improve zoom
-        updateCircleLocations(Math.max(scale, 1))
+        updateCircleLocations(Math.max(scale * 2, 1))
+        // updateCircleLocations(1)
 
         updateLineBoldness(scale, zoom)
 
