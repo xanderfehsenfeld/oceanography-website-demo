@@ -16,7 +16,7 @@ import "leaflet/dist/leaflet.css"
 
 // @ts-ignore
 import FullScreen from "leaflet.fullscreen"
-import { MapContainer, TileLayer } from "react-leaflet"
+import { AttributionControl, MapContainer, TileLayer } from "react-leaflet"
 import Control from "react-leaflet-custom-control"
 
 import MapScale from "./map-scale"
@@ -24,6 +24,7 @@ import PixiOverlayComponent from "./pixi-overlay-component"
 
 import "./map-view.css"
 
+import { Attribution } from "./attribution"
 import { MapLibreTileLayer } from "./map-libre-tile-layer"
 
 const mapSources = {
@@ -49,6 +50,8 @@ const mapSources = {
       '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
   },
 }
+
+// @refresh reset
 
 function MapView({
   initialLong = -122.5,
@@ -80,6 +83,8 @@ function MapView({
 
   useEffect(() => {
     if (map) {
+      map.attributionControl.remove()
+
       setTimeout(() => setIsLoaded(true), 2000)
       map.addControl(new FullScreen())
 
@@ -117,7 +122,6 @@ function MapView({
         maxZoom={15}
         minZoom={7}
         zoomControl={false}
-        attributionControl
         maxBounds={[
           [51.67131229155612, -117.89978027343751],
           [44.320112128003764, -127.10083007812501],
@@ -154,7 +158,7 @@ function MapView({
           ]}
           maxZoom={15}
           minZoom={7}
-          attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>'
+          attribution=""
           url={
             theme === "dark"
               ? "/data/alidade_smooth.json"
@@ -186,6 +190,7 @@ function MapView({
             prepend
             position="bottomleft"
           >
+            <Attribution />
             {controls}
           </Control>
         )}
