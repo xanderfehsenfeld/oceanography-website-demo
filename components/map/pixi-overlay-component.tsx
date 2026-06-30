@@ -105,8 +105,8 @@ const PixiOverlayComponent = ({
   )
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
-    const lineWidth = zoom > 7 ? 2 / scale : 3
-
+    const lineWidth = zoom > 10 ? 2 / scale : 3
+    console.log("zoom", zoom)
     const showArrowHeads = false
 
     lazybatchApply(
@@ -114,13 +114,12 @@ const PixiOverlayComponent = ({
       (v) => v.setArrowHeadVisibility(showArrowHeads)
     )
     //Update drawn lines
-    if (zoom > 7 || firstDraw) {
+    if (zoom > 10 || firstDraw) {
       lazybatchApply(lineGraphics.current, (line) => {
         line.clear()
 
         line.lineStyle({
           width: lineWidth,
-          // color: theme === "dark" ? "lime" : "darkgreen",
         })
 
         line.drawVertices()
