@@ -438,7 +438,8 @@ const PixiOverlayComponent = ({
         //update the drifters
 
         //Change the scale of the circles for improve zoom
-        updateCircleLocations(Math.max(scale, 1))
+        updateCircleLocations(Math.max(scale * 2, 1))
+        // updateCircleLocations(1)
 
         updateLineBoldness(scale, zoom)
 
