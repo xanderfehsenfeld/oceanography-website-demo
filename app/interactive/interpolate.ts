@@ -59,7 +59,6 @@ function extractBezierSegments(
     .x((d) => d.x)
     .y((d) => d.y)
     .curve(d3.curveCatmullRom.alpha(0.5))
-    // @ts-ignore
     .context(recorder)(points)
 
   // d3-path stores commands internally — serialize and parse them
