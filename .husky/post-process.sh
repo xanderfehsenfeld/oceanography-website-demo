@@ -16,7 +16,10 @@ for file in dist/scripts/scripts/content.mjs dist/scripts/lib/pageroutes.mjs; do
       echo "Error: Failed to update $file"
       exit 1
     fi
-    
+
+    if [ -f "$file=" ]; then
+        rm "$file="
+    fi
     echo "$file updated successfully."
   else
     echo "$file not found!"

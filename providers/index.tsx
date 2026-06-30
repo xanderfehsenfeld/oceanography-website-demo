@@ -10,7 +10,7 @@ export const Providers: React.FC<{ children: React.ReactNode }> = ({
   return (
     <MetadataProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ViewTransitions>{children}</ViewTransitions>
+        {children}
       </ThemeProvider>
     </MetadataProvider>
   )
