@@ -77,8 +77,13 @@ export class DrifterPath extends Container {
   }
 
   setIsDark(isDark: boolean): void {
-    this.lineGraphic.tint = isDark ? "lime" : "darkgreen"
-    this.dottedLineGraphic.tint = isDark ? "lime" : "darkgreen"
+    if (this.isBackground) {
+      this.lineGraphic.tint = isDark ? "magenta" : "purple"
+      this.dottedLineGraphic.tint = isDark ? "magenta" : "purple"
+    } else {
+      this.lineGraphic.tint = isDark ? "lime" : "darkgreen"
+      this.dottedLineGraphic.tint = isDark ? "lime" : "darkgreen"
+    }
   }
 
   lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
