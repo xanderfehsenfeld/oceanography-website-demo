@@ -82,16 +82,16 @@ export const Documents = [
             },
             {
                 title: "Drifters: Willapa 2025 Custom",
-                href: "/tracks2_willapa25",
+                href: "/drifters/custom",
             },
             {
                 title: "Observation Viewer",
-                href: "/obs",
+                href: "/observationsviewer",
             },
-            {
-                title: "Model vs. Observations Viewer",
-                href: "/obsmod",
-            },
+            // {
+            //   title: "Model vs. Observations Viewer",
+            //   href: "/obsmod",
+            // },
         ],
     },
     {
