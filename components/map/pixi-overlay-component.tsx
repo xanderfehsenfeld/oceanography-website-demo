@@ -37,7 +37,7 @@ const PixiOverlayComponent = ({
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
-  onLoadData: () => void
+  onLoadData?: () => void
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -307,7 +307,7 @@ const PixiOverlayComponent = ({
             circleSprites.current = circleSprites.current.concat(newCircles)
             circlesContainer.current?.addChild(...newCircles)
           } else {
-            onLoadData()
+            onLoadData?.()
             ticker.current?.remove(popInData)
           }
         }
