@@ -74,23 +74,32 @@ const getPoints = (tracksTyped: Track[]): IPoints[] => {
 const baseUrl = "/api/liveocean-web/"
 
 export const fetchPoints = async (filename: string) => {
+  console.time("fetchPointsApiRequest")
+
   const tracksResponse = await fetch(`${baseUrl}${filename}`, {
     cache: "force-cache",
     next: { revalidate: 3600 },
   })
 
+  console.timeEnd("fetchPointsApiRequest")
+
+  console.time("processPoints")
+
   const points = getPoints(await tracksResponse.json())
+  console.timeEnd("processPoints")
 
   return points
 }
 
 export const fetchTimes = async (filename: string): Promise<string[]> => {
+  console.time("fetchTimesApiRequest")
   const timesResponse = await fetch(`${baseUrl}${filename}`, {
     cache: "force-cache",
     next: { revalidate: 3600 },
   })
 
   const times: TimesResponse = await timesResponse.json()
+  console.timeEnd("fetchTimesApiRequest")
 
   const dateTimes = times[0].t.map((timeString) => {
     //01/11/2026 - 04PM PST

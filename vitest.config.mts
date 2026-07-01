@@ -18,6 +18,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
+    setupFiles: ["vitest.setup.ts"],
     projects: [
       {
         extends: true,
