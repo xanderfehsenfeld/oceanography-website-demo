@@ -101,7 +101,7 @@ export async function getDocument(slug: string) {
     const infoResponse = await fetch(fileInfoHref)
 
     if (!infoResponse.ok) {
-      throw new Error(
+      console.error(
         `Failed to fetch content info from GitHub: ${infoResponse.statusText}`
       )
     } else {
