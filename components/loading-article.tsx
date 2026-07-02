@@ -16,6 +16,9 @@ import { Typography } from "@/components/ui/typography"
 import { Pagination } from "@/components/article/pagination"
 import { BackToTop } from "@/components/toc/backtotop"
 
+import { LastEdited } from "./ui/last-edited"
+import { Video } from "./video"
+
 export default function LoadingArticle() {
   return (
     <div className="flex items-start gap-10">
@@ -65,11 +68,16 @@ export default function LoadingArticle() {
             </Skeleton>
           </p>
           <Separator />
+          <Skeleton loading width={"auto"}>
+            <LastEdited lastEdited={"July 15, 2027"} />
+          </Skeleton>
         </div>
         <Typography>
           <section>
             <HorizontalLayout className="mt-4">
-              <Skeleton width={"100%"} height={"100%"} />
+              <Skeleton loading>
+                <div style={{ height: 500, width: "100%" }} />
+              </Skeleton>
               <div>
                 <Skeleton>
                   {

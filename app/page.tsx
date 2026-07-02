@@ -1,6 +1,6 @@
 import { ComponentProps } from "react"
 import Image from "next/image"
-import { Link } from "lib/transition"
+import Link from "next/link"
 
 import { Card } from "@/components/markdown/card"
 
@@ -132,12 +132,6 @@ export default function Home() {
             className="bg-sky-200 dark:bg-teal-800"
             href="/interactive/observationsviewer"
             title="Observation Viewer"
-          />
-          <Card
-            variant="small"
-            className="bg-sky-200 dark:bg-teal-800"
-            href="/interactive/modelvsobservation"
-            title="Model vs. Observations Viewer"
           />
         </div>
 

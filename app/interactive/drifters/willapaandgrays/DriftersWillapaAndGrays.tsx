@@ -20,8 +20,8 @@ export const dataFilenames: IDataFileNames = {
   times: "wgh0_times.json",
 }
 
-preload(dataFilenames.times, fetchTimes)
-preload(dataFilenames.tracks, fetchPoints)
+// preload(dataFilenames.times, fetchTimes)
+// preload(dataFilenames.tracks, fetchPoints)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
