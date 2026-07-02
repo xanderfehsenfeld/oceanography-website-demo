@@ -133,12 +133,6 @@ export default function Home() {
             href="/interactive/observationsviewer"
             title="Observation Viewer"
           />
-          <Card
-            variant="small"
-            className="bg-sky-200 dark:bg-teal-800"
-            href="/interactive/modelvsobservation"
-            title="Model vs. Observations Viewer"
-          />
         </div>
 
         <div className="flex flex-col gap-2">
