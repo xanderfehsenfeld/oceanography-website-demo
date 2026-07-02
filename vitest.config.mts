@@ -11,6 +11,8 @@ const dirname =
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url))
 
+const mdx = /.*\/*\.mdx/
+
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
@@ -18,6 +20,17 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
+    watchTriggerPatterns: [
+      // Example: Rerun tests if any .mdx file changes
+      {
+        pattern: mdx,
+
+        testsToRun: (id, match) => {
+          // relative to the root value
+          return `./app/docs/**/*.test.ts`
+        },
+      },
+    ],
     projects: [
       {
         extends: true,
