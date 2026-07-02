@@ -97,10 +97,10 @@ export const Documents: Paths[] = [
         title: "Observation Viewer",
         href: "/observationsviewer",
       },
-      // {
-      //   title: "Model vs. Observations Viewer",
-      //   href: "/obsmod",
-      // },
+      {
+        title: "Stations",
+        href: "/stations",
+      },
     ],
   },
   {

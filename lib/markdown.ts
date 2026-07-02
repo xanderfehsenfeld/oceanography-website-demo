@@ -121,9 +121,7 @@ export async function getDocument(slug: string) {
       lastUpdated,
     }
   } catch (err) {
-    console.error("error while looking in path", slug)
-    console.error(err)
-    return null
+    throw err
   }
 }
 
