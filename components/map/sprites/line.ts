@@ -1,5 +1,6 @@
 import * as d3 from "d3"
 import {
+  BLEND_MODES,
   Container,
   Graphics,
   ILineStyleOptions,
@@ -24,16 +25,14 @@ const arrowTransform = new Matrix()
   // .translate(defaultRadius - 5, 0)
   .scale(1, 1)
 
-const transformedArrow = arrow.map((point: IPointData) =>
-  arrowTransform.apply(point)
-)
-
 export class DrifterPath extends Container {
   isBackground: boolean
 
   linePoints: IPointData[]
   lineGraphic: Graphics
   dottedLineGraphic: Graphics
+
+  visibleLineSegment: Graphics
 
   constructor(
     _linePoints: IPointData[],
@@ -69,11 +68,22 @@ export class DrifterPath extends Container {
 
     this.addChild(this.lineGraphic)
     this.addChild(this.dottedLineGraphic)
+
+    // // Create a graphics object to define our mask
+    this.visibleLineSegment = new Graphics()
+    this.visibleLineSegment.lineStyle({
+      width: 3,
+      color: "#A6A09B",
+    })
+    // Add container that wi
+    this.mask = this.visibleLineSegment
+    this.addChild(this.visibleLineSegment)
   }
 
   clear() {
     this.lineGraphic.clear()
     this.dottedLineGraphic.clear()
+    this.visibleLineSegment.clear()
   }
 
   setIsDark(isDark: boolean): void {
@@ -88,33 +98,48 @@ export class DrifterPath extends Container {
 
   lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
     this.lineGraphic.lineStyle({ ...style, color: "white" })
+    this.visibleLineSegment.lineStyle({ ...style, color: "white" })
     this.dottedLineGraphic.lineStyle({ ...style, color: "#A6A09B" })
-
-    // const scale = (style.width || 3) / 3
-    // this.children.slice(1).forEach((v) => v.scale.set(scale))
   }
 
   setDottedLineVisibility(visible: boolean) {
-    // this.children.slice(1).forEach((v) => (v.renderable = visible))
     this.dottedLineGraphic.visible = visible
   }
 
-  drawVertices() {
+  // drawMask(currentFrameNumber: number) {
+  //   this.visibleLineSegment.clear()
+  // }
+
+  drawVertices(currentFrameNumber: number) {
     this.linePoints.forEach(({ x, y }, frame) => {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
 
-        this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
+        if (frame === 0)
+          this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
 
         this.dottedLineGraphic.moveTo(x, y)
       } else {
         this.lineGraphic.lineTo(x, y)
-
         if (frame % 2 === 1) {
           this.dottedLineGraphic.lineTo(x, y)
         } else {
           this.dottedLineGraphic.moveTo(x, y)
         }
+      }
+    })
+
+    this.linePoints.slice(currentFrameNumber).forEach(({ x, y }, frame) => {
+      if (frame === 0) {
+        this.visibleLineSegment.moveTo(x, y)
+
+        this.visibleLineSegment.drawCircle(
+          x,
+          y,
+          this.lineGraphic.line.width * 2
+        )
+      } else {
+        this.visibleLineSegment.lineTo(x, y)
       }
     })
   }

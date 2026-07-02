@@ -33,11 +33,13 @@ const PixiOverlayComponent = ({
   circles,
   showAllLines,
   onLoadData,
+  frame = 0,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
   onLoadData?: () => void
+  frame?: number
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -75,6 +77,8 @@ const PixiOverlayComponent = ({
 
       circle?.setLocation(x, y)
       if (scale && circle) circle.scale.set(1 / scale / 2)
+
+      // circle.line?.drawMask(frame)
     })
   })
 
@@ -106,7 +110,6 @@ const PixiOverlayComponent = ({
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 2 / scale : 3
-    console.log("zoom", zoom)
     const showDottedLine = zoom > 11
 
     lazybatchApply(
@@ -122,7 +125,7 @@ const PixiOverlayComponent = ({
           width: lineWidth,
         })
 
-        line.drawVertices()
+        line.drawVertices(frame)
       })
 
       lazybatchApply(backgroundLineGraphics.current, (line) => {
@@ -130,7 +133,7 @@ const PixiOverlayComponent = ({
 
         line.lineStyle({ width: lineWidth, alpha: 0.3 })
         line.lineGraphic.tint = theme === "dark" ? "magenta" : "purple"
-        line.drawVertices()
+        line.drawVertices(frame)
       })
     }
   })
@@ -258,12 +261,6 @@ const PixiOverlayComponent = ({
       if (firstDraw) {
         ticker.current = new Ticker()
 
-        ticker.current.add(() => {
-          renderer.render(container)
-        })
-        ticker.current.maxFPS = 60
-        ticker.current.start()
-
         container.eventMode = "dynamic"
 
         linesContainer.current = new Container()
@@ -293,7 +290,19 @@ const PixiOverlayComponent = ({
         //Initialize the drifters
         circlesContainer.current = new Container()
 
+        const backgroundTicker = new Ticker()
+        backgroundTicker.maxFPS = 10
+
         container.addChild(circlesContainer.current)
+        backgroundTicker.add(() => renderer.render(container))
+
+        backgroundTicker.start()
+        ticker.current.add(() => {
+          renderer.render(circlesContainer.current as Container)
+          renderer.render(backgroundContainer.current as Container)
+        })
+        ticker.current.maxFPS = 60
+        ticker.current.start()
 
         const chunkSize = 20
         function popInData() {
