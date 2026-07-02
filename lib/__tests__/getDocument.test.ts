@@ -39,6 +39,7 @@ describe("markdown documents", async () => {
       )
 
       //render the doc
+
       await act(() => render(res?.content))
 
       const internalLinksOnPage = screen
