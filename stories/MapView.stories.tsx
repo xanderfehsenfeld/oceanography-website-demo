@@ -8,6 +8,8 @@ import { IPoints } from "@/app/interactive/fetchData"
 
 import points from "./sample-points.json"
 
+import "leaflet/dist/leaflet.css"
+
 const typedPoints = points as unknown as IPoints[]
 
 const initialZoomLevel = 12

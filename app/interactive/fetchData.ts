@@ -6,7 +6,7 @@ import { TimesResponse } from "./drifters/pugetsound/types"
 import { interpolatePoints } from "./interpolate"
 import { interpolateDateSegments } from "./interpolateDates"
 
-interface Track {
+export interface Track {
   x: number[]
   y: number[]
 }
@@ -33,7 +33,7 @@ interface Geometry {
   coordinates: [number, number]
 }
 
-const getPoints = (tracksTyped: Track[]): IPoints[] => {
+export const getPoints = (tracksTyped: Track[]): IPoints[] => {
   const points = tracksTyped
 
   const pointsInterpolated = points.map(({ x, y }) => {
