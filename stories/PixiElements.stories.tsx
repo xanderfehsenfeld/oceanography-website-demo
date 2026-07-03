@@ -43,13 +43,24 @@ const pointData: Track[] = [
 
 const singleDrifterData: IPoints[] = getPoints(pointData)
 
-const vertices = singleDrifterData.map((v) => {
-  const { longitude, latitude } = v.features[0].properties
+const convertDrifterDataToVertices = (data: IPoints[]) => {
+  return data.map((v) => {
+    const { longitude, latitude } = v.features[0].properties
 
-  return { x: longitude, y: latitude }
-})
+    return { x: longitude, y: latitude }
+  })
+}
 
-const getLine = (renderer: IRenderer, isDark: boolean) => {
+const vertices = convertDrifterDataToVertices(singleDrifterData)
+
+const getLine = (
+  renderer: IRenderer,
+  vertices: {
+    x: number
+    y: number
+  }[],
+  isDark: boolean
+) => {
   const line = new DrifterPath(vertices, renderer)
 
   line.lineStyle({
@@ -57,7 +68,7 @@ const getLine = (renderer: IRenderer, isDark: boolean) => {
   })
 
   const color = "darkgreen"
-  line.lineGraphic.tint = color
+  line.lineGraphics.tint = color
   line.dottedLineGraphic.tint = color
   line.visible = true
 
@@ -73,7 +84,7 @@ export const LightSelectedDrifter: Story = {
     width: 300,
     height: 300,
     child: (renderer) => {
-      const line = getLine(renderer, false)
+      const line = getLine(renderer, vertices, false)
       const drifter = new Drifter(renderer, 0, line, false, vertices)
       const { latitude, longitude } =
         singleDrifterData[20].features[0].properties
@@ -95,7 +106,7 @@ export const DarkSelectedDrifter: Story = {
     width: 300,
     height: 300,
     child: (renderer) => {
-      const line = getLine(renderer, true)
+      const line = getLine(renderer, vertices, true)
       const drifter = new Drifter(renderer, 0, line, false, vertices)
       const { latitude, longitude } =
         singleDrifterData[20].features[0].properties
@@ -108,6 +119,49 @@ export const DarkSelectedDrifter: Story = {
       container.addChild(line)
       container.addChild(drifter)
       return container
+    },
+  },
+}
+
+const morePointData = getPoints([
+  {
+    x: [
+      initialLong,
+      initialLong + 100,
+      initialLong + 100,
+      initialLong + 50,
+      initialLong + 25,
+      initialLong + 75,
+      initialLong + 200,
+      initialLong - 50,
+    ],
+    y: [
+      initialLat,
+      initialLat + 100,
+      initialLat + 50,
+      initialLat - 100,
+      initialLat - 120,
+      initialLat - 150,
+      initialLat - 100,
+      initialLat + 350,
+    ],
+  },
+])
+
+export const DarkDrifterPath: Story = {
+  args: {
+    width: 500,
+    height: 500,
+    child: (renderer) => {
+      const line = getLine(
+        renderer,
+        convertDrifterDataToVertices(morePointData),
+        true
+      )
+
+      line.setFrame(40)
+
+      return line
     },
   },
 }
