@@ -68,7 +68,7 @@ const getLine = (
   })
 
   const color = "darkgreen"
-  line.lineGraphics.tint = color
+  line.lineGraphic.tint = color
   line.dottedLineGraphic.tint = color
   line.visible = true
 
@@ -158,8 +158,6 @@ export const DarkDrifterPath: Story = {
         convertDrifterDataToVertices(morePointData),
         true
       )
-
-      line.setFrame(40)
 
       return line
     },

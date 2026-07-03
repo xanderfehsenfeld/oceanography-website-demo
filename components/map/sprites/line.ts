@@ -2,6 +2,7 @@ import * as d3 from "d3"
 import {
   Container,
   Graphics,
+  IDestroyOptions,
   ILineStyleOptions,
   IPointData,
   IRenderer,
@@ -35,6 +36,8 @@ export class DrifterPath extends Container {
   lineGraphic: Graphics
   dottedLineGraphic: Graphics
 
+  lineSegments: Graphics[]
+
   constructor(
     _linePoints: IPointData[],
     renderer: IRenderer,
@@ -57,6 +60,8 @@ export class DrifterPath extends Container {
       ? backgroundLineColor
       : defaultLineColor
 
+    this.lineSegments = new Array(this.linePoints.length - 1)
+
     this.dottedLineGraphic = new Graphics()
     this.dottedLineGraphic.lineStyle({
       width: 3,
@@ -69,6 +74,13 @@ export class DrifterPath extends Container {
 
     this.addChild(this.lineGraphic)
     this.addChild(this.dottedLineGraphic)
+  }
+
+  destroy(options?: IDestroyOptions | boolean): void {
+    this.lineGraphic.destroy()
+    this.dottedLineGraphic.destroy()
+    this.lineSegments.forEach((s) => s?.destroy())
+    super.destroy(options)
   }
 
   clear() {
@@ -89,9 +101,6 @@ export class DrifterPath extends Container {
   lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
     this.lineGraphic.lineStyle({ ...style, color: "white" })
     this.dottedLineGraphic.lineStyle({ ...style, color: "#A6A09B" })
-
-    // const scale = (style.width || 3) / 3
-    // this.children.slice(1).forEach((v) => v.scale.set(scale))
   }
 
   setDottedLineVisibility(visible: boolean) {
@@ -100,22 +109,32 @@ export class DrifterPath extends Container {
   }
 
   drawVertices() {
-    this.linePoints.forEach(({ x, y }, frame) => {
+    this.linePoints.forEach((_, frame) => {
+      // Draw segments in reverse order
+
+      const index = this.linePoints.length - 1 - frame
+      const { x, y } = this.linePoints[index]
+
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
-
-        this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
 
         this.dottedLineGraphic.moveTo(x, y)
       } else {
         this.lineGraphic.lineTo(x, y)
 
+        // Draw a circle at the 'beginning' of the path
+        if (frame === this.linePoints.length - 1) {
+          this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
+        }
+        // Alternate to create a dotted line
         if (frame % 2 === 1) {
           this.dottedLineGraphic.lineTo(x, y)
         } else {
           this.dottedLineGraphic.moveTo(x, y)
         }
       }
+      this.lineSegments[index]?.destroy()
+      this.lineSegments[index] = new Graphics(this.lineGraphic.geometry)
     })
   }
 }
