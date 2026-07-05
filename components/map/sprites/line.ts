@@ -2,6 +2,7 @@ import * as d3 from "d3"
 import {
   Container,
   Graphics,
+  GraphicsData,
   GraphicsGeometry,
   IDestroyOptions,
   ILineStyleOptions,
@@ -135,48 +136,48 @@ export class DrifterPath extends Container {
   }
 
   drawVertices() {
-    this.linePoints.forEach((_, frame) => {
-      // Draw segments in reverse order
+    const points = this.linePoints
+    const n = points.length
+    if (n === 0) return
 
-      const index = this.linePoints.length - 1 - frame
-      const { x, y } = this.linePoints[index]
+    const circleRadius = this.lineGraphic.line.width * 2
+    const segments = this.lineSegments
 
-      if (frame === 0) {
-        this.lineGraphic.moveTo(x, y)
+    // frame === 0 case: moveTo on everything, at the last point
+    const first = points[n - 1]
+    this.lineGraphic.moveTo(first.x, first.y)
+    this.dottedLineGraphic.moveTo(first.x, first.y)
+    for (let s = 0; s < segments.length; s++) {
+      segments[s].moveTo(first.x, first.y)
+    }
 
-        this.lineSegments.forEach((segment) => segment.moveTo(x, y))
-        this.dottedLineGraphic.moveTo(x, y)
-      } else {
-        this.lineSegments.slice(0, index).forEach((segment, i) => {
-          return segment.lineTo(x, y)
-        })
+    // frame = 1..n-1  ->  index = n-2..0
+    for (let frame = 1; frame < n; frame++) {
+      const index = n - 1 - frame
+      const { x, y } = points[index]
 
-        this.lineGraphic.lineTo(x, y)
-
-        // Draw a circle at the 'beginning' of the path
-        if (frame === this.linePoints.length - 1) {
-          this.lineSegments[index].drawCircle(
-            x,
-            y,
-            this.lineGraphic.line.width * 2
-          )
-          this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
-        }
-        // Alternate to create a dotted line
-        if (frame % 2 === 1) {
-          this.dottedLineGraphic.lineTo(x, y)
-        } else {
-          this.dottedLineGraphic.moveTo(x, y)
-        }
-        this.lineSegments[index].lineStyle({
-          width: this.lineGraphic.width,
-          color: "white",
-        })
-        this.lineSegments[index].tint = this.lineGraphic.tint
+      // equivalent to segments.slice(0, index).forEach(seg => seg.lineTo(x, y))
+      // but with no per-iteration array allocation
+      const limit = index < segments.length ? index : segments.length
+      for (let k = 0; k < limit; k++) {
+        segments[k].lineTo(x, y)
       }
 
-      // this.lineSegments[index].cacheAsBitmap = true
-    })
+      this.lineGraphic.lineTo(x, y)
+
+      if (frame === n - 1) {
+        segments[index]?.drawCircle(x, y, circleRadius)
+        this.lineGraphic.drawCircle(x, y, circleRadius)
+      }
+
+      if (frame % 2 === 1) {
+        this.dottedLineGraphic.lineTo(x, y)
+      } else {
+        this.dottedLineGraphic.moveTo(x, y)
+      }
+    }
+
+    // this.lineSegments.forEach((v) => (v.cacheAsBitmap = true))
 
     this.lineGraphic.visible = false
     this.dottedLineGraphic.visible = false
