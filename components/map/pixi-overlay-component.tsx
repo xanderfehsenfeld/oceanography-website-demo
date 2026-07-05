@@ -33,11 +33,13 @@ const PixiOverlayComponent = ({
   circles,
   showAllLines,
   onLoadData,
+  frame,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
   onLoadData?: () => void
+  frame: number
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -75,6 +77,8 @@ const PixiOverlayComponent = ({
 
       circle?.setLocation(x, y)
       if (scale && circle) circle.scale.set(1 / scale / 2)
+
+      // circle.line?.setFrame(frame)
     })
   })
 
@@ -111,7 +115,8 @@ const PixiOverlayComponent = ({
 
     lazybatchApply(
       lineGraphics.current.concat(backgroundLineGraphics.current),
-      (v) => v.setDottedLineVisibility(showDottedLine)
+      (v) => v.setDottedLineVisibility(showDottedLine),
+      2
     )
     //Update drawn lines
     if (zoom > 10 || firstDraw) {

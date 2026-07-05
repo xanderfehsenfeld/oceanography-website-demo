@@ -2,6 +2,7 @@ import * as d3 from "d3"
 import {
   Container,
   Graphics,
+  GraphicsGeometry,
   IDestroyOptions,
   ILineStyleOptions,
   IPointData,
@@ -37,6 +38,7 @@ export class DrifterPath extends Container {
   dottedLineGraphic: Graphics
 
   lineSegments: Graphics[]
+  currentSegment: Graphics
 
   constructor(
     _linePoints: IPointData[],
@@ -60,7 +62,7 @@ export class DrifterPath extends Container {
       ? backgroundLineColor
       : defaultLineColor
 
-    this.lineSegments = new Array(this.linePoints.length - 1)
+    this.currentSegment = new Graphics()
 
     this.dottedLineGraphic = new Graphics()
     this.dottedLineGraphic.lineStyle({
@@ -68,12 +70,22 @@ export class DrifterPath extends Container {
       color: "#A6A09B",
     })
 
+    this.lineSegments = this.linePoints.slice(1).map(() => {
+      const segment = new Graphics()
+
+      segment.lineStyle({ color: "white", width: this.lineGraphic.width })
+
+      segment.tint = this.lineGraphic.tint
+      return segment
+    })
     this.dottedLineGraphic.lineTextureStyle
 
     this.visible = this.isBackground
 
     this.addChild(this.lineGraphic)
+    this.addChild(this.currentSegment)
     this.addChild(this.dottedLineGraphic)
+    this.setFrame(0)
   }
 
   destroy(options?: IDestroyOptions | boolean): void {
@@ -86,6 +98,7 @@ export class DrifterPath extends Container {
   clear() {
     this.lineGraphic.clear()
     this.dottedLineGraphic.clear()
+    this.lineSegments.forEach((segment) => segment.clear())
   }
 
   setIsDark(isDark: boolean): void {
@@ -100,12 +113,25 @@ export class DrifterPath extends Container {
 
   lineStyle(style: Pick<ILineStyleOptions, "alpha" | "width">) {
     this.lineGraphic.lineStyle({ ...style, color: "white" })
+    this.lineSegments.forEach((segment) =>
+      segment.lineStyle({ ...style, color: "white" })
+    )
     this.dottedLineGraphic.lineStyle({ ...style, color: "#A6A09B" })
   }
 
   setDottedLineVisibility(visible: boolean) {
     // this.children.slice(1).forEach((v) => (v.renderable = visible))
     this.dottedLineGraphic.visible = visible
+  }
+
+  setFrame(frame: number) {
+    this.removeChild(this.currentSegment)
+
+    this.currentSegment = this.lineSegments[frame]
+
+    this.addChild(this.currentSegment)
+
+    this.currentSegment.visible = true
   }
 
   drawVertices() {
@@ -118,12 +144,22 @@ export class DrifterPath extends Container {
       if (frame === 0) {
         this.lineGraphic.moveTo(x, y)
 
+        this.lineSegments.forEach((segment) => segment.moveTo(x, y))
         this.dottedLineGraphic.moveTo(x, y)
       } else {
+        this.lineSegments.slice(0, index).forEach((segment, i) => {
+          return segment.lineTo(x, y)
+        })
+
         this.lineGraphic.lineTo(x, y)
 
         // Draw a circle at the 'beginning' of the path
         if (frame === this.linePoints.length - 1) {
+          this.lineSegments[index].drawCircle(
+            x,
+            y,
+            this.lineGraphic.line.width * 2
+          )
           this.lineGraphic.drawCircle(x, y, this.lineGraphic.line.width * 2)
         }
         // Alternate to create a dotted line
@@ -132,9 +168,17 @@ export class DrifterPath extends Container {
         } else {
           this.dottedLineGraphic.moveTo(x, y)
         }
+        this.lineSegments[index].lineStyle({
+          width: this.lineGraphic.width,
+          color: "white",
+        })
+        this.lineSegments[index].tint = this.lineGraphic.tint
       }
-      this.lineSegments[index]?.destroy()
-      this.lineSegments[index] = new Graphics(this.lineGraphic.geometry)
+
+      // this.lineSegments[index].cacheAsBitmap = true
     })
+
+    this.lineGraphic.visible = false
+    this.dottedLineGraphic.visible = false
   }
 }

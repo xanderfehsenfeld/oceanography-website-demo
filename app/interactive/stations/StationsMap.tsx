@@ -19,6 +19,7 @@ function StationsMap() {
       zoom={8}
       circles={[]}
       allPoints={[]}
+      frame={0}
     >
       {stations.map(({ lat, lng, longname, sta }) => {
         return (

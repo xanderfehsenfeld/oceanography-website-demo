@@ -67,6 +67,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         initialLat={initialLat}
         initialLong={initialLong}
         zoom={initialZoomLevel}
+        frame={sliderValue}
         circles={points[sliderValue]?.features || []}
         allPoints={points}
         controls={

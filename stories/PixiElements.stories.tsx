@@ -107,6 +107,8 @@ export const DarkSelectedDrifter: Story = {
     height: 300,
     child: (renderer) => {
       const line = getLine(renderer, vertices, true)
+
+      line.setFrame(0)
       const drifter = new Drifter(renderer, 0, line, false, vertices)
       const { latitude, longitude } =
         singleDrifterData[20].features[0].properties

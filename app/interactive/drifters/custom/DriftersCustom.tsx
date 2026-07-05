@@ -58,6 +58,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
+        frame={sliderValue}
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}

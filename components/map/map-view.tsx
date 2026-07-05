@@ -63,6 +63,7 @@ function MapView({
   showAllLines,
   controls,
   onLoadData,
+  frame,
 }: {
   initialLat: number
   initialLong: number
@@ -148,6 +149,7 @@ function MapView({
               showAllLines={showAllLines}
               circles={circles}
               allPoints={allPoints}
+              frame={frame}
             />
           ))}
 
