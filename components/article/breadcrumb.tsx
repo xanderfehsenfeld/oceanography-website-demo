@@ -1,6 +1,6 @@
 import { Fragment } from "react"
+import Link from "next/link"
 import { toTitleCase } from "@/utils/toTitleCase"
-import { Link } from "lib/transition"
 import { LuHouse } from "react-icons/lu"
 
 import { PageRoutes } from "@/lib/pageroutes"
@@ -14,13 +14,18 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 
-export function ArticleBreadcrumb({ paths, prefix }: { paths: string[], prefix: string }) {
+export function ArticleBreadcrumb({
+  paths,
+  prefix,
+}: {
+  paths: string[]
+  prefix: string
+}) {
   const currentPath = `/${paths.join("/").toLowerCase()}`
   const breadCrumb =
     PageRoutes.find(({ href }) => {
       return href.toLowerCase().includes(currentPath)
     })?.breadCrumb || []
-
 
   return (
     <div className="pb-5">
@@ -96,11 +101,7 @@ export function ArticleBreadcrumb({ paths, prefix }: { paths: string[], prefix: 
                   <BreadcrumbItem>
                     {index < paths.length - 1 ? (
                       <BreadcrumbLink asChild>
-              
-                          <span>
-                          {breadCrumbTitle}
-
-                          </span>
+                        <span>{breadCrumbTitle}</span>
                       </BreadcrumbLink>
                     ) : (
                       <BreadcrumbPage className="b">

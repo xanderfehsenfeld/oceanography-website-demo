@@ -20,8 +20,8 @@ export const dataFilenames: IDataFileNames = {
   times: "willapa25_times.json",
 }
 
-preload(dataFilenames.times, fetchTimes)
-preload(dataFilenames.tracks, fetchPoints)
+// preload(dataFilenames.times, fetchTimes)
+// preload(dataFilenames.tracks, fetchPoints)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [playbackSpeed, setPlaybackSpeed] = useState(0)

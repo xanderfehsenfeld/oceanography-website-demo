@@ -1,5 +1,5 @@
 import Image from "next/image"
-import { Link } from "lib/transition"
+import Link from "next/link"
 
 import { Settings } from "@/types/settings"
 

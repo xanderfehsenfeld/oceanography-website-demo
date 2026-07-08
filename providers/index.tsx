@@ -1,7 +1,5 @@
 import { ThemeProvider } from "@/providers/theme"
 
-import { ViewTransitions } from "@/lib/transition"
-
 import { MetadataProvider } from "./metadata"
 
 export const Providers: React.FC<{ children: React.ReactNode }> = ({
