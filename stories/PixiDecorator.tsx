@@ -19,6 +19,7 @@ export default function PixiDecorator({
 
     const app = new Application({ width, height, backgroundColor: "gray" })
 
+    // @ts-ignore
     container.appendChild(app.view)
 
     return app
