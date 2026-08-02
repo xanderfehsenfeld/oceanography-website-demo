@@ -1,7 +1,5 @@
-import { describe } from "node:test"
-
 import { act, render, screen, waitFor } from "@testing-library/react"
-import { beforeEach, expect, test, vi } from "vitest"
+import { beforeEach, describe, expect, test, vi } from "vitest"
 
 import { PageRoutes } from "@/lib/pageroutes"
 import { generateStaticParams } from "@/app/docs/[[...slug]]/page"

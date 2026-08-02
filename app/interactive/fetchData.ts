@@ -2,7 +2,11 @@
 
 import { IPointData } from "pixi.js"
 
-import { TimesResponse } from "./drifters/pugetsound/types"
+import {
+  IMapDataProps,
+  TimesData,
+  TimesResponse,
+} from "./drifters/pugetsound/types"
 import { interpolatePoints } from "./interpolate"
 import { interpolateDateSegments } from "./interpolateDates"
 
@@ -69,6 +73,50 @@ export const getPoints = (tracksTyped: Track[]): IPoints[] => {
       }),
     }
   })
+}
+
+interface ILiveoceanDataEndpointResponse {
+  name: string
+  date_of_query: string
+  drifters_forecast: Track[]
+  tracks_filename: string
+  times: TimesData[]
+}
+
+export const fetchData = async (
+  tracksFilename: string,
+  timesFilename: string
+): Promise<IMapDataProps> => {
+  const liveOceanResponse = await fetch(
+    `/api/forecast/drifters/${tracksFilename}-${timesFilename}`
+  )
+  const { drifters_forecast: driftersForecast, times } =
+    (await liveOceanResponse.json()) as ILiveoceanDataEndpointResponse
+
+  const dateTimes = times[0].t.map((timeString) => {
+    //01/11/2026 - 04PM PST
+    const dateString = timeString
+      .replace("-", "")
+      .replace("PM", ":00 PM")
+      .replace("AM", ":00 AM")
+      .replace("PST", "")
+
+    return new Date(dateString)
+  })
+
+  const interpolatedTimes = interpolateDateSegments(dateTimes).map((date) =>
+    new Intl.DateTimeFormat("en-US", {
+      timeStyle: "short",
+      dateStyle: "medium",
+
+      timeZone: "America/Los_Angeles",
+    }).format(date)
+  )
+
+  return {
+    points: getPoints(driftersForecast),
+    times: interpolatedTimes,
+  }
 }
 
 const baseUrl = "/api/liveocean-web/"
