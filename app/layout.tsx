@@ -39,16 +39,32 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  // Server-side prefetch for SWR fallback: commonly-used Puget Sound drifter dataset
+  let swrFallback: Record<string, any> | undefined = undefined
+  try {
+    const tracks = 'PS_tracks.json'
+    const times = 'PS_times.json'
+    // dynamic import to avoid pulling client-only code; this module is server-safe
+    const { prefetchFetchData } = await import('@/app/interactive/prefetchFetchData')
+    const data = await prefetchFetchData(tracks, times)
+    const key = JSON.stringify(['fetchData', tracks, times])
+    swrFallback = { [key]: data }
+  } catch (err) {
+    // don't block rendering on prefetch errors
+    // eslint-disable-next-line no-console
+    console.warn('SWR prefetch failed in RootLayout:', err)
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       {Settings.gtmconnected && <GoogleTagManager gtmId={Settings.gtm} />}
       <body className={`${inter.variable} font-regular`}>
-        <Providers>
+        <Providers swrFallback={swrFallback}>
           <Navbar />
           <main className="h-auto px-5 sm:px-8">{children}</main>
           <Footer />
