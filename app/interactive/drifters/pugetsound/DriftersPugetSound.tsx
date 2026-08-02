@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useCallback, useEffect, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
 import { useTheme } from "next-themes"
 import useSWR, { preload } from "swr"
@@ -8,7 +8,7 @@ import useSWR, { preload } from "swr"
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
-import { fetchPoints, fetchTimes } from "../../fetchData"
+import { fetchData, fetchPoints, fetchTimes } from "../../fetchData"
 import { usePlayback } from "../usePlayback"
 import { IDataFileNames } from "./types"
 
@@ -25,15 +25,14 @@ export const dataFilenames: IDataFileNames = {
 // preload(dataFilenames.tracks, fetchPoints)
 
 function DriftersPugetSound({ children }: { children: ReactNode }) {
-  const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
-    dataFilenames.tracks,
-    fetchPoints
+  const { isLoading: isLoadingTracks, data } = useSWR(
+    () => [dataFilenames.tracks, dataFilenames.times],
+    (args) => fetchData(...args)
   )
 
-  const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
-    dataFilenames.times,
-    fetchTimes
-  )
+  const points = data?.points || []
+
+  const times = data?.times || []
 
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
   const maxSliderValue = points.length - 1
@@ -45,7 +44,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   )
   const [isLoadingRender, setIsLoadingRender] = useState(true)
 
-  const isLoading = isLoadingTimes || isLoadingTracks || isLoadingRender
+  const isLoading = isLoadingTracks || isLoadingRender
 
   useEffect(() => {
     if (isLoading) {
