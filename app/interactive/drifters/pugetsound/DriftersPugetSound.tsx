@@ -9,6 +9,7 @@ import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchData, fetchPoints, fetchTimes } from "../../fetchData"
+import { useFetchData } from "../../useFetchData"
 import { usePlayback } from "../usePlayback"
 import { IDataFileNames } from "./types"
 
@@ -21,18 +22,12 @@ export const dataFilenames: IDataFileNames = {
   times: "PS_times.json",
 }
 
-// preload(dataFilenames.times, fetchTimes)
-// preload(dataFilenames.tracks, fetchPoints)
-
 function DriftersPugetSound({ children }: { children: ReactNode }) {
-  const { isLoading: isLoadingTracks, data } = useSWR(
-    () => [dataFilenames.tracks, dataFilenames.times],
-    (args) => fetchData(...args)
-  )
-
-  const points = data?.points || []
-
-  const times = data?.times || []
+  const {
+    isLoading: isLoadingTracks,
+    times,
+    points,
+  } = useFetchData(dataFilenames.tracks, dataFilenames.times)
 
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
   const maxSliderValue = points.length - 1
