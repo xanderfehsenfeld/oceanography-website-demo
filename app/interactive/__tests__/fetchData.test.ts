@@ -1,9 +1,7 @@
-import { describe } from "node:test"
-
 import { http, HttpResponse } from "msw"
 // src/mocks/node.ts
 import { setupServer } from "msw/node"
-import { afterAll, afterEach, beforeAll, expect, test } from "vitest"
+import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest"
 
 import { fetchData } from "@/app/interactive/fetchData"
 

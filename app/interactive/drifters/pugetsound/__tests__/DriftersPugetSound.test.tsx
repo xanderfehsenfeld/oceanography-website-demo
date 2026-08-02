@@ -1,7 +1,5 @@
-import { beforeEach, describe } from "node:test"
-
 import { render, screen } from "@testing-library/react"
-import { expect, test, vi } from "vitest"
+import { beforeEach, describe, expect, test, vi } from "vitest"
 
 import { fetchData, fetchPoints, fetchTimes } from "@/app/interactive/fetchData"
 
