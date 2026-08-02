@@ -93,8 +93,46 @@ export const fetchData = async (
   const { drifters_forecast: driftersForecast, times } =
     (await liveOceanResponse.json()) as ILiveoceanDataEndpointResponse
 
+  // If service workers are available, offload interpolation to the worker for
+  // better main-thread performance. Falls back to existing in-thread logic.
+  if (typeof window !== "undefined" && 'serviceWorker' in navigator) {
+    try {
+      // Register the service worker (no-op if already registered) and wait until active
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      await navigator.serviceWorker.ready
+
+      const sw = registration.active || registration.waiting || registration.installing;
+
+      if (sw && sw.postMessage) {
+        const channel = new MessageChannel()
+        const resultPromise: Promise<any> = new Promise((resolve, reject) => {
+          channel.port1.onmessage = (ev) => {
+            const payload = ev.data
+            if (payload && payload.error) reject(new Error(payload.error))
+            else resolve(payload)
+          }
+          channel.port1.onmessageerror = (err) => reject(err)
+        })
+
+        // send raw times array (worker will parse/format them)
+        const timesArray = (times && times[0] && times[0].t) || []
+
+        sw.postMessage({ type: 'interpolate', driftersForecast, times: timesArray }, [channel.port2])
+
+        const workerResult = await resultPromise
+        // Expect { points, times }
+        if (workerResult && workerResult.points && workerResult.times) {
+          return { points: workerResult.points, times: workerResult.times }
+        }
+      }
+    } catch (err) {
+      // On any worker error, fall through to client-side interpolation
+      console.warn('Service worker interpolation failed, falling back:', err)
+    }
+  }
+
+  // Fallback: perform interpolation on the main thread (original behavior)
   const dateTimes = times[0].t.map((timeString) => {
-    //01/11/2026 - 04PM PST
     const dateString = timeString
       .replace("-", "")
       .replace("PM", ":00 PM")
