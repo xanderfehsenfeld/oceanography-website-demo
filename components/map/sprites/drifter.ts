@@ -56,12 +56,15 @@ export class Drifter extends Sprite {
   linePoints: IPointData[]
   arrowAngles: number[]
   id: number
+
+  velocities: number[]
   constructor(
     renderer: IRenderer,
     _id: number,
     _line: DrifterPath,
     _isDark: boolean,
-    _linePoints: IPointData[]
+    _linePoints: IPointData[],
+    _velocities: number[]
   ) {
     const defaultCircleTexture = renderer.generateTexture(defaultCircle)
 
@@ -69,6 +72,8 @@ export class Drifter extends Sprite {
 
     this.id = _id
     this.isDark = _isDark
+
+    this.velocities = _velocities
 
     this.scale.set(defaultScale)
 

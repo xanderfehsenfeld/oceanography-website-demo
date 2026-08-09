@@ -1,11 +1,17 @@
 "use client"
 
-import { ReactPortal, useEffect, useEffectEvent, useRef, useState } from "react"
+import {
+  ReactPortal,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react"
 import { createPortal } from "react-dom"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
-import { Tooltip } from "@radix-ui/themes"
 import L, { PixiOverlayUtils } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -23,6 +29,8 @@ import { useMap } from "react-leaflet"
 
 import { IFeature, IPoints } from "@/app/interactive/fetchData"
 
+import { Tooltip } from "../ui/tooltip"
+import { getDistanceInMiles } from "./map-utils"
 import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
@@ -37,11 +45,15 @@ const PixiOverlayComponent = ({
   circles,
   showAllLines,
   onLoadData,
+  frame = 0,
+  timeDeltaMS = 0,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
   onLoadData?: () => void
+  frame?: number
+  timeDeltaMS?: number
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -156,6 +168,36 @@ const PixiOverlayComponent = ({
   }, [theme])
 
   const [tooltipLocation, setTooltipLocation] = useState({ x: 100, y: 100 })
+  const [hoveredDrifterInfo, setHoveredDrifterInfo] = useState({
+    id: 0,
+    velocity: 0,
+    frame: `0/1`,
+  })
+
+  const onDrifterHover = useCallback(
+    (drifter: Drifter) => {
+      console.log("hover", frame)
+      if (backgroundContainer.current)
+        setTooltipLocation(
+          // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
+          drifter.toGlobal({ x: 0, y: 0 })
+        )
+
+      setHoveredDrifterInfo({
+        velocity: drifter.velocities?.[frame] || 0,
+        id: drifter.id,
+        frame: `${frame}/${drifter.linePoints.length}`,
+      })
+
+      if (!isIn.current[drifter.id]) {
+        drifter.setActive()
+      } else {
+        if (drifter.line) drifter.line.visible = true
+      }
+    },
+    [frame]
+  )
+
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
     let map = utils.getMap()
 
@@ -212,29 +254,29 @@ const PixiOverlayComponent = ({
             return { x, y }
           })
         }
+        const timeDeltaInHours = timeDeltaMS / 3600000
 
+        const velocities = points?.map((v) => {
+          const distanceTraveledInMiles = getDistanceInMiles(
+            v.features[id].geometry.coordinates,
+            v.features[Math.max(id - 1, 0)].geometry.coordinates
+          )
+
+          return (distanceTraveledInMiles / timeDeltaInHours).toFixed(2)
+        })
         const sprite = new Drifter(
           renderer,
           id,
           line,
           theme === "dark",
-          vertices
+          vertices,
+          velocities || []
         )
 
         sprite.visible = visible || false
 
-        sprite.onpointerenter = function (this: Drifter) {
-          if (backgroundContainer.current)
-            setTooltipLocation(
-              // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
-              this.toGlobal({ x: 0, y: 0 })
-            )
-
-          if (!isIn.current[id]) {
-            this.setActive()
-          } else {
-            if (this.line) this.line.visible = true
-          }
+        sprite.onpointerenter = () => {
+          onDrifterHover(sprite)
         }
 
         sprite.onpointerleave = function (this: Drifter) {
@@ -486,13 +528,16 @@ const PixiOverlayComponent = ({
     }
   })
 
+  const mapContainer = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     console.log("create application")
     let pixiContainer = new Container()
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+    const myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+
     myOverlay.addTo(leafletMap)
     setTimeout(updateCircleLocations, 50)
 
@@ -500,6 +545,12 @@ const PixiOverlayComponent = ({
     leafletMap.on("zoomend", enablePixiInteraction)
     leafletMap.on("movestart", disablePixiInteraction)
     leafletMap.on("moveend", enablePixiInteraction)
+
+    console.log("test")
+
+    mapContainer.current = document.getElementsByClassName(
+      "leaflet-pixi-overlay"
+    )?.[0] as HTMLDivElement
 
     return () => {
       setIsMounted(false)
@@ -518,66 +569,20 @@ const PixiOverlayComponent = ({
     }
   }, [])
 
-  const mapContainer = useRef(document.getElementById("map"))
+  // const overlay =
 
-  return createPortal(
-    <div
-      style={{
-        top: tooltipLocation.y - 95,
-        left: tooltipLocation.x - 92,
-        position: "absolute",
-        zIndex: 600,
-      }}
-    >
-      <div
-        className="radix-themes rt-TooltipContent rt-r-max-w"
-        style={{
-          maxWidth: 360,
-        }}
-      >
-        <p className="rt-Text rt-r-size-1 rt-TooltipText">Add to library</p>
-        <span
-          style={{
-            position: "absolute",
-            bottom: "1px",
-            transform: "translateY(100%)",
-            left: "calc(50% - 8px)",
-          }}
-        >
-          <svg
-            className="rt-TooltipArrow"
-            width="16"
-            height="10"
-            viewBox="0 0 30 10"
-            preserveAspectRatio="none"
-            style={{ display: "block" }}
-          >
-            <polygon points="0,0 30,0 15,10"></polygon>
-          </svg>
-        </span>
-        <span
-          id="radix-_r_3_"
-          role="tooltip"
-          style={{
-            position: "absolute",
-            border: "0px",
-            width: "1px",
-            height: "1px",
-            padding: "0px",
-            margin: "-1px",
-            overflow: "hidden",
-            clip: "rect(0px, 0px, 0px, 0px)",
-            whiteSpace: "nowrap",
-            overflowWrap: "normal",
-          }}
-        >
-          <p className="rt-Text rt-r-size-1 rt-TooltipText">Add to library</p>
-        </span>
-      </div>
-    </div>,
+  return mapContainer.current
+    ? createPortal(
+        <Tooltip x={tooltipLocation.x} y={tooltipLocation.y}>
+          <p className="rt-Text rt-r-size-1 rt-TooltipText">
+            id: {hoveredDrifterInfo.id} , speed: {hoveredDrifterInfo.velocity}{" "}
+            mph, frame {hoveredDrifterInfo.frame}
+          </p>
+        </Tooltip>,
 
-    mapContainer.current as HTMLDivElement
-  )
+        mapContainer.current as HTMLDivElement
+      )
+    : null
 }
 
 export default PixiOverlayComponent

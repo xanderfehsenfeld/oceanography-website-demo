@@ -64,6 +64,8 @@ function MapView({
   showAllLines,
   controls,
   onLoadData,
+  frame,
+  timeDeltaMS,
 }: {
   initialLat: number
   initialLong: number
@@ -145,6 +147,8 @@ function MapView({
         {children ||
           (circles.length > 0 && isLoaded && (
             <PixiOverlayComponent
+              frame={frame}
+              timeDeltaMS={timeDeltaMS}
               onLoadData={onLoadData}
               showAllLines={showAllLines}
               circles={circles}
