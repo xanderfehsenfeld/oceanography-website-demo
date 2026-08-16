@@ -8,6 +8,7 @@ import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
+import { useFetchData } from "../../useFetchData"
 import { IDataFileNames } from "../pugetsound/types"
 import { usePlayback } from "../usePlayback"
 
@@ -20,21 +21,13 @@ export const dataFilenames: IDataFileNames = {
   times: "willapa25_times.json",
 }
 
-// preload(dataFilenames.times, fetchTimes)
-// preload(dataFilenames.tracks, fetchPoints)
-
 function DriftersPugetSound({ children }: { children: ReactNode }) {
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
-
-  const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
-    dataFilenames.tracks,
-    fetchPoints
-  )
-
-  const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
-    dataFilenames.times,
-    fetchTimes
-  )
+  const {
+    isLoading: isLoadingTracks,
+    times,
+    points,
+  } = useFetchData(dataFilenames.tracks, dataFilenames.times)
   const maxSliderValue = points.length - 1
   const [sliderValue, setSliderValue] = usePlayback(
     playbackSpeed,
@@ -42,7 +35,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   )
   const [isLoadingRender, setIsLoadingRender] = useState(true)
 
-  const isLoading = isLoadingTimes || isLoadingTracks || isLoadingRender
+  const isLoading = isLoadingTracks || isLoadingRender
 
   useEffect(() => {
     if (isLoading) {
@@ -54,13 +47,21 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [isLoading])
 
   const displayValue = times[sliderValue]
+  const timeDeltaMS = useMemo(() => {
+    const start = new Date(times[0])
+    const end = new Date(times[1])
+    console.log(end.getTime() - start.getTime())
 
+    return end.getTime() - start.getTime()
+  }, [times])
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
+        timeDeltaMS={timeDeltaMS}
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}
+        frame={sliderValue}
         zoom={initialZoomLevel}
         circles={points[sliderValue]?.features || []}
         allPoints={points}

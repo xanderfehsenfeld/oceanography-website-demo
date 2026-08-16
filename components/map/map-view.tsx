@@ -3,6 +3,7 @@
 import { ComponentProps, Profiler, ReactNode, useEffect, useState } from "react"
 import { Browser, Map } from "leaflet"
 import { useTheme } from "next-themes"
+import { createPortal } from "react-dom"
 import {
   RxEnterFullScreen,
   RxExitFullScreen,
@@ -63,6 +64,8 @@ function MapView({
   showAllLines,
   controls,
   onLoadData,
+  frame,
+  timeDeltaMS,
 }: {
   initialLat: number
   initialLong: number
@@ -144,6 +147,8 @@ function MapView({
         {children ||
           (circles.length > 0 && isLoaded && (
             <PixiOverlayComponent
+              frame={frame}
+              timeDeltaMS={timeDeltaMS}
               onLoadData={onLoadData}
               showAllLines={showAllLines}
               circles={circles}

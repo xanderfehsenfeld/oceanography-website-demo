@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
 import { useTheme } from "next-themes"
 import useSWR, { preload } from "swr"
@@ -8,7 +8,8 @@ import useSWR, { preload } from "swr"
 import ClientMapView from "@/components/map/client-map-view"
 import TimeControls from "@/components/map/time-controls"
 
-import { fetchPoints, fetchTimes } from "../../fetchData"
+import { fetchData, fetchPoints, fetchTimes } from "../../fetchData"
+import { useFetchData } from "../../useFetchData"
 import { usePlayback } from "../usePlayback"
 import { IDataFileNames } from "./types"
 
@@ -21,19 +22,12 @@ export const dataFilenames: IDataFileNames = {
   times: "PS_times.json",
 }
 
-// preload(dataFilenames.times, fetchTimes)
-// preload(dataFilenames.tracks, fetchPoints)
-
 function DriftersPugetSound({ children }: { children: ReactNode }) {
-  const { isLoading: isLoadingTracks, data: points = [] } = useSWR(
-    dataFilenames.tracks,
-    fetchPoints
-  )
-
-  const { isLoading: isLoadingTimes, data: times = [] } = useSWR(
-    dataFilenames.times,
-    fetchTimes
-  )
+  const {
+    isLoading: isLoadingTracks,
+    times,
+    points,
+  } = useFetchData(dataFilenames.tracks, dataFilenames.times)
 
   const [playbackSpeed, setPlaybackSpeed] = useState(0)
   const maxSliderValue = points.length - 1
@@ -45,7 +39,15 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   )
   const [isLoadingRender, setIsLoadingRender] = useState(true)
 
-  const isLoading = isLoadingTimes || isLoadingTracks || isLoadingRender
+  const isLoading = isLoadingTracks || isLoadingRender
+
+  const timeDeltaMS = useMemo(() => {
+    const start = new Date(times[0])
+    const end = new Date(times[1])
+    console.log(end.getTime() - start.getTime())
+
+    return end.getTime() - start.getTime()
+  }, [times])
 
   useEffect(() => {
     if (isLoading) {
@@ -63,6 +65,8 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
+        frame={sliderValue}
+        timeDeltaMS={timeDeltaMS}
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}

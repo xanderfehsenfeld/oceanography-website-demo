@@ -1,8 +1,7 @@
 import { debug } from "node:console"
-import { describe } from "node:test"
 
 import { renderHook } from "@testing-library/react"
-import { afterEach, beforeEach, expect, it, test, vi } from "vitest"
+import { afterEach, beforeEach, describe, expect, it, test, vi } from "vitest"
 
 import { usePlayback } from "../usePlayback"
 
