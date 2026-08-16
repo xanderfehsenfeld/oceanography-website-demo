@@ -1,6 +1,14 @@
 "use client"
 
-import { useEffect, useEffectEvent, useRef, useState } from "react"
+import {
+  ReactPortal,
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+} from "react"
+import { createPortal } from "react-dom"
 
 import "leaflet-pixi-overlay" // Must be called before the 'leaflet' import
 
@@ -10,7 +18,9 @@ import {
   Circle,
   Container,
   FederatedPointerEvent,
+  IPoint,
   IPointData,
+  Point,
   Rectangle,
   Ticker,
   UPDATE_PRIORITY,
@@ -19,6 +29,8 @@ import { useMap } from "react-leaflet"
 
 import { IFeature, IPoints } from "@/app/interactive/fetchData"
 
+import { Tooltip } from "../ui/tooltip"
+import { getDistanceInMiles } from "./map-utils"
 import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
 import { Reticule } from "./sprites/reticule"
@@ -33,11 +45,15 @@ const PixiOverlayComponent = ({
   circles,
   showAllLines,
   onLoadData,
+  frame = 0,
+  timeDeltaMS = 0,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
   showAllLines?: boolean
   onLoadData?: () => void
+  frame?: number
+  timeDeltaMS?: number
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -106,7 +122,6 @@ const PixiOverlayComponent = ({
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 2 / scale : 3
-    console.log("zoom", zoom)
     const showDottedLine = zoom > 11
 
     lazybatchApply(
@@ -151,8 +166,37 @@ const PixiOverlayComponent = ({
     backgroundLineGraphics.current?.forEach((c) => c.setIsDark(isDark))
   }, [theme])
 
+  const [tooltipLocation, setTooltipLocation] = useState({ x: 100, y: 100 })
+  const [activeDrifter, setActiveDrifter] = useState<Drifter | undefined>(
+    undefined
+  )
+
+  const onDrifterHover = useCallback(
+    function (this: Drifter) {
+      const drifter = this
+      if (backgroundContainer.current)
+        setTooltipLocation(
+          // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
+          drifter.toGlobal({ x: 0, y: 0 })
+        )
+
+      setActiveDrifter(drifter)
+
+      if (!isIn.current[drifter.id]) {
+        drifter.setActive()
+      } else {
+        if (drifter.line) drifter.line.visible = true
+      }
+
+      this.onpointerenter = onDrifterHover
+    },
+
+    [frame]
+  )
+
   const drawCallback = useEffectEvent(function (utils: PixiOverlayUtils) {
     let map = utils.getMap()
+
     let zoom = map.getZoom()
     var renderer = utils.getRenderer()
 
@@ -206,29 +250,40 @@ const PixiOverlayComponent = ({
             return { x, y }
           })
         }
+        const timeDeltaInHours = timeDeltaMS / 3600000
 
+        const velocities = points?.map((v, i) => {
+          const distanceTraveledInMiles = getDistanceInMiles(
+            v.features[id].geometry.coordinates,
+            points[Math.max(i - 1, 0)].features[id].geometry.coordinates
+          )
+
+          return parseFloat(
+            (distanceTraveledInMiles / timeDeltaInHours).toFixed(2)
+          )
+        })
         const sprite = new Drifter(
           renderer,
           id,
           line,
           theme === "dark",
-          vertices
+          vertices,
+          velocities || []
         )
 
         sprite.visible = visible || false
 
-        sprite.onpointerenter = function (this: Drifter) {
-          if (!isIn.current[id]) {
-            this.setActive()
-          } else {
-            if (this.line) this.line.visible = true
-          }
-        }
+        sprite.onpointerenter = onDrifterHover
 
         sprite.onpointerleave = function (this: Drifter) {
           if (!isIn.current[id]) {
             this.setInactive()
           }
+
+          setTooltipLocation(
+            // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
+            { x: -1000, y: -1000 }
+          )
         }
 
         sprite.onpointerdown = function (
@@ -253,6 +308,8 @@ const PixiOverlayComponent = ({
     if (map) {
       var container = utils.getContainer()
       var project = utils.latLngToLayerPoint
+      // utils.layerPointToLatLng
+
       var scale = utils.getScale() || 1
 
       if (firstDraw) {
@@ -380,22 +437,17 @@ const PixiOverlayComponent = ({
         }
 
         backgroundContainer.current.onpointerleave = () => {
-          // console.log("leave")
-
           reticule.current?.hide()
         }
 
         backgroundContainer.current.onmousemove = (
           e: FederatedPointerEvent
         ) => {
-          // console.log(e.target)
-
           moveReticuleToEvent(e)
         }
       }
 
       if (backgroundContainer.current) {
-        console.log("draw background")
         //redraw the background container for capturing clicks
         const bounds = map.getBounds()
 
@@ -467,13 +519,15 @@ const PixiOverlayComponent = ({
     }
   })
 
+  const mapContainer = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    console.log("create application")
     let pixiContainer = new Container()
     firstDraw = true
     setIsMounted(true)
 
-    let myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+    const myOverlay = L.pixiOverlay(drawCallback, pixiContainer, {})
+
     myOverlay.addTo(leafletMap)
     setTimeout(updateCircleLocations, 50)
 
@@ -482,9 +536,12 @@ const PixiOverlayComponent = ({
     leafletMap.on("movestart", disablePixiInteraction)
     leafletMap.on("moveend", enablePixiInteraction)
 
+    mapContainer.current = document.getElementsByClassName(
+      "leaflet-pixi-overlay"
+    )?.[0] as HTMLDivElement
+
     return () => {
       setIsMounted(false)
-      console.log("destroy")
       ticker.current?.destroy()
 
       myOverlay.removeFrom(leafletMap)
@@ -499,7 +556,20 @@ const PixiOverlayComponent = ({
     }
   }, [])
 
-  return <></>
+  // const overlay =
+
+  return mapContainer.current
+    ? createPortal(
+        <Tooltip x={tooltipLocation.x} y={tooltipLocation.y}>
+          <p className="rt-Text rt-r-size-1 rt-TooltipText">
+            id: {activeDrifter?.id} , speed: {activeDrifter?.velocities[frame]}{" "}
+            mph, frame: {frame}/{points?.length}
+          </p>
+        </Tooltip>,
+
+        mapContainer.current as HTMLDivElement
+      )
+    : null
 }
 
 export default PixiOverlayComponent

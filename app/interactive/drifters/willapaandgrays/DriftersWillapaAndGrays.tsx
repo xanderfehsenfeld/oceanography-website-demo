@@ -1,6 +1,6 @@
 "use client"
 
-import { ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
 import useSWR, { preload } from "swr"
 
@@ -52,10 +52,18 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [isLoading])
 
   const displayValue = times[sliderValue]
+  const timeDeltaMS = useMemo(() => {
+    const start = new Date(times[0])
+    const end = new Date(times[1])
+    console.log(end.getTime() - start.getTime())
 
+    return end.getTime() - start.getTime()
+  }, [times])
   return (
     <div className="gap-4 lg:flex">
       <ClientMapView
+        frame={sliderValue}
+        timeDeltaMS={timeDeltaMS}
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}
