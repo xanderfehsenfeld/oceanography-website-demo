@@ -122,7 +122,6 @@ const PixiOverlayComponent = ({
 
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
     const lineWidth = zoom > 10 ? 2 / scale : 3
-    console.log("zoom", zoom)
     const showDottedLine = zoom > 11
 
     lazybatchApply(
@@ -175,8 +174,8 @@ const PixiOverlayComponent = ({
   })
 
   const onDrifterHover = useCallback(
-    (drifter: Drifter) => {
-      console.log("hover", frame)
+    function (this: Drifter) {
+      const drifter = this
       if (backgroundContainer.current)
         setTooltipLocation(
           // backgroundContainer.current.toGlobal({ x: this.x, y: this.y })
@@ -194,7 +193,10 @@ const PixiOverlayComponent = ({
       } else {
         if (drifter.line) drifter.line.visible = true
       }
+
+      this.onpointerenter = onDrifterHover
     },
+
     [frame]
   )
 
@@ -275,9 +277,7 @@ const PixiOverlayComponent = ({
 
         sprite.visible = visible || false
 
-        sprite.onpointerenter = () => {
-          onDrifterHover(sprite)
-        }
+        sprite.onpointerenter = onDrifterHover
 
         sprite.onpointerleave = function (this: Drifter) {
           if (!isIn.current[id]) {
@@ -441,22 +441,17 @@ const PixiOverlayComponent = ({
         }
 
         backgroundContainer.current.onpointerleave = () => {
-          // console.log("leave")
-
           reticule.current?.hide()
         }
 
         backgroundContainer.current.onmousemove = (
           e: FederatedPointerEvent
         ) => {
-          // console.log(e.target)
-
           moveReticuleToEvent(e)
         }
       }
 
       if (backgroundContainer.current) {
-        console.log("draw background")
         //redraw the background container for capturing clicks
         const bounds = map.getBounds()
 
@@ -531,7 +526,6 @@ const PixiOverlayComponent = ({
   const mapContainer = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    console.log("create application")
     let pixiContainer = new Container()
     firstDraw = true
     setIsMounted(true)
@@ -546,15 +540,12 @@ const PixiOverlayComponent = ({
     leafletMap.on("movestart", disablePixiInteraction)
     leafletMap.on("moveend", enablePixiInteraction)
 
-    console.log("test")
-
     mapContainer.current = document.getElementsByClassName(
       "leaflet-pixi-overlay"
     )?.[0] as HTMLDivElement
 
     return () => {
       setIsMounted(false)
-      console.log("destroy")
       ticker.current?.destroy()
 
       myOverlay.removeFrom(leafletMap)
@@ -575,8 +566,7 @@ const PixiOverlayComponent = ({
     ? createPortal(
         <Tooltip x={tooltipLocation.x} y={tooltipLocation.y}>
           <p className="rt-Text rt-r-size-1 rt-TooltipText">
-            id: {hoveredDrifterInfo.id} , speed: {hoveredDrifterInfo.velocity}{" "}
-            mph, frame {hoveredDrifterInfo.frame}
+            id: {hoveredDrifterInfo.id}
           </p>
         </Tooltip>,
 

@@ -54,6 +54,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
         initialLong={initialLong}
+        frame={sliderValue}
         zoom={initialZoomLevel}
         circles={points[sliderValue]?.features || []}
         allPoints={points}
