@@ -42,14 +42,11 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   const isLoading = isLoadingTracks || isLoadingRender
 
   const timeDeltaMS = useMemo(() => {
-    if (times) {
-      const start = new Date(times[0])
-      const end = new Date(times[1])
+    const start = new Date(times[0])
+    const end = new Date(times[1])
+    console.log(end.getTime() - start.getTime())
 
-      return end.getTime() - start.getTime()
-    } else {
-      return 1000
-    }
+    return end.getTime() - start.getTime()
   }, [times])
 
   useEffect(() => {

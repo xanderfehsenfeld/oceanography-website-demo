@@ -167,11 +167,9 @@ const PixiOverlayComponent = ({
   }, [theme])
 
   const [tooltipLocation, setTooltipLocation] = useState({ x: 100, y: 100 })
-  const [hoveredDrifterInfo, setHoveredDrifterInfo] = useState({
-    id: 0,
-    velocity: 0,
-    frame: `0/1`,
-  })
+  const [activeDrifter, setActiveDrifter] = useState<Drifter | undefined>(
+    undefined
+  )
 
   const onDrifterHover = useCallback(
     function (this: Drifter) {
@@ -182,11 +180,7 @@ const PixiOverlayComponent = ({
           drifter.toGlobal({ x: 0, y: 0 })
         )
 
-      setHoveredDrifterInfo({
-        velocity: drifter.velocities?.[frame] || 0,
-        id: drifter.id,
-        frame: `${frame}/${drifter.linePoints.length}`,
-      })
+      setActiveDrifter(drifter)
 
       if (!isIn.current[drifter.id]) {
         drifter.setActive()
@@ -258,13 +252,15 @@ const PixiOverlayComponent = ({
         }
         const timeDeltaInHours = timeDeltaMS / 3600000
 
-        const velocities = points?.map((v) => {
+        const velocities = points?.map((v, i) => {
           const distanceTraveledInMiles = getDistanceInMiles(
             v.features[id].geometry.coordinates,
-            v.features[Math.max(id - 1, 0)].geometry.coordinates
+            points[Math.max(i - 1, 0)].features[id].geometry.coordinates
           )
 
-          return (distanceTraveledInMiles / timeDeltaInHours).toFixed(2)
+          return parseFloat(
+            (distanceTraveledInMiles / timeDeltaInHours).toFixed(2)
+          )
         })
         const sprite = new Drifter(
           renderer,
@@ -566,7 +562,8 @@ const PixiOverlayComponent = ({
     ? createPortal(
         <Tooltip x={tooltipLocation.x} y={tooltipLocation.y}>
           <p className="rt-Text rt-r-size-1 rt-TooltipText">
-            id: {hoveredDrifterInfo.id}
+            id: {activeDrifter?.id} , speed: {activeDrifter?.velocities[frame]}{" "}
+            mph, frame: {frame}/{points?.length}
           </p>
         </Tooltip>,
 
