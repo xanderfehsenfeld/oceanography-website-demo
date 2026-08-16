@@ -84,7 +84,7 @@ export const LightSelectedDrifter: Story = {
     height: 300,
     child: (renderer) => {
       const line = getLine(renderer, vertices, false)
-      const drifter = new Drifter(renderer, 0, line, false, vertices)
+      const drifter = new Drifter(renderer, 0, line, false, vertices, [])
       const { latitude, longitude } =
         singleDrifterData[20].features[0].properties
 
@@ -106,7 +106,7 @@ export const DarkSelectedDrifter: Story = {
     height: 300,
     child: (renderer) => {
       const line = getLine(renderer, vertices, true)
-      const drifter = new Drifter(renderer, 0, line, false, vertices)
+      const drifter = new Drifter(renderer, 0, line, false, vertices, [])
       const { latitude, longitude } =
         singleDrifterData[20].features[0].properties
 
