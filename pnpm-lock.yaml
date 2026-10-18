@@ -83,6 +83,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      pixi-dashed-line:
+        specifier: ^1.4.2
+        version: 1.4.2(pixi.js@7.4.2)
       pixi.js:
         specifier: 7.4.2
         version: 7.4.2
@@ -5353,6 +5356,11 @@ packages:
   picomatch@4.0.4:
     resolution: {integrity: sha512-QP88BAKvMam/3NxH6vj2o21R6MjxZUAd6nlwAS/pnGvN9IVLocLHxGYIzFhg6fUQ+5th6P4dv4eW9jX3DSIj7A==}
     engines: {node: '>=12'}
+
+  pixi-dashed-line@1.4.2:
+    resolution: {integrity: sha512-THMJdKc+IrzZTxSm/EncJT2i0VQmRLTn8EVpshA9JnvYBjTk6xiqtVUFQBe72yr4Kzp4UJ9JCKdDdqzdWtUKbw==}
+    peerDependencies:
+      pixi.js: ^6.2.2
 
   pixi.js@7.4.2:
     resolution: {integrity: sha512-TifqgHGNofO7UCEbdZJOpUu7dUnpu4YZ0o76kfCqxDa4RS8ITc9zjECCbtalmuNXkVhSEZmBKQvE7qhHMqw/xg==}
@@ -12128,6 +12136,10 @@ snapshots:
   picomatch@4.0.3: {}
 
   picomatch@4.0.4: {}
+
+  pixi-dashed-line@1.4.2(pixi.js@7.4.2):
+    dependencies:
+      pixi.js: 7.4.2
 
   pixi.js@7.4.2:
     dependencies:

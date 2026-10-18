@@ -73,6 +73,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         zoom={initialZoomLevel}
         circles={points[sliderValue]?.features || []}
         allPoints={points}
+        isPlaying={playbackSpeed !== 0}
         controls={
           <div className={theme === "dark" ? "" : "dark"}>
             <div

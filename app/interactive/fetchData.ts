@@ -87,49 +87,69 @@ export const fetchData = async (
   tracksFilename: string,
   timesFilename: string
 ): Promise<IMapDataProps> => {
+  let start = performance.now()
   const liveOceanResponse = await fetch(
     `/api/forecast/drifters/${tracksFilename}-${timesFilename}`
   )
+  let end = performance.now()
+  console.log(
+    `Execution time for fetch to /api/forecast/drifters/: ${end - start} milliseconds`
+  )
+
   const { drifters_forecast: driftersForecast, times } =
     (await liveOceanResponse.json()) as ILiveoceanDataEndpointResponse
 
+  /* Disabled because it turned out to be 6x slower */
   // If service workers are available, offload interpolation to the worker for
   // better main-thread performance. Falls back to existing in-thread logic.
-  if (typeof window !== "undefined" && 'serviceWorker' in navigator) {
-    try {
-      // Register the service worker (no-op if already registered) and wait until active
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      await navigator.serviceWorker.ready
+  // if (typeof window !== "undefined" && "serviceWorker" in navigator) {
+  //   try {
+  //     const start = performance.now()
 
-      const sw = registration.active || registration.waiting || registration.installing;
+  //     // Register the service worker (no-op if already registered) and wait until active
+  //     const registration = await navigator.serviceWorker.register("/sw.js")
+  //     await navigator.serviceWorker.ready
 
-      if (sw && sw.postMessage) {
-        const channel = new MessageChannel()
-        const resultPromise: Promise<any> = new Promise((resolve, reject) => {
-          channel.port1.onmessage = (ev) => {
-            const payload = ev.data
-            if (payload && payload.error) reject(new Error(payload.error))
-            else resolve(payload)
-          }
-          channel.port1.onmessageerror = (err) => reject(err)
-        })
+  //     const sw =
+  //       registration.active || registration.waiting || registration.installing
 
-        // send raw times array (worker will parse/format them)
-        const timesArray = (times && times[0] && times[0].t) || []
+  //     if (sw && sw.postMessage) {
+  //       const channel = new MessageChannel()
+  //       const resultPromise: Promise<any> = new Promise((resolve, reject) => {
+  //         channel.port1.onmessage = (ev) => {
+  //           const payload = ev.data
+  //           if (payload && payload.error) reject(new Error(payload.error))
+  //           else resolve(payload)
+  //         }
+  //         channel.port1.onmessageerror = (err) => reject(err)
+  //       })
 
-        sw.postMessage({ type: 'interpolate', driftersForecast, times: timesArray }, [channel.port2])
+  //       // send raw times array (worker will parse/format them)
+  //       const timesArray = (times && times[0] && times[0].t) || []
 
-        const workerResult = await resultPromise
-        // Expect { points, times }
-        if (workerResult && workerResult.points && workerResult.times) {
-          return { points: workerResult.points, times: workerResult.times }
-        }
-      }
-    } catch (err) {
-      // On any worker error, fall through to client-side interpolation
-      console.warn('Service worker interpolation failed, falling back:', err)
-    }
-  }
+  //       sw.postMessage(
+  //         { type: "interpolate", driftersForecast, times: timesArray },
+  //         [channel.port2]
+  //       )
+
+  //       const workerResult = await resultPromise
+
+  //       const end = performance.now()
+  //       console.log(
+  //         `Execution time for service worker: ${end - start} milliseconds`
+  //       )
+  //       // Expect { points, times }
+  //       if (workerResult && workerResult.points && workerResult.times) {
+  //         return { points: workerResult.points, times: workerResult.times }
+  //       }
+  //     }
+  //   } catch (err) {
+  //     // On any worker error, fall through to client-side interpolation
+  //     console.warn("Service worker interpolation failed, falling back:", err)
+  //   }
+  // }
+
+  start = performance.now()
 
   // Fallback: perform interpolation on the main thread (original behavior)
   const dateTimes = times[0].t.map((timeString) => {
@@ -151,8 +171,14 @@ export const fetchData = async (
     }).format(date)
   )
 
+  const points = getPoints(driftersForecast)
+  end = performance.now()
+  console.log(
+    `Execution time to interpolate without service worker: ${end - start} milliseconds`
+  )
+
   return {
-    points: getPoints(driftersForecast),
+    points,
     times: interpolatedTimes,
   }
 }
@@ -164,8 +190,10 @@ export const fetchPoints = async (filename: string) => {
     cache: "force-cache",
     next: { revalidate: 3600 },
   })
-
+  const start = performance.now()
   const points = getPoints(await tracksResponse.json())
+  const end = performance.now()
+  console.log(`Execution time for getPoints: ${end - start} milliseconds`)
 
   return points
 }
