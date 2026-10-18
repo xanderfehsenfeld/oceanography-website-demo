@@ -47,7 +47,7 @@ export default async function Pages() {
 
             <p>
               If you click on the map (not a single drifter), all the drifters
-              within a certain distance will turn red. Increase or decrease the
+              within a certain distance will turn yellow. Increase or decrease the
               area of selection by zooming in or out of the map. By selecting
               different groups of particles at different times you can explore
               questions such as: Where do all the particles from one place go?
