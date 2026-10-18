@@ -58,10 +58,10 @@ export class DrifterPath extends Container {
       : defaultLineColor
 
     this.dottedLineGraphic = new Graphics()
-    this.dottedLineGraphic.tint = this.isBackground
-      ? backgroundLineColor
-      : defaultLineColor
-    // Hidden until zoom threshold is reached
+    // dottedLineGraphic deliberately has no tint — DashLine draws geometry in
+    // white (0xffffff) and tinting it the same color as lineGraphic would make
+    // the dashes invisible against the solid background line. White dashes are
+    // visible over any tint color.
     this.dottedLineGraphic.visible = false
 
     this.visible = this.isBackground
@@ -78,10 +78,8 @@ export class DrifterPath extends Container {
   setIsDark(isDark: boolean): void {
     if (this.isBackground) {
       this.lineGraphic.tint = isDark ? "magenta" : "purple"
-      this.dottedLineGraphic.tint = isDark ? "magenta" : "purple"
     } else {
       this.lineGraphic.tint = isDark ? "lime" : "darkgreen"
-      this.dottedLineGraphic.tint = isDark ? "lime" : "darkgreen"
     }
   }
 
@@ -119,8 +117,6 @@ export class DrifterPath extends Container {
 
   /**
    * Called when the drifter is selected (opaque).
-   * Solid line always stays visible (fills dash gaps), so no special
-   * layer logic needed — same as hovered, just alpha differs on the Container.
    */
   setSelectedStyle() {
     this._syncLayers()
@@ -138,13 +134,11 @@ export class DrifterPath extends Container {
    * Reconciles layer visibility from the three independent flags.
    *
    * The solid lineGraphic always stays visible — it acts as the background
-   * that fills the gaps in the animated dashes, preserving the original
-   * tinted-line look while still showing movement.
+   * that fills the gaps in the animated dashes.
    * dottedLineGraphic is shown only when zoom-enabled AND animating.
    */
   private _syncLayers() {
     const showDots = this._dottedVisible && this._isAnimating
-    // Solid line always visible — fills dash gaps, no transparency needed
     this.lineGraphic.visible = true
     this.dottedLineGraphic.visible = showDots
   }
@@ -168,9 +162,7 @@ export class DrifterPath extends Container {
    * Redraws the animated dashed overlay at the current dashOffset.
    *
    * Pre-positioning the Graphics cursor before constructing DashLine prevents
-   * a stray diagonal segment from origin → first point (the artifact that
-   * appeared because DashLine's moveTo re-issues the position after the
-   * constructor already set a lineStyle on the Graphics).
+   * a stray diagonal segment from origin → first point.
    */
   drawDottedVertices() {
     this.dottedLineGraphic.clear()
@@ -185,7 +177,7 @@ export class DrifterPath extends Container {
     const dash = new DashLine(this.dottedLineGraphic, {
       dash: DASH_PATTERN,
       width: this._lineWidth,
-      color: 0xffffff, // tint on the Graphics child controls actual colour
+      color: 0xffffff, // no tint on dottedLineGraphic — white stays white
       alpha: this._lineAlpha,
       join: LINE_JOIN.ROUND,
     })
@@ -199,5 +191,4 @@ export class DrifterPath extends Container {
       dash.lineTo(x, y)
     }
   }
-
 }

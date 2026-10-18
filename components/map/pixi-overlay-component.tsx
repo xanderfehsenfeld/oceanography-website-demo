@@ -328,7 +328,6 @@ const PixiOverlayComponent = ({
           width: 3,
         })
         line.lineGraphic.tint = color
-        line.dottedLineGraphic.tint = color
         line.visible = isBackground || false
 
         return line
