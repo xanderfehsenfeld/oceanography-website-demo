@@ -66,6 +66,7 @@ function MapView({
   onLoadData,
   frame,
   timeDeltaMS,
+  isPlaying,
 }: {
   initialLat: number
   initialLong: number
@@ -154,6 +155,7 @@ function MapView({
               showAllLines={showAllLines}
               circles={circles}
               allPoints={allPoints}
+              isPlaying={isPlaying}
             />
           ))}
 
