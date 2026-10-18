@@ -38,7 +38,7 @@ export default async function Pages() {
             <p>
               Using the "Time Slider" you can see where each particle goes in
               time. If you click on the map with some drifters nearby they will
-              turn red. They will stay red when you use the Time Slider. By
+              turn yellow. They will stay yellow when you use the Time Slider. By
               selecting different groups of particles at different times you can
               explore questions such as: Where do all the particles from the
               North release site go? or Where did all the particles that ended
