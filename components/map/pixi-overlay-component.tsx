@@ -1,5 +1,5 @@
 "use client"
-
+ 
 import {
   ReactPortal,
   useCallback,
@@ -30,10 +30,14 @@ import { useMap } from "react-leaflet"
 import { IFeature, IPoints } from "@/app/interactive/fetchData"
 
 import { Tooltip } from "../ui/tooltip"
-import { getDistanceInMiles } from "./map-utils"
+import {
+  getDistanceInMiles,
+  getReticuleRadiusInMiles,
+  pixelToLatLng,
+} from "./map-utils"
 import { Drifter } from "./sprites/drifter"
 import { DrifterPath } from "./sprites/line"
-import { Reticule } from "./sprites/reticule"
+import { RETICULE_BASE_RADIUS, Reticule } from "./sprites/reticule"
 
 // @refresh reset
 
@@ -392,6 +396,21 @@ const PixiOverlayComponent = ({
               localPositionToParent.x,
               localPositionToParent.y
             )
+
+            // Update lat/lng crosshair labels
+            const { lat, lng } = pixelToLatLng(leafletMap, localPositionToParent)
+            reticule.current?.setLatLng(lat, lng)
+
+            // Update distance scale label based on current reticule radius
+            if (reticule.current) {
+              const pixelRadius = reticule.current.scale.x * RETICULE_BASE_RADIUS
+              const miles = getReticuleRadiusInMiles(
+                leafletMap,
+                localPositionToParent,
+                pixelRadius
+              )
+              reticule.current.setRadiusInMiles(miles)
+            }
           }
         }
 
@@ -542,7 +561,9 @@ const PixiOverlayComponent = ({
 
     return () => {
       setIsMounted(false)
+
       ticker.current?.destroy()
+      ticker.current = null
 
       myOverlay.removeFrom(leafletMap)
       myOverlay.remove()
@@ -553,6 +574,17 @@ const PixiOverlayComponent = ({
         texture: true,
         baseTexture: true,
       })
+
+      // Null out all PIXI refs so effects that run after cleanup (e.g. the
+      // theme effect in React Strict Mode's double-invoke cycle) don't call
+      // methods on destroyed objects.
+      reticule.current = null
+      circleSprites.current = []
+      lineGraphics.current = []
+      backgroundLineGraphics.current = []
+      backgroundContainer.current = null
+      circlesContainer.current = null
+      linesContainer.current = null
     }
   }, [])
 

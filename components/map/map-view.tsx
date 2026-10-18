@@ -114,7 +114,8 @@ function MapView({
 
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
-      {map && <MapScale isHorizontal map={map} />}
+      {/* Horizontal scale: above the map in normal mode, overlaid in fullscreen */}
+      {map && <MapScale isHorizontal map={map} isFullscreen={isFullscreen} />}
 
       <MapContainer
         center={[initialLat, initialLong]}
@@ -201,7 +202,8 @@ function MapView({
         )}
       </MapContainer>
 
-      {map && <MapScale isHorizontal={false} map={map} />}
+      {/* Vertical scale: left of the map in normal mode, overlaid in fullscreen */}
+      {map && <MapScale isHorizontal={false} map={map} isFullscreen={isFullscreen} />}
     </div>
   )
 }
