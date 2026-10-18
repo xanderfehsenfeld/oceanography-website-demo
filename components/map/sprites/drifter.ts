@@ -107,6 +107,7 @@ export class Drifter extends Sprite {
     if (this.line) {
       this.line.alpha = 0.3
       this.line.visible = true
+      this.line.setHovered()
     }
   }
 
@@ -117,7 +118,10 @@ export class Drifter extends Sprite {
   resetState() {
     this.tint = this.isDark ? darkColor : lightColor
     this.alpha = defaultAlpha
-    if (this.line) this.line.visible = false
+    if (this.line) {
+      this.line.resetStyle()
+      this.line.visible = false
+    }
   }
 
   setSelected() {
@@ -126,8 +130,8 @@ export class Drifter extends Sprite {
 
     if (this.line) {
       this.line.alpha = 1
-
       this.line.visible = true
+      this.line.setSelectedStyle()
     }
   }
 

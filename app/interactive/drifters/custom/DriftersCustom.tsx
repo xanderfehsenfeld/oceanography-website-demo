@@ -66,6 +66,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         circles={points[sliderValue]?.features || []}
         allPoints={points}
         showAllLines
+        isPlaying={playbackSpeed !== 0}
         controls={
           <div className={`flex flex-col gap-2 border bg-background p-4 pb-6`}>
             <div className="typography">

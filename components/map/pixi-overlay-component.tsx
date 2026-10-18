@@ -36,7 +36,7 @@ import {
   pixelToLatLng,
 } from "./map-utils"
 import { Drifter } from "./sprites/drifter"
-import { DrifterPath } from "./sprites/line"
+import { DASH_PATTERN, DrifterPath } from "./sprites/line"
 import { RETICULE_BASE_RADIUS, Reticule } from "./sprites/reticule"
 
 // @refresh reset
@@ -51,6 +51,7 @@ const PixiOverlayComponent = ({
   onLoadData,
   frame = 0,
   timeDeltaMS = 0,
+  isPlaying = false,
 }: {
   circles: IFeature[]
   allPoints?: IPoints[]
@@ -58,6 +59,7 @@ const PixiOverlayComponent = ({
   onLoadData?: () => void
   frame?: number
   timeDeltaMS?: number
+  isPlaying?: boolean
 }) => {
   const ticker = useRef<Ticker>(null)
 
@@ -74,6 +76,13 @@ const PixiOverlayComponent = ({
   const circleSprites = useRef<Drifter[]>([])
 
   const backgroundLineGraphics = useRef<DrifterPath[]>([])
+
+  // Whether the marching-ants ticker callback is currently attached
+  const dashAnimationActive = useRef<boolean>(false)
+  // Rolling index into the lines array for batched dotted-line redraws
+  const dashBatchIndex = useRef(0)
+  // Last known zoom, used to recompute animation state when isPlaying changes
+  const currentZoom = useRef<number>(prevZoom)
 
   const leafletMap = useMap()
 
@@ -124,32 +133,108 @@ const PixiOverlayComponent = ({
     }
   )
 
+  // Animation is active only when paused AND sufficiently zoomed in.
+  // Computed from props + current zoom; used to gate the ticker and layer state.
+  const shouldAnimate = useEffectEvent(() => {
+    return !isPlaying && currentZoom.current > 11
+  })
+
+  // Notify all lines of the current animation state so they can sync their layers.
+  const applyAnimatingState = useEffectEvent((animating: boolean) => {
+    const allLines = lineGraphics.current.concat(backgroundLineGraphics.current)
+    for (const line of allLines) {
+      line.setAnimating(animating)
+    }
+  })
+
+  // Marching-ants ticker callback.
+  // Uses ticker.deltaMS (real elapsed ms) so apparent speed is
+  // framerate-independent regardless of how many lines are visible.
+  // Runs at LOW priority so it doesn't compete with rendering or interaction.
+  const DASH_BATCH_SIZE = 10
+
+  const dashAnimationTick = useEffectEvent(() => {
+    // Use elapsedMS (raw wall-clock ms) rather than deltaMS (which is scaled
+    // by ticker.speed) so animation speed is truly framerate-independent.
+    const elapsedMS = ticker.current?.elapsedMS ?? 16
+
+    // Only animate visible lines — skips all the hidden ones for free
+    const visibleLines = lineGraphics.current
+      .concat(backgroundLineGraphics.current)
+      .filter((l) => l.visible && l.dottedLineGraphic.visible)
+
+    if (visibleLines.length === 0) return
+
+    // 12 px/sec gives a slow, readable flow
+    const DASH_SPEED_PPS = 12
+    const advance = (DASH_SPEED_PPS * elapsedMS) / 1000
+    const newOffset =
+      (visibleLines[0].dashOffset + advance) %
+      (DASH_PATTERN[0] + DASH_PATTERN[1])
+
+    for (const line of visibleLines) {
+      line.dashOffset = newOffset
+    }
+
+    // Redraw only a rolling batch this frame — limits geometry rebuild cost
+    const start = dashBatchIndex.current % visibleLines.length
+    const end = Math.min(start + DASH_BATCH_SIZE, visibleLines.length)
+    for (let i = start; i < end; i++) {
+      visibleLines[i].drawDottedVertices()
+    }
+    dashBatchIndex.current = end >= visibleLines.length ? 0 : end
+  })
+
+  const startDashAnimation = useEffectEvent(() => {
+    if (!dashAnimationActive.current && ticker.current) {
+      ticker.current.add(dashAnimationTick, null, UPDATE_PRIORITY.LOW)
+      dashAnimationActive.current = true
+    }
+  })
+
+  const stopDashAnimation = useEffectEvent(() => {
+    if (dashAnimationActive.current && ticker.current) {
+      ticker.current.remove(dashAnimationTick)
+      dashAnimationActive.current = false
+    }
+  })
+
   const updateLineBoldness = useEffectEvent((scale: number, zoom: number) => {
+    currentZoom.current = zoom
     const lineWidth = zoom > 10 ? 2 / scale : 3
     const showDottedLine = zoom > 11
+    const animating = !isPlaying && showDottedLine
 
     lazybatchApply(
       lineGraphics.current.concat(backgroundLineGraphics.current),
       (v) => v.setDottedLineVisibility(showDottedLine)
     )
+
+    // Tell all lines about the combined animation state
+    applyAnimatingState(animating)
+
+    // Start or stop the marching-ants ticker
+    if (animating) {
+      startDashAnimation()
+    } else {
+      stopDashAnimation()
+    }
+
     //Update drawn lines
     if (zoom > 10 || firstDraw) {
       lazybatchApply(lineGraphics.current, (line) => {
         line.clear()
-
-        line.lineStyle({
-          width: lineWidth,
-        })
-
+        line.lineStyle({ width: lineWidth })
         line.drawVertices()
+        if (animating) line.drawDottedVertices()
       })
 
       lazybatchApply(backgroundLineGraphics.current, (line) => {
         line.clear()
-
         line.lineStyle({ width: lineWidth, alpha: 0.3 })
         line.lineGraphic.tint = theme === "dark" ? "magenta" : "purple"
         line.drawVertices()
+        if (animating) line.drawDottedVertices()
       })
     }
   })
@@ -158,6 +243,18 @@ const PixiOverlayComponent = ({
     //draw new frame with renderer
     if (circleSprites && isMounted) updateCircleLocations()
   }, [circles])
+
+  // When playback starts/stops, update animation state immediately
+  useEffect(() => {
+    if (!isMounted) return
+    const animating = !isPlaying && currentZoom.current > 11
+    applyAnimatingState(animating)
+    if (animating) {
+      startDashAnimation()
+    } else {
+      stopDashAnimation()
+    }
+  }, [isPlaying])
 
   const { theme } = useTheme()
 
@@ -189,7 +286,8 @@ const PixiOverlayComponent = ({
       if (!isIn.current[drifter.id]) {
         drifter.setActive()
       } else {
-        if (drifter.line) drifter.line.visible = true
+        // Already selected — re-apply selected style so dotted layer stays correct
+        drifter.setSelected()
       }
 
       this.onpointerenter = onDrifterHover
@@ -561,6 +659,12 @@ const PixiOverlayComponent = ({
 
     return () => {
       setIsMounted(false)
+
+      // Stop dash animation before destroying the ticker
+      if (dashAnimationActive.current && ticker.current) {
+        ticker.current.remove(dashAnimationTick)
+        dashAnimationActive.current = false
+      }
 
       ticker.current?.destroy()
       ticker.current = null
