@@ -20,6 +20,7 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
+    exclude: ["**/node_modules/**", "**/docs/**"],
     watchTriggerPatterns: [
       // Example: Rerun tests if any .mdx file changes
       {
