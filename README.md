@@ -97,3 +97,23 @@ We welcome contributions to improve this project.
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
 
 ---
+
+## Environment Variables
+
+Copy `.env.local.example` to `.env.local` and fill in the values:
+
+```bash
+cp .env.local.example .env.local
+```
+
+| Variable | Required | Description |
+|---|---|---|
+| `NEXT_PUBLIC_MAPTILER_KEY` | Recommended | MapTiler API key for the bathymetric terrain layer on the drifter maps. Without it the map still works but renders flat (no 3D ocean depth relief). Get a free key at [cloud.maptiler.com](https://cloud.maptiler.com/account/keys/). |
+
+### Getting a MapTiler key
+
+1. Create a free account at [maptiler.com](https://www.maptiler.com/).
+2. Go to **Account → Keys** and copy your default key.
+3. Paste it as `NEXT_PUBLIC_MAPTILER_KEY` in `.env.local`.
+
+The free tier includes access to the `terrain-rgb-v2` tiles used by the drifter visualization.
