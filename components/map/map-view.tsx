@@ -128,7 +128,6 @@ function MapView({
 
         {children ||
           (circles.length > 0 &&
-            isLoaded &&
             maplibreReady &&
             maplibreMapRef.current && (
               <DeckOverlayComponent

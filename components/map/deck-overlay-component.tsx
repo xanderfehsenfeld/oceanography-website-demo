@@ -33,9 +33,11 @@ function DeckOverlayComponent({
 }: IDeckOverlayProps) {
   const overlayRef = useRef<MapLibreOverlay | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  // Track whether onLoadData has been called yet
+  const loadCalledRef = useRef(false)
 
   const handleHover = useCallback((_info: { object?: IFeature }) => {
-    // hover state drives tooltip only — no React re-render needed
+    // hover handled by getTooltip — no state update needed
   }, [])
 
   const handleClick = useCallback((info: { object?: IFeature }) => {
@@ -80,26 +82,46 @@ function DeckOverlayComponent({
     [velocities, frame]
   )
 
-  // Mount: create overlay and attach to MapLibre map
+  // Mount: create overlay and attach to MapLibre map once
   useEffect(() => {
-    const overlay = new MapLibreOverlay({ interleaved: true, layers: [] })
-    maplibreMap.addControl(overlay)
-    overlayRef.current = overlay
+    // Small defer to ensure MapLibre's WebGL context is fully ready before
+    // attaching the interleaved overlay (addControl must happen post-load).
+    let overlay: MapLibreOverlay | null = null
 
-    // Signal that deck.gl is ready (one rAF to allow first render)
-    const raf = requestAnimationFrame(() => onLoadData?.())
+    const attach = () => {
+      overlay = new MapLibreOverlay({ interleaved: true, layers: [] })
+      maplibreMap.addControl(overlay)
+      overlayRef.current = overlay
+    }
+
+    if (maplibreMap.loaded()) {
+      attach()
+    } else {
+      maplibreMap.once("load", attach)
+    }
 
     return () => {
-      cancelAnimationFrame(raf)
-      maplibreMap.removeControl(overlay)
+      if (overlay) {
+        maplibreMap.removeControl(overlay)
+      }
       overlayRef.current = null
+      loadCalledRef.current = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [maplibreMap])
 
-  // Sync layers + tooltip into the overlay on every render
+  // Sync layers + tooltip into the overlay on every render.
+  // This runs after every render, keeping the overlay in sync with React state.
   useEffect(() => {
-    overlayRef.current?.setProps({ layers, getTooltip } as any)
+    if (!overlayRef.current) return
+
+    overlayRef.current.setProps({ layers, getTooltip } as any)
+
+    // Signal ready on the first render that actually has drifter data
+    if (!loadCalledRef.current && circles.length > 0) {
+      loadCalledRef.current = true
+      onLoadData?.()
+    }
   })
 
   return null

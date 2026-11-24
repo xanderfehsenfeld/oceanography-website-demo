@@ -37,6 +37,9 @@ const makeFrame = (): IPoints => ({
 const makeMaplibreMap = () => ({
   addControl: vi.fn(),
   removeControl: vi.fn(),
+  // loaded() returns true so the overlay attaches synchronously in tests
+  loaded: vi.fn().mockReturnValue(true),
+  once: vi.fn(),
 })
 
 const BASE_PROPS = {
