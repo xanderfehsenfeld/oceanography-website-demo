@@ -1,9 +1,9 @@
 "use client"
 
-import { ComponentProps, Profiler, ReactNode, useEffect, useState } from "react"
-import { Browser, Map } from "leaflet"
+import { ComponentProps, ReactNode, useEffect, useRef, useState } from "react"
+import { Map } from "leaflet"
+import type { Map as MaplibreMap } from "maplibre-gl"
 import { useTheme } from "next-themes"
-import { createPortal } from "react-dom"
 import {
   RxEnterFullScreen,
   RxExitFullScreen,
@@ -17,40 +17,17 @@ import "leaflet/dist/leaflet.css"
 
 // @ts-ignore
 import FullScreen from "leaflet.fullscreen"
-import { AttributionControl, MapContainer, TileLayer } from "react-leaflet"
+import { AttributionControl, MapContainer } from "react-leaflet"
 import Control from "react-leaflet-custom-control"
 
 import MapScale from "./map-scale"
-import PixiOverlayComponent from "./pixi-overlay-component"
 
 import "./map-view.css"
 
 import { Attribution } from "./attribution"
+import DeckOverlayComponent from "./deck-overlay-component"
 import { MapLibreTileLayer } from "./map-libre-tile-layer"
-
-const mapSources = {
-  voyagerNoLabels: {
-    url: "https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-  darkMatterNoLabels: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-  },
-  stadiaAlidadeSmoothDark: {
-    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-  },
-
-  stadiaAlidadeSmooth: {
-    url: "https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png",
-    attribution:
-      '&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a>',
-  },
-}
+import { type PixiOverlayComponentProps } from "./pixi-overlay-compat"
 
 // @refresh reset
 
@@ -61,18 +38,19 @@ function MapView({
   zoom: initialZoomLevel,
   circles,
   allPoints,
-  showAllLines,
   controls,
   onLoadData,
   frame,
   timeDeltaMS,
+  // isPlaying kept for API compatibility but not passed to DeckOverlayComponent
+  isPlaying: _isPlaying,
 }: {
   initialLat: number
   initialLong: number
   zoom: number
   children?: ReactNode
   controls?: ReactNode
-} & ComponentProps<typeof PixiOverlayComponent>) {
+} & PixiOverlayComponentProps) {
   const { theme, setTheme } = useTheme()
 
   const toggleTheme = () => {
@@ -80,6 +58,9 @@ function MapView({
   }
 
   const [map, setMap] = useState<Map | null>(null)
+
+  const maplibreMapRef = useRef<MaplibreMap | null>(null)
+  const [maplibreReady, setMaplibreReady] = useState(false)
 
   const [isFullscreen, setIsFullScreen] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -104,13 +85,12 @@ function MapView({
     }
   }, [map])
 
-  useEffect(() => {
-    console.log("mount")
-
-    return () => {
-      console.log("unmount")
-    }
-  }, [])
+  const handleMapLibreReady = (mlMap: MaplibreMap) => {
+    maplibreMapRef.current = mlMap
+    // Apply a 45° pitch for the 3D terrain effect
+    mlMap.setPitch(45)
+    setMaplibreReady(true)
+  }
 
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
@@ -145,17 +125,22 @@ function MapView({
             </Button>
           )}
         </Control>
+
         {children ||
-          (circles.length > 0 && isLoaded && (
-            <PixiOverlayComponent
-              frame={frame}
-              timeDeltaMS={timeDeltaMS}
-              onLoadData={onLoadData}
-              showAllLines={showAllLines}
-              circles={circles}
-              allPoints={allPoints}
-            />
-          ))}
+          (circles.length > 0 &&
+            isLoaded &&
+            maplibreReady &&
+            maplibreMapRef.current && (
+              <DeckOverlayComponent
+                frame={frame ?? 0}
+                timeDeltaMS={timeDeltaMS}
+                onLoadData={onLoadData}
+                circles={circles}
+                allPoints={allPoints ?? []}
+                isDark={theme === "dark"}
+                maplibreMap={maplibreMapRef.current}
+              />
+            ))}
 
         <MapLibreTileLayer
           maxBounds={[
@@ -165,6 +150,7 @@ function MapView({
           maxZoom={15}
           minZoom={7}
           attribution=""
+          onMapLibreReady={handleMapLibreReady}
           url={
             theme === "dark"
               ? "/data/alidade_smooth.json"

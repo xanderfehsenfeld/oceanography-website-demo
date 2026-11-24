@@ -6,6 +6,7 @@ import {
   type LayerProps,
 } from "@react-leaflet/core"
 import L from "leaflet"
+import type { Map as MaplibreMap } from "maplibre-gl"
 
 import "@maplibre/maplibre-gl-leaflet"
 
@@ -13,18 +14,33 @@ export interface MapLibreTileLayerProps
   extends L.LeafletMaplibreGLOptions, LayerProps {
   url: string
   attribution: string
+  onMapLibreReady?: (map: MaplibreMap) => void
 }
 
 export const MapLibreTileLayer = createTileLayerComponent<
   L.MaplibreGL,
   MapLibreTileLayerProps
 >(
-  function createTileLayer({ url, attribution, ...options }, context) {
+  function createTileLayer({ url, attribution, onMapLibreReady, ...options }, context) {
     const layer = L.maplibreGL(
       { style: url, attribution: attribution, noWrap: true },
       // @ts-ignore
       withPane(options, context)
     )
+
+    // Once the underlying MapLibre map is initialized and loaded, surface it
+    // to the parent via the callback so DeckOverlayComponent can attach.
+    if (onMapLibreReady) {
+      layer.on("add", () => {
+        const mlMap = layer.getMaplibreMap() as unknown as MaplibreMap
+        if (mlMap.loaded()) {
+          onMapLibreReady(mlMap)
+        } else {
+          mlMap.once("load", () => onMapLibreReady(mlMap))
+        }
+      })
+    }
+
     return createElementObject(layer, context)
   },
   function updateTileLayer(layer, props, prevProps) {
