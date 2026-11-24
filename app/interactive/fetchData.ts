@@ -1,7 +1,5 @@
 "use client"
 
-import { IPointData } from "pixi.js"
-
 import {
   IMapDataProps,
   TimesData,
@@ -41,7 +39,7 @@ export const getPoints = (tracksTyped: Track[]): IPoints[] => {
   const points = tracksTyped
 
   const pointsInterpolated = points.map(({ x, y }) => {
-    const pointsTyped: IPointData[] = x.map((xValue, i) => ({
+    const pointsTyped: { x: number; y: number }[] = x.map((xValue, i) => ({
       x: xValue,
       y: y[i],
     }))
