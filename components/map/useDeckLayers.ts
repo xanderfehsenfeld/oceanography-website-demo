@@ -3,6 +3,7 @@
 import { useMemo } from "react"
 
 import { Layer, PickingInfo } from "@deck.gl/core"
+import { TerrainLayer } from "@deck.gl/geo-layers"
 import { PathLayer, ScatterplotLayer } from "@deck.gl/layers"
 
 import { IFeature, IPoints } from "@/app/interactive/fetchData"
@@ -66,6 +67,29 @@ export const useDeckLayers = ({
   const layers = useMemo<Layer[]>(() => {
     const result: Layer[] = []
 
+    // ── TerrainLayer — bathymetric elevation mesh ───────────────────────────────
+    // Renders visual 3D terrain. The MapTiler key gates whether this layer is
+    // included at all (no key → flat map, still fully functional).
+    const maptilerKey = process.env.NEXT_PUBLIC_MAPTILER_KEY ?? ""
+    if (maptilerKey) {
+      result.push(
+        new TerrainLayer({
+          id: "terrain",
+          elevationData: `https://api.maptiler.com/tiles/terrain-rgb-v2/{z}/{x}/{y}.webp?key=${maptilerKey}`,
+          elevationDecoder: {
+            rScaler: 6553.6,
+            gScaler: 25.6,
+            bScaler: 0.1,
+            offset: -10000,
+          },
+          // No texture — semi-transparent deep blue so the basemap shows
+          // through and the terrain reads as the ocean floor under water
+          color: isDark ? [12, 28, 48, 160] : [70, 130, 180, 140],
+          meshMaxError: 4,
+        })
+      )
+    }
+
     // ── ScatterplotLayer — drifter dots ───────────────────────────────────────
     // radiusUnits: "meters" so dots shrink/grow naturally with zoom, matching
     // the original PIXI sprite behaviour where scale = 1/mapScale/2.
@@ -118,6 +142,5 @@ export const useDeckLayers = ({
 
     return result
   }, [circles, allPoints, selectedId, isDark, onHover, onClick])
-
   return { layers, velocities }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { ComponentProps, ReactNode, useEffect, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { Map } from "leaflet"
 import { useTheme } from "next-themes"
 import {
@@ -24,37 +24,29 @@ import MapScale from "./map-scale"
 import "./map-view.css"
 
 import { Attribution } from "./attribution"
-import DeckOverlayComponent from "./deck-overlay-component"
 import { MapLibreTileLayer } from "./map-libre-tile-layer"
-import { type PixiOverlayComponentProps } from "./pixi-overlay-compat"
 
 // @refresh reset
+
+interface IMapViewProps {
+  initialLat: number
+  initialLong: number
+  zoom: number
+  children?: ReactNode
+  controls?: ReactNode
+  /** Unused legacy props kept for API compat with StationsMap */
+  circles?: unknown[]
+  allPoints?: unknown[]
+}
 
 function MapView({
   initialLong = -122.5,
   initialLat = 48,
   children,
   zoom: initialZoomLevel,
-  circles,
-  allPoints,
   controls,
-  onLoadData,
-  frame,
-  timeDeltaMS,
-  isPlaying: _isPlaying,
-}: {
-  initialLat: number
-  initialLong: number
-  zoom: number
-  children?: ReactNode
-  controls?: ReactNode
-} & PixiOverlayComponentProps) {
+}: IMapViewProps) {
   const { theme, setTheme } = useTheme()
-
-  const toggleTheme = () => {
-    setTheme(theme === "dark" ? "light" : "dark")
-  }
-
   const [map, setMap] = useState<Map | null>(null)
   const [isFullscreen, setIsFullScreen] = useState(false)
 
@@ -62,10 +54,8 @@ function MapView({
     if (!map) return
     map.attributionControl.remove()
     map.addControl(new FullScreen())
-
     const fullscreen = map.fullscreenControl as any
     fullscreen.link?.remove()
-
     map.on("enterFullscreen", () => setIsFullScreen(true))
     map.on("exitFullscreen", () => setIsFullScreen(false))
   }, [map])
@@ -93,7 +83,7 @@ function MapView({
             <Button
               variant="default"
               size="icon"
-              onClick={toggleTheme}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="h-11 w-11 cursor-pointer"
             >
               <RxSun className="h-[1.1rem] w-[1.1rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
@@ -124,9 +114,7 @@ function MapView({
             size="icon"
             title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
             className="h-11 w-11 cursor-pointer"
-            onClick={() => {
-              map?.toggleFullscreen()
-            }}
+            onClick={() => map?.toggleFullscreen()}
           >
             {isFullscreen ? (
               <RxExitFullScreen className="h-[1.1rem] w-[1.1rem] scale-100" />
@@ -146,22 +134,9 @@ function MapView({
             {controls}
           </Control>
         )}
-      </MapContainer>
 
-      {/* DeckGL overlay — rendered outside MapContainer so it isn't clipped by
-          Leaflet's overflow:hidden, but positioned to cover the same area.
-          Only mounted once the Leaflet map ref is available and data is ready. */}
-      {map && !children && circles.length > 0 && (
-        <DeckOverlayComponent
-          frame={frame ?? 0}
-          timeDeltaMS={timeDeltaMS}
-          onLoadData={onLoadData}
-          circles={circles}
-          allPoints={allPoints ?? []}
-          isDark={theme === "dark"}
-          leafletMap={map}
-        />
-      )}
+        {children}
+      </MapContainer>
 
       {map && <MapScale isHorizontal={false} map={map} isFullscreen={isFullscreen} />}
     </div>

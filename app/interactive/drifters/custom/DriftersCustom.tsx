@@ -4,7 +4,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react"
 import { Skeleton } from "@radix-ui/themes"
 import useSWR, { preload } from "swr"
 
-import ClientMapView from "@/components/map/client-map-view"
+import ClientDeckMapView from "@/components/map/client-deck-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchPoints, fetchTimes } from "../../fetchData"
@@ -56,7 +56,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
   }, [times])
   return (
     <div className="gap-4 lg:flex">
-      <ClientMapView
+      <ClientDeckMapView
         timeDeltaMS={timeDeltaMS}
         onLoadData={() => setIsLoadingRender(false)}
         initialLat={initialLat}
@@ -65,7 +65,6 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
         zoom={initialZoomLevel}
         circles={points[sliderValue]?.features || []}
         allPoints={points}
-        showAllLines
         controls={
           <div className={`flex flex-col gap-2 border bg-background p-4 pb-6`}>
             <div className="typography">

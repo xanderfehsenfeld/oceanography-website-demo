@@ -5,7 +5,7 @@ import { Skeleton } from "@radix-ui/themes"
 import { useTheme } from "next-themes"
 import useSWR, { preload } from "swr"
 
-import ClientMapView from "@/components/map/client-map-view"
+import ClientDeckMapView from "@/components/map/client-deck-map-view"
 import TimeControls from "@/components/map/time-controls"
 
 import { fetchData, fetchPoints, fetchTimes } from "../../fetchData"
@@ -64,7 +64,7 @@ function DriftersPugetSound({ children }: { children: ReactNode }) {
 
   return (
     <div className="gap-4 lg:flex">
-      <ClientMapView
+      <ClientDeckMapView
         frame={sliderValue}
         timeDeltaMS={timeDeltaMS}
         onLoadData={() => setIsLoadingRender(false)}

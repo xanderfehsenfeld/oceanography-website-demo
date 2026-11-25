@@ -37,8 +37,11 @@ const BASE_PROPS = {
   timeDeltaMS: 3_600_000,
 }
 
+// NEXT_PUBLIC_MAPTILER_KEY is not set in the test env, so TerrainLayer is skipped.
+// The count assertions below reflect that (1 ScatterplotLayer, no TerrainLayer).
+
 describe("useDeckLayers", () => {
-  it("returns 1 layer (ScatterplotLayer only) when no selection", () => {
+  it("returns 1 layer (ScatterplotLayer only) when no key and no selection", () => {
     const { result } = renderHook(() => useDeckLayers(BASE_PROPS))
     expect(result.current.layers).toHaveLength(1)
     expect(result.current.layers[0].id).toBe("drifters")
