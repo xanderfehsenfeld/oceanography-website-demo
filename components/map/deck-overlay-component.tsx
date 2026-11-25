@@ -2,15 +2,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 
-import { PickingInfo } from "@deck.gl/core"
-import { MapLibreOverlay } from "@deck.gl/maplibre"
-import type { Map as MaplibreMap } from "maplibre-gl"
+import { MapView } from "@deck.gl/core"
+import type { PickingInfo } from "@deck.gl/core"
+import { DeckGL } from "@deck.gl/react"
+import { Map as LeafletMap } from "leaflet"
 
 import { IFeature, IPoints } from "@/app/interactive/fetchData"
 
 import { useDeckLayers } from "./useDeckLayers"
-
-const TERRAIN_LAYER_ID = "terrain"
 
 interface IDeckOverlayProps {
   circles: IFeature[]
@@ -18,8 +17,21 @@ interface IDeckOverlayProps {
   frame: number
   onLoadData?: () => void
   isDark: boolean
-  maplibreMap: MaplibreMap
   timeDeltaMS?: number
+  /** The Leaflet Map instance — used to sync the deck.gl viewport. */
+  leafletMap: LeafletMap
+}
+
+/** Read the current Leaflet viewport as a deck.gl MapView viewState. */
+function getLeafletViewState(map: LeafletMap) {
+  const center = map.getCenter()
+  return {
+    longitude: center.lng,
+    latitude: center.lat,
+    zoom: map.getZoom(),
+    bearing: 0,
+    pitch: 0,
+  }
 }
 
 function DeckOverlayComponent({
@@ -28,19 +40,27 @@ function DeckOverlayComponent({
   frame,
   onLoadData,
   isDark,
-  maplibreMap,
   timeDeltaMS = 0,
+  leafletMap,
 }: IDeckOverlayProps) {
-  const overlayRef = useRef<MapLibreOverlay | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
-  // Track whether onLoadData has been called yet
+  const [viewState, setViewState] = useState(() =>
+    getLeafletViewState(leafletMap)
+  )
   const loadCalledRef = useRef(false)
 
-  const handleHover = useCallback((_info: { object?: IFeature }) => {
-    // hover handled by getTooltip — no state update needed
-  }, [])
+  // Keep deck.gl viewport in sync with Leaflet camera
+  useEffect(() => {
+    const sync = () => setViewState(getLeafletViewState(leafletMap))
+    leafletMap.on("move", sync)
+    leafletMap.on("zoom", sync)
+    return () => {
+      leafletMap.off("move", sync)
+      leafletMap.off("zoom", sync)
+    }
+  }, [leafletMap])
 
-  const handleClick = useCallback((info: { object?: IFeature }) => {
+  const handleClick = useCallback((info: PickingInfo<IFeature>) => {
     if (!info.object) {
       setSelectedId(null)
       return
@@ -55,11 +75,17 @@ function DeckOverlayComponent({
     frame,
     selectedId,
     isDark,
-    terrainLayerId: TERRAIN_LAYER_ID,
-    onHover: handleHover,
     onClick: handleClick,
     timeDeltaMS,
   })
+
+  // Signal ready on first render with actual drifter data
+  useEffect(() => {
+    if (!loadCalledRef.current && circles.length > 0) {
+      loadCalledRef.current = true
+      onLoadData?.()
+    }
+  }, [circles.length, onLoadData])
 
   const getTooltip = useCallback(
     ({ object }: PickingInfo<IFeature>) => {
@@ -82,49 +108,27 @@ function DeckOverlayComponent({
     [velocities, frame]
   )
 
-  // Mount: create overlay and attach to MapLibre map once
-  useEffect(() => {
-    // Small defer to ensure MapLibre's WebGL context is fully ready before
-    // attaching the interleaved overlay (addControl must happen post-load).
-    let overlay: MapLibreOverlay | null = null
-
-    const attach = () => {
-      overlay = new MapLibreOverlay({ interleaved: true, layers: [] })
-      maplibreMap.addControl(overlay)
-      overlayRef.current = overlay
-    }
-
-    if (maplibreMap.loaded()) {
-      attach()
-    } else {
-      maplibreMap.once("load", attach)
-    }
-
-    return () => {
-      if (overlay) {
-        maplibreMap.removeControl(overlay)
+  return (
+    <DeckGL
+      views={new MapView({ id: "map" })}
+      viewState={viewState}
+      layers={layers}
+      getTooltip={getTooltip}
+      onClick={handleClick as any}
+      style={{
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        zIndex: "400",
+        pointerEvents: "none",
+      }}
+      getCursor={({ isDragging, isHovering }) =>
+        isDragging ? "grabbing" : isHovering ? "pointer" : "default"
       }
-      overlayRef.current = null
-      loadCalledRef.current = false
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [maplibreMap])
-
-  // Sync layers + tooltip into the overlay on every render.
-  // This runs after every render, keeping the overlay in sync with React state.
-  useEffect(() => {
-    if (!overlayRef.current) return
-
-    overlayRef.current.setProps({ layers, getTooltip } as any)
-
-    // Signal ready on the first render that actually has drifter data
-    if (!loadCalledRef.current && circles.length > 0) {
-      loadCalledRef.current = true
-      onLoadData?.()
-    }
-  })
-
-  return null
+    />
+  )
 }
 
 export default DeckOverlayComponent

@@ -1,8 +1,7 @@
 "use client"
 
-import { ComponentProps, ReactNode, useEffect, useRef, useState } from "react"
+import { ComponentProps, ReactNode, useEffect, useState } from "react"
 import { Map } from "leaflet"
-import type { Map as MaplibreMap } from "maplibre-gl"
 import { useTheme } from "next-themes"
 import {
   RxEnterFullScreen,
@@ -17,7 +16,7 @@ import "leaflet/dist/leaflet.css"
 
 // @ts-ignore
 import FullScreen from "leaflet.fullscreen"
-import { AttributionControl, MapContainer } from "react-leaflet"
+import { MapContainer } from "react-leaflet"
 import Control from "react-leaflet-custom-control"
 
 import MapScale from "./map-scale"
@@ -42,7 +41,6 @@ function MapView({
   onLoadData,
   frame,
   timeDeltaMS,
-  // isPlaying kept for API compatibility but not passed to DeckOverlayComponent
   isPlaying: _isPlaying,
 }: {
   initialLat: number
@@ -58,43 +56,22 @@ function MapView({
   }
 
   const [map, setMap] = useState<Map | null>(null)
-
-  const maplibreMapRef = useRef<MaplibreMap | null>(null)
-  const [maplibreReady, setMaplibreReady] = useState(false)
-
   const [isFullscreen, setIsFullScreen] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
-    if (map) {
-      map.attributionControl.remove()
+    if (!map) return
+    map.attributionControl.remove()
+    map.addControl(new FullScreen())
 
-      setTimeout(() => setIsLoaded(true), 2000)
-      map.addControl(new FullScreen())
+    const fullscreen = map.fullscreenControl as any
+    fullscreen.link?.remove()
 
-      const fullscreen = map.fullscreenControl as any
-      fullscreen.link?.remove()
-
-      map.on("enterFullscreen", function () {
-        setIsFullScreen(true)
-      })
-
-      map.on("exitFullscreen", function () {
-        setIsFullScreen(false)
-      })
-    }
+    map.on("enterFullscreen", () => setIsFullScreen(true))
+    map.on("exitFullscreen", () => setIsFullScreen(false))
   }, [map])
-
-  const handleMapLibreReady = (mlMap: MaplibreMap) => {
-    maplibreMapRef.current = mlMap
-    // Apply a 45° pitch for the 3D terrain effect
-    mlMap.setPitch(45)
-    setMaplibreReady(true)
-  }
 
   return (
     <div className="md:h-inherit relative max-h-[80vh] min-h-[80vh] flex-1 md:pl-5">
-      {/* Horizontal scale: above the map in normal mode, overlaid in fullscreen */}
       {map && <MapScale isHorizontal map={map} isFullscreen={isFullscreen} />}
 
       <MapContainer
@@ -126,21 +103,6 @@ function MapView({
           )}
         </Control>
 
-        {children ||
-          (circles.length > 0 &&
-            maplibreReady &&
-            maplibreMapRef.current && (
-              <DeckOverlayComponent
-                frame={frame ?? 0}
-                timeDeltaMS={timeDeltaMS}
-                onLoadData={onLoadData}
-                circles={circles}
-                allPoints={allPoints ?? []}
-                isDark={theme === "dark"}
-                maplibreMap={maplibreMapRef.current}
-              />
-            ))}
-
         <MapLibreTileLayer
           maxBounds={[
             [51.67131229155612, -117.89978027343751],
@@ -149,7 +111,6 @@ function MapView({
           maxZoom={15}
           minZoom={7}
           attribution=""
-          onMapLibreReady={handleMapLibreReady}
           url={
             theme === "dark"
               ? "/data/alidade_smooth.json"
@@ -187,7 +148,21 @@ function MapView({
         )}
       </MapContainer>
 
-      {/* Vertical scale: left of the map in normal mode, overlaid in fullscreen */}
+      {/* DeckGL overlay — rendered outside MapContainer so it isn't clipped by
+          Leaflet's overflow:hidden, but positioned to cover the same area.
+          Only mounted once the Leaflet map ref is available and data is ready. */}
+      {map && !children && circles.length > 0 && (
+        <DeckOverlayComponent
+          frame={frame ?? 0}
+          timeDeltaMS={timeDeltaMS}
+          onLoadData={onLoadData}
+          circles={circles}
+          allPoints={allPoints ?? []}
+          isDark={theme === "dark"}
+          leafletMap={map}
+        />
+      )}
+
       {map && <MapScale isHorizontal={false} map={map} isFullscreen={isFullscreen} />}
     </div>
   )
